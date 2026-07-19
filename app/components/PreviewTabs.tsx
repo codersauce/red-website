@@ -52,7 +52,7 @@ const previews: Record<Preview, { label: string; title: string; image: string; a
 };
 
 export default function PreviewTabs() {
-  const [preview, setPreview] = useState<Preview>("edit");
+  const [preview, setPreview] = useState<Preview>("commands");
 
   function handlePreviewKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;

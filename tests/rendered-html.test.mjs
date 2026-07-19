@@ -35,7 +35,7 @@ test("server-renders the Red website proposal", async () => {
   assert.match(html, /role="tablist"/i);
   assert.match(html, /role="tabpanel"/i);
   assert.match(html, /aria-selected="true"/i);
-  assert.match(html, /Rendering pipeline/i);
+  assert.match(html, /Discover Git actions/i);
   assert.match(html, /id="preview-tab-splash"[^>]*>Welcome<\/button>/i);
   assert.match(html, /src\/editor\/rendering\.rs/i);
   assert.doesNotMatch(html, /red-editor-demo|src\/main\.rs|codex-preview|react-loading-skeleton|Your site is taking shape/i);

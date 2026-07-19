@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:4173";
   const protocol = requestHeaders.get("x-forwarded-proto") === "http" ? "http" : "https";
-  const socialImage = `${protocol}://${host}/og.png`;
+  const socialImage = `${protocol}://${host}/og.png?v=2`;
 
   return {
     metadataBase: new URL(canonicalOrigin),
@@ -22,8 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: { canonical: "/" },
     icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
     other: { "theme-color": "#101014" },
-    openGraph: { title: "red — the modal editor for the agent era", description: "Every agent edit is a proposal. Nothing touches your files until you accept it.", type: "website", images: [{ url: socialImage, width: 1200, height: 630, alt: "Red editor and agent proposal preview" }] },
-    twitter: { card: "summary_large_image", title: "red — the modal editor for the agent era", description: "Fast modal editing. Modern code intelligence. Reviewable agent proposals.", images: [socialImage] },
+    openGraph: { title: "red — the modal editor for the agent era", description: "Every agent edit is a proposal. Nothing touches your files until you accept it.", type: "website", images: [{ url: socialImage, width: 1200, height: 630, alt: "Red modal editor alongside a reviewable agent proposal" }] },
+    twitter: { card: "summary_large_image", title: "red — the modal editor for the agent era", description: "Every agent edit is a proposal. Nothing touches your files until you accept it.", images: [socialImage] },
   };
 }
 

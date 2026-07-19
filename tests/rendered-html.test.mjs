@@ -30,7 +30,7 @@ test("server-renders the Red website proposal", async () => {
   assert.match(html, /every agent edit is a proposal/i);
   assert.match(html, /Space A/);
   assert.match(html, /:AgentReview/);
-  assert.match(html, /https:\/\/red\.example\/og\.png/);
+  assert.match(html, /https:\/\/red\.example\/og\.png\?v=2/);
   assert.match(html, /ghostty-code\.jpg/);
   assert.match(html, /role="tablist"/i);
   assert.match(html, /role="tabpanel"/i);
@@ -49,6 +49,7 @@ test("ships SEO metadata: canonical, theme-color, and structured data", async ()
   const html = await (await render()).text();
   assert.match(html, /<link rel="canonical" href="https:\/\/getred\.dev\/"\/>/);
   assert.match(html, /<meta name="theme-color" content="#101014"\/>/);
+  assert.match(html, /Red modal editor alongside a reviewable agent proposal/);
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /"@type":"SoftwareApplication"/);
   assert.match(html, /"softwareVersion":"0\.2\.0"/);

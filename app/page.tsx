@@ -2,6 +2,7 @@
 
 import { useState, type KeyboardEvent } from "react";
 import Image from "next/image";
+import { releaseVersion } from "./installers.generated";
 
 const previewOrder = ["edit", "find", "commands", "agent", "git", "splash"] as const;
 type Preview = (typeof previewOrder)[number];
@@ -60,13 +61,33 @@ const shortcuts = [
   ["Space G", "open git status"],
 ];
 
+const installMethods = {
+  homebrew: {
+    label: "Homebrew",
+    command: "brew install codersauce/tap/red",
+    aria: "Copy Homebrew install command",
+  },
+  unix: {
+    label: "macOS + Linux",
+    command: "curl --proto '=https' --tlsv1.2 -fsSL https://getred.dev/install.sh | sh",
+    aria: "Copy macOS and Linux install command",
+  },
+  windows: {
+    label: "Windows",
+    command: "irm https://getred.dev/install.ps1 | iex",
+    aria: "Copy Windows PowerShell install command",
+  },
+} as const;
+type InstallMethod = keyof typeof installMethods;
+
 export default function Home() {
   const [preview, setPreview] = useState<Preview>("edit");
+  const [installMethod, setInstallMethod] = useState<InstallMethod>("homebrew");
   const [copied, setCopied] = useState(false);
 
   async function copyInstall() {
     try {
-      await navigator.clipboard.writeText("brew install codersauce/tap/red");
+      await navigator.clipboard.writeText(installMethods[installMethod].command);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -88,6 +109,20 @@ export default function Home() {
   }
 
   const active = previews[preview];
+  const activeInstall = installMethods[installMethod];
+  const installSelector = <div className="install-selector" role="tablist" aria-label="Installation method">
+    {(Object.keys(installMethods) as InstallMethod[]).map((method) => <button
+      className={installMethod === method ? "active" : ""}
+      type="button"
+      role="tab"
+      aria-selected={installMethod === method}
+      onClick={() => {
+        setInstallMethod(method);
+        setCopied(false);
+      }}
+      key={method}
+    >{installMethods[method].label}</button>)}
+  </div>;
 
   return <main>
     <nav className="nav shell">
@@ -97,12 +132,13 @@ export default function Home() {
     </nav>
 
     <section className="hero shell" id="top">
-      <div className="eyebrow"><span className="pulse" /> v0.1.1 · built in Rust</div>
+      <div className="eyebrow"><span className="pulse" /> {releaseVersion} · built in Rust</div>
       <div className="wordmark" aria-hidden="true">{`                 ╷\n╭──╮   ╭──╮   ╭──┤\n│      ├──╯   │  │\n╵      ╰──╴   ╰──╯`}<span> ●</span></div>
       <h1>The modal editor<br /><em>for the agent era.</em></h1>
       <p className="lead">Fast, familiar editing with modern code intelligence and a safer way to work with agents. One binary. No required configuration. Your files stay yours.</p>
       <div className="hero-actions">
-        <button className="install" onClick={copyInstall} aria-label="Copy Homebrew install command"><span className="prompt">$</span><code>brew install codersauce/tap/red</code><span className="copy">{copied ? "copied" : "copy"}</span></button>
+        {installSelector}
+        <button className="install" onClick={copyInstall} aria-label={activeInstall.aria}><span className="prompt">$</span><code>{activeInstall.command}</code><span className="copy">{copied ? "copied" : "copy"}</span></button>
         <a className="release" href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">Download a release <span aria-hidden="true">→</span></a>
       </div>
       <p className="platforms">macOS <span /> Linux <span /> Windows</p>
@@ -155,7 +191,7 @@ export default function Home() {
 
     <section className="shortcuts shell"><header><span className="index">A FEW KEYS TO START</span><h2>Hands on the keyboard.</h2></header><div className="shortcut-grid">{shortcuts.map(([key, description]) => <div className="shortcut" key={key}><kbd>{key}</kbd><span>{description}</span><i>↵</i></div>)}</div></section>
 
-    <section className="start shell" id="start"><span className="start-dot" /><p className="start-kicker">READY WHEN YOU ARE</p><h2>Open a file.<br /><em>Start editing.</em></h2><p className="start-copy">Install the self-contained binary and get a capable editor without a setup ritual. Red is early and actively evolving—bring curiosity, and keep backups for critical work.</p><button className="install wide" onClick={copyInstall} aria-label="Copy Homebrew install command"><span className="prompt">$</span><code>brew install codersauce/tap/red</code><span className="copy">{copied ? "copied" : "copy"}</span></button><div className="start-links"><a href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">prebuilt binaries <span>→</span></a><a href="https://github.com/codersauce/red" target="_blank" rel="noreferrer">read the docs <span>→</span></a><a href="https://discord.gg/5PWvAUNRHU" target="_blank" rel="noreferrer">join the community <span>→</span></a></div></section>
+    <section className="start shell" id="start"><span className="start-dot" /><p className="start-kicker">READY WHEN YOU ARE</p><h2>Open a file.<br /><em>Start editing.</em></h2><p className="start-copy">Install the self-contained binary and get a capable editor without a setup ritual. Red is early and actively evolving—bring curiosity, and keep backups for critical work.</p>{installSelector}<button className="install wide" onClick={copyInstall} aria-label={activeInstall.aria}><span className="prompt">$</span><code>{activeInstall.command}</code><span className="copy">{copied ? "copied" : "copy"}</span></button><div className="start-links"><a href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">prebuilt binaries <span>→</span></a><a href="https://github.com/codersauce/red" target="_blank" rel="noreferrer">read the docs <span>→</span></a><a href="https://discord.gg/5PWvAUNRHU" target="_blank" rel="noreferrer">join the community <span>→</span></a></div></section>
 
     <footer className="footer shell"><a className="brand" href="#top" aria-label="Back to top"><span className="brand-name">red</span><span className="dot" /></a><p>Rusty Editor · MIT licensed · made in the open</p><a href="https://github.com/codersauce/red" target="_blank" rel="noreferrer">github.com/codersauce/red <span>↗</span></a></footer>
   </main>;

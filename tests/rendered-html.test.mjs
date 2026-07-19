@@ -24,6 +24,9 @@ test("server-renders the Red website proposal", async () => {
   const html = await response.text();
   assert.match(html, /the modal editor.*for the agent era/i);
   assert.match(html, /brew install codersauce\/tap\/red/);
+  assert.match(html, /macOS \+ Linux/);
+  assert.match(html, />Windows<\/button>/);
+  assert.match(html, /v0\.2\.0/);
   assert.match(html, /every agent edit is a proposal/i);
   assert.match(html, /Space A/);
   assert.match(html, /:AgentReview/);
@@ -45,4 +48,17 @@ test("ships Red-specific preview assets and removes the starter skeleton", async
   assert.ok(captures.every((capture) => capture.byteLength > 20_000));
   assert.deepEqual(captures.map(jpegDimensions), Array.from({ length: 6 }, () => ({ width: 1208, height: 704 })));
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
+});
+
+test("ships checksum-verifying installers at stable public paths", async () => {
+  const [shell, powershell, manifest] = await Promise.all([
+    readFile(new URL("../public/install.sh", import.meta.url), "utf8"),
+    readFile(new URL("../public/install.ps1", import.meta.url), "utf8"),
+    readFile(new URL("../public/installers.json", import.meta.url), "utf8"),
+  ]);
+  assert.match(shell, /SHA256SUMS\.txt/);
+  assert.match(shell, /--self-check/);
+  assert.match(powershell, /Get-FileHash -Algorithm SHA256/);
+  assert.match(powershell, /--self-check/);
+  assert.equal(JSON.parse(manifest).version, "0.2.0");
 });

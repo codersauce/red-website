@@ -34,7 +34,7 @@ export default function Home() {
         </div>
         <div className="hero-shot">
           <div className="hero-shot-bar"><span className="preview-dot" /><span>src/editor/rendering.rs</span><span className="hero-shot-note">real capture · Ghostty</span></div>
-          <Image src="/ghostty-code.jpg" width={1208} height={704} alt="Red editing its Rust rendering pipeline with the project file tree open and the NORMAL-mode status bar visible" priority unoptimized />
+          <Image src="/ghostty-code.jpg" width={1208} height={704} alt="Red using the Kanso Ink theme while editing its Rust rendering pipeline with the project file tree open" priority unoptimized />
         </div>
       </div>
     </section>
@@ -50,14 +50,14 @@ export default function Home() {
     </section>
 
     <section className="capture-grid shell" aria-label="Navigation previews">
-      <figure><Image src="/ghostty-picker-demo.jpg" width={1208} height={704} unoptimized alt="Red file picker showing its rendering source and a live buffer preview" /><figcaption><span>FIND SOURCE FILES</span><kbd>Ctrl-p</kbd></figcaption></figure>
-      <figure><Image src="/ghostty-commands-demo.jpg" width={1208} height={704} unoptimized alt="Red command palette showing real Git hunk actions and shortcuts" /><figcaption><span>DISCOVER COMMANDS</span><kbd>Space ?</kbd></figcaption></figure>
+      <figure><Image src="/ghostty-picker-demo.jpg" width={1208} height={704} unoptimized alt="Red using the GitHub Light theme with its file picker and live buffer preview" /><figcaption><span>FIND SOURCE FILES</span><kbd>Ctrl-p</kbd></figcaption></figure>
+      <figure><Image src="/ghostty-commands-demo.jpg" width={1208} height={704} unoptimized alt="Red using the Tokyo Night Storm theme with its Git command palette" /><figcaption><span>DISCOVER COMMANDS</span><kbd>Space ?</kbd></figcaption></figure>
     </section>
 
     <section className="trust shell" id="trust">
       <div className="trust-copy"><span className="eyebrow"><span className="pulse" /> agent workflow</span><h2>Let the agent help.<br /><em>Keep the final say.</em></h2><p>Red can give an agent the context it needs, including unsaved buffers, while staging every suggested write in an isolated proposal filesystem. Review the diff, then accept or reject it explicitly.</p><blockquote>every agent edit is a proposal —<br />nothing touches your files until you accept it</blockquote></div>
       <div className="trust-side">
-        <figure className="trust-shot"><Image src="/ghostty-agent.jpg" width={1208} height={704} unoptimized alt="Red agent prompt asking a contextual question over the editor highlighter source" /><figcaption><span>ASK WITH SOURCE CONTEXT</span><kbd>Space A</kbd></figcaption></figure>
+        <figure className="trust-shot"><Image src="/ghostty-agent.jpg" width={1208} height={704} unoptimized alt="Red using the Rosé Pine Dawn theme with an agent prompt over the editor highlighter source" /><figcaption><span>ASK WITH SOURCE CONTEXT</span><kbd>Space A</kbd></figcaption></figure>
         <div className="trust-steps"><div><span>01</span><h3>Ask</h3><p>Open the agent from the editor with the right workspace context.</p><kbd>Space A</kbd></div><div><span>02</span><h3>Review</h3><p>Inspect attributed changes as clear, isolated proposals.</p><kbd>:AgentReview</kbd></div><div><span>03</span><h3>Decide</h3><p>Accept what helps. Reject what does not. Nothing is silently applied.</p><kbd>your call</kbd></div></div>
       </div>
     </section>

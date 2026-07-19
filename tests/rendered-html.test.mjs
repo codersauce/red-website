@@ -30,14 +30,18 @@ test("server-renders the Red website proposal", async () => {
   assert.match(html, /every agent edit is a proposal/i);
   assert.match(html, /Space A/);
   assert.match(html, /:AgentReview/);
-  assert.match(html, /https:\/\/red\.example\/og\.png/);
+  assert.match(html, /https:\/\/red\.example\/og\.png\?v=2/);
   assert.match(html, /ghostty-code\.jpg/);
   assert.match(html, /role="tablist"/i);
   assert.match(html, /role="tabpanel"/i);
   assert.match(html, /aria-selected="true"/i);
   assert.match(html, /Discover Git actions/i);
   assert.match(html, /id="preview-tab-splash"[^>]*>Welcome<\/button>/i);
-  assert.match(html, /src\/editor\/rendering\.rs/i);
+  for (const theme of ["Kanso Ink", "GitHub Light", "Tokyo Night Storm", "Rosé Pine Dawn"]) {
+    assert.match(html, new RegExp(theme, "i"));
+  }
+  const previewSource = await readFile(new URL("../app/components/PreviewTabs.tsx", import.meta.url), "utf8");
+  assert.match(previewSource, /Cyberdream/i);
   assert.doesNotMatch(html, /red-editor-demo|src\/main\.rs|codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 
@@ -45,6 +49,7 @@ test("ships SEO metadata: canonical, theme-color, and structured data", async ()
   const html = await (await render()).text();
   assert.match(html, /<link rel="canonical" href="https:\/\/getred\.dev\/"\/>/);
   assert.match(html, /<meta name="theme-color" content="#101014"\/>/);
+  assert.match(html, /Red modal editor alongside a reviewable agent proposal/);
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /"@type":"SoftwareApplication"/);
   assert.match(html, /"softwareVersion":"0\.2\.0"/);

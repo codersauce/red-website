@@ -36,6 +36,8 @@ a { color: inherit; text-decoration: none; }
 
 .hero { overflow-x: clip; padding: 64px 0 78px; }
 .hero-grid { display: grid; align-items: center; grid-template-columns: .95fr 1.05fr; gap: 64px; }
+.hero-copy { min-width: 0; }
+.hero-copy .install { width: 100%; }
 .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--dim); font: 550 11px var(--font-mono), monospace; letter-spacing: .12em; text-transform: uppercase; }
 .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 4px #e5484d16; }
 .hero h1, .trust h2, .start h2 { margin: 0; color: var(--bright); font-weight: 590; letter-spacing: -.075em; line-height: .96; }

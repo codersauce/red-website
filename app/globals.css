@@ -42,9 +42,13 @@ a { color: inherit; text-decoration: none; }
 .hero h1 em, .trust h2 em, .start h2 em { color: var(--red); font-style: normal; }
 .lead { max-width: 680px; margin: 29px auto 28px; color: #9898a2; font-size: 16px; line-height: 1.75; }
 .hero-actions { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.install-selector { display: inline-flex; gap: 3px; padding: 4px; border: 1px solid #2d2d35; border-radius: 7px; background: #131318; }
+.install-selector button { min-height: 31px; cursor: pointer; padding: 6px 13px; border: 0; border-radius: 4px; background: transparent; color: #73737d; font: 560 10px var(--font-mono), monospace; white-space: nowrap; }
+.install-selector button:hover { color: #b6b6be; }
+.install-selector button.active { background: #292930; color: var(--bright); box-shadow: inset 0 0 0 1px #393942; }
 .install { display: flex; width: min(470px, 100%); height: 58px; cursor: pointer; align-items: center; gap: 12px; padding: 0 12px 0 20px; border: 1px solid #4a3236; border-radius: 6px; background: #171416; box-shadow: 0 20px 50px #0000002c; transition: border-color .18s ease, transform .18s ease; }
 .install:hover { border-color: #875054; transform: translateY(-1px); }
-.install:focus-visible, .preview-tabs button:focus-visible, .live-shot:focus-visible, .release:focus-visible, .nav a:focus-visible, .start-links a:focus-visible { outline: 1px solid var(--red-2); outline-offset: 3px; }
+.install:focus-visible, .install-selector button:focus-visible, .preview-tabs button:focus-visible, .live-shot:focus-visible, .release:focus-visible, .nav a:focus-visible, .start-links a:focus-visible { outline: 1px solid var(--red-2); outline-offset: 3px; }
 .install .prompt { color: var(--red-2); font: 700 14px var(--font-mono), monospace; }
 .install code { flex: 1; color: #c8c8d0; font: 500 13px var(--font-mono), monospace; text-align: left; white-space: nowrap; }
 .install .copy { min-width: 58px; padding: 8px 9px; border-left: 1px solid #4a3236; color: #8f7d81; font: 600 10px var(--font-mono), monospace; letter-spacing: .1em; text-transform: uppercase; }
@@ -125,6 +129,7 @@ a { color: inherit; text-decoration: none; }
 .start h2 { margin-top: 26px; font-size: clamp(55px, 5.5vw, 86px); }
 .start-copy { max-width: 640px; margin: 27px auto 28px; color: #80808a; font-size: 13px; line-height: 1.8; }
 .start .wide { margin: 0 auto; }
+.start .install-selector { margin: 0 auto 12px; }
 .start-links { display: flex; margin-top: 30px; flex-wrap: wrap; justify-content: center; gap: 26px; color: #777780; font: 500 11px var(--font-mono), monospace; }
 .start-links span { margin-left: 7px; }
 .footer { display: grid; min-height: 110px; grid-template-columns: 1fr 1fr 1fr; align-items: center; }
@@ -162,8 +167,10 @@ a { color: inherit; text-decoration: none; }
   .wordmark { margin: 24px auto 17px; transform: scale(.84); }
   .lead { font-size: 14px; line-height: 1.7; }
   .install { height: 54px; gap: 9px; padding-left: 14px; }
-  .install code { font-size: 10px; }
+  .install code { overflow: hidden; font-size: 10px; text-overflow: ellipsis; }
   .install .copy { min-width: 48px; padding-inline: 5px; font-size: 9px; }
+  .install-selector { max-width: 100%; overflow-x: auto; }
+  .install-selector button { padding-inline: 10px; font-size: 9px; }
   .preview-head { gap: 10px; padding: 11px 10px 10px; }
   .preview-title, .preview-file { font-size: 9px; }
   .preview-tabs button { min-height: 32px; padding: 6px 8px; font-size: 9px; }

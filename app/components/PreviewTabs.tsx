@@ -88,7 +88,7 @@ export default function PreviewTabs() {
       <span className="preview-file">real editor · Ghostty</span>
     </header>
     <figure className="live-shot" id="preview-panel" role="tabpanel" aria-labelledby={`preview-tab-${preview}`} tabIndex={0}>
-      <Image src={active.image} width={1208} height={704} alt={active.alt} priority unoptimized />
+      <Image src={active.image} width={1208} height={704} alt={active.alt} unoptimized />
       <figcaption><span>Red source capture</span><span>{active.note}</span></figcaption>
     </figure>
   </section>;

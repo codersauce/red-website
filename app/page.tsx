@@ -20,16 +20,23 @@ export default function Home() {
       <a className="nav-github" href="https://github.com/codersauce/red" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
     </nav>
 
-    <section className="hero shell" id="top">
-      <div className="eyebrow"><span className="pulse" /> {releaseVersion} · built in Rust</div>
-      <div className="wordmark" aria-hidden="true">{`                 ╷\n╭──╮   ╭──╮   ╭──┤\n│      ├──╯   │  │\n╵      ╰──╴   ╰──╯`}<span> ●</span></div>
-      <h1>The modal editor<br /><em>for the agent era.</em></h1>
-      <p className="lead">Fast, familiar editing with modern code intelligence and a safer way to work with agents. One binary. No required configuration. Your files stay yours.</p>
-      <div className="hero-actions">
-        <InstallPicker />
-        <a className="release" href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">Download a release <span aria-hidden="true">→</span></a>
+    <section className="hero" id="top">
+      <div className="hero-grid shell">
+        <div className="hero-copy">
+          <div className="eyebrow"><span className="pulse" /> {releaseVersion} · built in Rust</div>
+          <h1>The modal editor<br /><em>for the agent era.</em></h1>
+          <p className="lead">Fast, familiar editing with modern code intelligence and a safer way to work with agents. One binary. No required configuration. Your files stay yours.</p>
+          <div className="hero-actions">
+            <InstallPicker />
+            <a className="release" href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">Download a release <span aria-hidden="true">→</span></a>
+          </div>
+          <p className="platforms">macOS <span /> Linux <span /> Windows</p>
+        </div>
+        <div className="hero-shot">
+          <div className="hero-shot-bar"><span className="preview-dot" /><span>src/editor/rendering.rs</span><span className="hero-shot-note">real capture · Ghostty</span></div>
+          <Image src="/ghostty-code.jpg" width={1208} height={704} alt="Red editing its Rust rendering pipeline with the project file tree open and the NORMAL-mode status bar visible" priority unoptimized />
+        </div>
       </div>
-      <p className="platforms">macOS <span /> Linux <span /> Windows</p>
     </section>
 
     <PreviewTabs />

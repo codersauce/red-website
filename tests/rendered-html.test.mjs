@@ -10,11 +10,11 @@ function jpegDimensions(bytes) {
   throw new Error("JPEG frame marker not found");
 }
 
-async function render() {
+async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
-  return worker.fetch(new Request("https://red.example/", { headers: { accept: "text/html", "x-forwarded-host": "red.example", "x-forwarded-proto": "https" } }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+  return worker.fetch(new Request(`https://red.example${path}`, { headers: { accept: "text/html", "x-forwarded-host": "red.example", "x-forwarded-proto": "https" } }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
 }
 
 test("server-renders the Red website proposal", async () => {
@@ -35,16 +35,38 @@ test("server-renders the Red website proposal", async () => {
   assert.match(html, /role="tablist"/i);
   assert.match(html, /role="tabpanel"/i);
   assert.match(html, /aria-selected="true"/i);
-  assert.match(html, /Rendering pipeline/i);
+  assert.match(html, /Discover Git actions/i);
   assert.match(html, /id="preview-tab-splash"[^>]*>Welcome<\/button>/i);
   assert.match(html, /src\/editor\/rendering\.rs/i);
   assert.doesNotMatch(html, /red-editor-demo|src\/main\.rs|codex-preview|react-loading-skeleton|Your site is taking shape/i);
+});
+
+test("ships SEO metadata: canonical, theme-color, and structured data", async () => {
+  const html = await (await render()).text();
+  assert.match(html, /<link rel="canonical" href="https:\/\/getred\.dev\/"\/>/);
+  assert.match(html, /<meta name="theme-color" content="#101014"\/>/);
+  assert.match(html, /application\/ld\+json/);
+  assert.match(html, /"@type":"SoftwareApplication"/);
+  assert.match(html, /"softwareVersion":"0\.2\.0"/);
+  const robots = await readFile(new URL("../public/robots.txt", import.meta.url), "utf8");
+  const sitemap = await readFile(new URL("../public/sitemap.xml", import.meta.url), "utf8");
+  assert.match(robots, /Sitemap: https:\/\/getred\.dev\/sitemap\.xml/);
+  assert.match(sitemap, /<loc>https:\/\/getred\.dev\/<\/loc>/);
+});
+
+test("renders a branded 404 page with a real 404 status", async () => {
+  const response = await render("/does-not-exist");
+  assert.equal(response.status, 404);
+  const html = await response.text();
+  assert.match(html, /Nothing at this path/);
+  assert.match(html, /github\.com\/codersauce\/red/);
 });
 
 test("ships Red-specific preview assets and removes the starter skeleton", async () => {
   const [favicon, og, ...captures] = await Promise.all([readFile(new URL("../public/favicon.svg", import.meta.url), "utf8"), readFile(new URL("../public/og.png", import.meta.url)), ...["ghostty-code.jpg", "ghostty-picker-demo.jpg", "ghostty-commands-demo.jpg", "ghostty-agent.jpg", "ghostty-git-workspace.jpg", "ghostty-splash.jpg"].map((name) => readFile(new URL(`../public/${name}`, import.meta.url)))]);
   assert.match(favicon, /#e5484d/i);
   assert.ok(og.byteLength > 100_000);
+  assert.ok(og.byteLength < 500_000, "og.png should stay well under 500 KB");
   assert.ok(captures.every((capture) => capture.byteLength > 20_000));
   assert.deepEqual(captures.map(jpegDimensions), Array.from({ length: 6 }, () => ({ width: 1208, height: 704 })));
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));

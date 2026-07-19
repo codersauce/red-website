@@ -20,12 +20,15 @@ test("server-renders the Red website proposal", async () => {
   assert.match(html, /Space A/);
   assert.match(html, /:AgentReview/);
   assert.match(html, /https:\/\/red\.example\/og\.png/);
+  assert.match(html, /ghostty-code\.jpg/);
+  assert.match(html, /blank state/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 
 test("ships Red-specific preview assets and removes the starter skeleton", async () => {
-  const [favicon, og] = await Promise.all([readFile(new URL("../public/favicon.svg", import.meta.url), "utf8"), readFile(new URL("../public/og.png", import.meta.url))]);
+  const [favicon, og, ...captures] = await Promise.all([readFile(new URL("../public/favicon.svg", import.meta.url), "utf8"), readFile(new URL("../public/og.png", import.meta.url)), ...["ghostty-code.jpg", "ghostty-picker-demo.jpg", "ghostty-commands-demo.jpg", "ghostty-agent.jpg", "ghostty-git-workspace.jpg", "ghostty-splash.jpg"].map((name) => readFile(new URL(`../public/${name}`, import.meta.url)))]);
   assert.match(favicon, /#e5484d/i);
   assert.ok(og.byteLength > 100_000);
+  assert.ok(captures.every((capture) => capture.byteLength > 20_000));
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
 });

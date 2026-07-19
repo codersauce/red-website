@@ -2,6 +2,14 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
+function jpegDimensions(bytes) {
+  for (let index = 0; index < bytes.length - 8; index += 1) {
+    if (bytes[index] !== 0xff || ![0xc0, 0xc1, 0xc2, 0xc3].includes(bytes[index + 1])) continue;
+    return { width: bytes.readUInt16BE(index + 7), height: bytes.readUInt16BE(index + 5) };
+  }
+  throw new Error("JPEG frame marker not found");
+}
+
 async function render() {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
@@ -21,8 +29,13 @@ test("server-renders the Red website proposal", async () => {
   assert.match(html, /:AgentReview/);
   assert.match(html, /https:\/\/red\.example\/og\.png/);
   assert.match(html, /ghostty-code\.jpg/);
-  assert.match(html, /blank state/i);
-  assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
+  assert.match(html, /role="tablist"/i);
+  assert.match(html, /role="tabpanel"/i);
+  assert.match(html, /aria-selected="true"/i);
+  assert.match(html, /Rendering pipeline/i);
+  assert.match(html, /id="preview-tab-splash"[^>]*>Welcome<\/button>/i);
+  assert.match(html, /src\/editor\/rendering\.rs/i);
+  assert.doesNotMatch(html, /red-editor-demo|src\/main\.rs|codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 
 test("ships Red-specific preview assets and removes the starter skeleton", async () => {
@@ -30,5 +43,6 @@ test("ships Red-specific preview assets and removes the starter skeleton", async
   assert.match(favicon, /#e5484d/i);
   assert.ok(og.byteLength > 100_000);
   assert.ok(captures.every((capture) => capture.byteLength > 20_000));
+  assert.deepEqual(captures.map(jpegDimensions), Array.from({ length: 6 }, () => ({ width: 1208, height: 704 })));
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
 });

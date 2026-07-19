@@ -37,7 +37,11 @@ test("server-renders the Red website proposal", async () => {
   assert.match(html, /aria-selected="true"/i);
   assert.match(html, /Discover Git actions/i);
   assert.match(html, /id="preview-tab-splash"[^>]*>Welcome<\/button>/i);
-  assert.match(html, /src\/editor\/rendering\.rs/i);
+  for (const theme of ["Kanso Ink", "GitHub Light", "Tokyo Night Storm", "Rosé Pine Dawn"]) {
+    assert.match(html, new RegExp(theme, "i"));
+  }
+  const previewSource = await readFile(new URL("../app/components/PreviewTabs.tsx", import.meta.url), "utf8");
+  assert.match(previewSource, /Cyberdream/i);
   assert.doesNotMatch(html, /red-editor-demo|src\/main\.rs|codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 

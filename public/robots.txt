@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://getred.dev/sitemap.xml

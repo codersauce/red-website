@@ -50,6 +50,12 @@ test("server-renders the replacement website and real docs route", async () => {
   assert.match(html, /aria-selected="true"/i);
   assert.match(html, /Use dark color theme/i);
   assert.match(html, /red-color-theme/);
+  assert.match(html, /theme-icon/);
+  assert.match(html, /github-icon/);
+  assert.match(html, /copy-icon/);
+  assert.match(html, /download-icon/);
+  assert.match(html, /external-link-icon/);
+  assert.doesNotMatch(html, /[☀☾↗]/);
   assert.doesNotMatch(html, /ghostty-|codex-preview|react-loading-skeleton|Your site is taking shape/i);
 
   const docsResponse = await render("/docs");

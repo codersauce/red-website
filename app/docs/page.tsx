@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { FaGithub } from "react-icons/fa6";
+import { FiExternalLink } from "react-icons/fi";
 import InstallPicker from "../components/InstallPicker";
 import { SiteFooter, SiteNav } from "../components/SiteChrome";
 import { releaseVersion } from "../installers.generated";
@@ -42,7 +44,7 @@ export default async function DocsPage() {
           {navigation.map(([id, label]) => <a href={`#${id}`} key={id}>{label}</a>)}
         </nav>
         <a className="docs-source" href="https://github.com/codersauce/red/tree/master/docs" target="_blank" rel="noreferrer">
-          Full reference on GitHub ↗
+          <FaGithub className="inline-icon github-icon" aria-hidden="true" /> Full reference on GitHub
         </a>
       </aside>
 
@@ -74,7 +76,9 @@ export default async function DocsPage() {
           <div className="docs-key-list">
             {keybindings.map(([key, description]) => <div key={key}><kbd>{key}</kbd><span>{description}</span></div>)}
           </div>
-          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">Open the versioned Vim compatibility matrix →</a>
+          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">
+            Open the versioned Vim compatibility matrix <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
+          </a>
         </section>
 
         <section id="agent-workflow">
@@ -85,7 +89,9 @@ export default async function DocsPage() {
             <li><strong>Review.</strong> Open <kbd>:AgentReview</kbd> to inspect pending changes.</li>
             <li><strong>Decide.</strong> Accept useful hunks and reject the rest. Nothing is silently written.</li>
           </ol>
-          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/AGENT_WORKFLOW.md" target="_blank" rel="noreferrer">Read the complete safety contract →</a>
+          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/AGENT_WORKFLOW.md" target="_blank" rel="noreferrer">
+            Read the complete safety contract <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
+          </a>
         </section>
 
         <section id="themes">
@@ -96,7 +102,9 @@ export default async function DocsPage() {
         <section id="plugins">
           <h2>Plugins</h2>
           <p>Red includes a typed Husk runtime. Bundled Husk plugins power core tools such as the file tree, project search, Git workspace, theme browser, progress UI, and agent interface.</p>
-          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/PLUGIN_SYSTEM.md" target="_blank" rel="noreferrer">Explore the plugin system →</a>
+          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/PLUGIN_SYSTEM.md" target="_blank" rel="noreferrer">
+            Explore the plugin system <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
+          </a>
         </section>
 
         <section id="configuration">

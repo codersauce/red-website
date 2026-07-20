@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { FiMoon, FiSun } from "react-icons/fi";
 
 type Theme = "light" | "dark";
 
@@ -51,7 +52,9 @@ export default function ThemeToggle() {
     onClick={toggleTheme}
     aria-label={`Use ${theme === "dark" ? "light" : "dark"} color theme`}
   >
-    <span aria-hidden="true">{theme === "dark" ? "☾" : "☀"}</span>
+    {theme === "dark"
+      ? <FiMoon className="button-icon theme-icon" aria-hidden="true" />
+      : <FiSun className="button-icon theme-icon" aria-hidden="true" />}
     {theme === "dark" ? "Dark" : "Light"}
   </button>;
 }

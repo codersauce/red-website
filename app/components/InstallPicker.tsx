@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { FiCheck, FiCopy } from "react-icons/fi";
 import {
   detectInstallMethod,
   installMethods,
@@ -96,7 +97,9 @@ export default function InstallPicker({
       <span className="prompt" aria-hidden="true">$</span>
       <code>{methods[method].command}</code>
       <button type="button" className="copy" onClick={() => copyInstall(method)} aria-label={methods[method].aria}>
-        {copied && installMethod === method ? "copied" : "copy"}
+        {copied && installMethod === method
+          ? <><FiCheck className="button-icon check-icon" aria-hidden="true" /> copied</>
+          : <><FiCopy className="button-icon copy-icon" aria-hidden="true" /> copy</>}
       </button>
     </div>)}
     <span className="sr-only" role="status">{copied ? "Install command copied to clipboard" : ""}</span>

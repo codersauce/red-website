@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { headers } from "next/headers";
+import { FiArrowRight, FiDownload, FiExternalLink } from "react-icons/fi";
 import AgentShowcase from "./components/AgentShowcase";
 import InstallPicker from "./components/InstallPicker";
 import ProductShowcase from "./components/ProductShowcase";
@@ -46,13 +47,13 @@ export default async function Home() {
     <div className="nav-wrap"><div className="page-shell"><SiteNav /></div></div>
 
     <section className="hero page-shell" id="top">
-      <div className="version-pill">{releaseVersion} · Codex review workflow <span aria-hidden="true">→</span></div>
+      <div className="version-pill">{releaseVersion} · Codex review workflow <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></div>
       <h1>The editor that respects<br className="desktop-break" /> your muscle memory</h1>
       <p>Red is a modern modal editor for people who think in Vim. Fast editing, language intelligence, themes, and embedded plugins—ready without a setup ritual.</p>
       <div className="hero-actions">
         <a className="primary-button" href="#install">Install Red</a>
         <a className="secondary-button" href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">
-          Download a release <span aria-hidden="true">↗</span>
+          <FiDownload className="button-icon download-icon" aria-hidden="true" /> Download a release
         </a>
       </div>
       <div className="hero-install"><InstallPicker origin={origin} /></div>
@@ -98,7 +99,7 @@ export default async function Home() {
           <div><kbd>:AgentReview</kbd><span>Review pending proposals</span></div>
         </div>
         <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/AGENT_WORKFLOW.md" target="_blank" rel="noreferrer">
-          Read the agent workflow docs <span aria-hidden="true">→</span>
+          Read the agent workflow docs <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
         </a>
       </div>
       <AgentShowcase />
@@ -117,7 +118,7 @@ export default async function Home() {
             {shortcuts.map(([key, action]) => <div key={key}><kbd>{key}</kbd><span>{action}</span></div>)}
           </div>
           <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">
-            View the compatibility matrix <span aria-hidden="true">→</span>
+            View the compatibility matrix <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
           </a>
         </div>
       </div>
@@ -129,8 +130,10 @@ export default async function Home() {
       <p>Red ships as a self-contained binary for macOS, Linux, and Windows. Supported desktop systems are detected automatically, and you can choose another method at any time.</p>
       <InstallPicker origin={origin} wide />
       <div className="install-links">
-        <a href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">Prebuilt archives ↗</a>
-        <a href="/docs#installation">Installation guide →</a>
+        <a href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">
+          <FiDownload className="inline-icon download-icon" aria-hidden="true" /> Prebuilt archives
+        </a>
+        <a href="/docs#installation">Installation guide <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></a>
       </div>
     </section>
 

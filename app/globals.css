@@ -338,6 +338,10 @@ img {
   text-align: left;
 }
 
+.install-command[hidden] {
+  display: none;
+}
+
 .install-command .prompt {
   flex: none;
   color: var(--red);

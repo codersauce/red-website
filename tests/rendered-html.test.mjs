@@ -76,6 +76,11 @@ test("installation snippets preserve each supported website origin", async () =>
   assert.doesNotMatch(untrusted, /attacker\.example\/install\.(sh|ps1)/);
 });
 
+test("inactive installation commands stay hidden", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /\.install-command\[hidden\]\s*\{[^}]*display:\s*none;/s);
+});
+
 test("ships SEO metadata and structured application data", async () => {
   const html = await (await render()).text();
   assert.match(html, /<meta name="theme-color" content="#fdfcfb"\/>/);

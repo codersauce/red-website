@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const previews = [
   {
@@ -45,6 +45,13 @@ export default function ProductShowcase() {
   const [selected, setSelected] = useState(0);
   const tabList = useRef<HTMLDivElement>(null);
   const preview = previews[selected];
+
+  useEffect(() => {
+    for (const item of previews.slice(1)) {
+      const image = new window.Image();
+      image.src = item.image;
+    }
+  }, []);
 
   function select(index: number) {
     setSelected(index);

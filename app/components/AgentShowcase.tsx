@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const views = [
   {
@@ -18,6 +18,12 @@ const views = [
 
 export default function AgentShowcase() {
   const [selected, setSelected] = useState(0);
+
+  useEffect(() => {
+    const image = new window.Image();
+    image.src = views[1].image;
+  }, []);
+
   return <div className="agent-showcase">
     <div role="tablist" aria-label="Agent workflow previews">
       {views.map((view, index) => <button

@@ -281,10 +281,6 @@ img {
 .hero-image {
   overflow: hidden;
   margin-top: 72px;
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  background: var(--surface);
-  box-shadow: 0 50px 100px var(--shadow);
 }
 
 .hero-image img {
@@ -517,10 +513,6 @@ img {
 .framed-image {
   overflow: hidden;
   margin: 0;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: #101014;
-  box-shadow: 0 38px 80px var(--shadow);
 }
 
 .showcase figure img,

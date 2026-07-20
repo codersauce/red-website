@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "source": "codersauce/red",
-  "sourceCommit": "8994b4bf0c232ede7bc49729fa6327d55c4f2192",
+  "sourceCommit": "55a90a749bc112da0cef0bacf2afc7c514eb39cf",
   "version": "0.2.0",
   "files": {
     "install.sh": "07facc3690b75c18e93cf96c9282378883121f650541119324abed7dcd9e8c04",
-    "install.ps1": "dc5f90f0aa91ecd828fc123bd62258e5a1aece63a7472dcbf22cefd2f41eca6d"
+    "install.ps1": "26e12ac33dd7fef58a84ccfb2696c7fc30bf57e444cdc7b9b1fb4a89845f035b"
   }
 }

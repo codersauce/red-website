@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export default function NotFound() {
-  return <main className="notfound shell">
-    <p className="eyebrow"><span className="pulse" /> 404</p>
+  return <main className="notfound page-shell">
+    <p className="section-kicker">404</p>
     <h1>Nothing at this path.<br /><em>Your files stay yours.</em></h1>
     <p className="lead">The page you were looking for does not exist — the editor, however, does.</p>
     <div className="notfound-links">

@@ -2,57 +2,87 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-function jpegDimensions(bytes) {
-  for (let index = 0; index < bytes.length - 8; index += 1) {
-    if (bytes[index] !== 0xff || ![0xc0, 0xc1, 0xc2, 0xc3].includes(bytes[index + 1])) continue;
-    return { width: bytes.readUInt16BE(index + 7), height: bytes.readUInt16BE(index + 5) };
-  }
-  throw new Error("JPEG frame marker not found");
+const publicOrigins = [
+  "https://getred.dev",
+  "https://rededitor.dev",
+  "https://rededitor.app",
+];
+
+function pngDimensions(bytes) {
+  assert.equal(bytes.toString("ascii", 1, 4), "PNG");
+  return {
+    width: bytes.readUInt32BE(16),
+    height: bytes.readUInt32BE(20),
+  };
 }
 
-async function render(path = "/") {
+async function render(path = "/", origin = "https://getred.dev") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${Math.random()}`);
   const { default: worker } = await import(workerUrl.href);
-  return worker.fetch(new Request(`https://red.example${path}`, { headers: { accept: "text/html", "x-forwarded-host": "red.example", "x-forwarded-proto": "https" } }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+  const url = new URL(path, origin);
+  return worker.fetch(
+    new Request(url, {
+      headers: {
+        accept: "text/html",
+        "x-forwarded-host": url.host,
+        "x-forwarded-proto": url.protocol.slice(0, -1),
+      },
+    }),
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
 }
 
-test("server-renders the Red website proposal", async () => {
+test("server-renders the replacement website and real docs route", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
-  assert.match(html, /the modal editor.*for the agent era/i);
-  assert.match(html, /brew install codersauce\/tap\/red/);
-  assert.match(html, /macOS \+ Linux/);
-  assert.match(html, />Windows<\/button>/);
-  assert.match(html, /v0\.2\.0/);
-  assert.match(html, /every agent edit is a proposal/i);
-  assert.match(html, /Space A/);
-  assert.match(html, /:AgentReview/);
-  assert.match(html, /https:\/\/red\.example\/og\.png\?v=2/);
-  assert.match(html, /ghostty-code\.jpg/);
+  assert.match(html, /editor that respects.*muscle memory/i);
+  assert.match(html, /Batteries included/i);
+  assert.match(html, /Agent edits you can actually trust/i);
+  assert.match(html, /v0\.2\.1/);
+  assert.match(html, /editing-light\.png/);
+  assert.match(html, /editing-dark\.png/);
   assert.match(html, /role="tablist"/i);
   assert.match(html, /role="tabpanel"/i);
   assert.match(html, /aria-selected="true"/i);
-  assert.match(html, /Discover Git actions/i);
-  assert.match(html, /id="preview-tab-splash"[^>]*>Welcome<\/button>/i);
-  for (const theme of ["Kanso Ink", "GitHub Light", "Tokyo Night Storm", "Rosé Pine Dawn"]) {
-    assert.match(html, new RegExp(theme, "i"));
-  }
-  const previewSource = await readFile(new URL("../app/components/PreviewTabs.tsx", import.meta.url), "utf8");
-  assert.match(previewSource, /Cyberdream/i);
-  assert.doesNotMatch(html, /red-editor-demo|src\/main\.rs|codex-preview|react-loading-skeleton|Your site is taking shape/i);
+  assert.match(html, /Use dark color theme/i);
+  assert.match(html, /red-color-theme/);
+  assert.doesNotMatch(html, /ghostty-|codex-preview|react-loading-skeleton|Your site is taking shape/i);
+
+  const docsResponse = await render("/docs");
+  assert.equal(docsResponse.status, 200);
+  const docs = await docsResponse.text();
+  assert.match(docs, /Red documentation/i);
+  assert.match(docs, /Installation/);
+  assert.match(docs, /Agent workflow/);
+  assert.match(docs, /typed Husk runtime/i);
 });
 
-test("ships SEO metadata: canonical, theme-color, and structured data", async () => {
+test("installation snippets preserve each supported website origin", async () => {
+  for (const origin of publicOrigins) {
+    const html = await (await render("/", origin)).text();
+    assert.match(html, new RegExp(`${origin.replaceAll(".", "\\.")}/install\\.sh`));
+    assert.match(html, new RegExp(`${origin.replaceAll(".", "\\.")}/install\\.ps1`));
+    assert.match(html, /brew install codersauce\/tap\/red/);
+    assert.match(html, /<link rel="canonical" href="https:\/\/getred\.dev\/"\/>/);
+    assert.match(html, new RegExp(`${origin.replaceAll(".", "\\.")}/og\\.png\\?v=3`));
+  }
+
+  const untrusted = await (await render("/", "https://attacker.example")).text();
+  assert.match(untrusted, /https:\/\/getred\.dev\/install\.sh/);
+  assert.doesNotMatch(untrusted, /attacker\.example\/install\.(sh|ps1)/);
+});
+
+test("ships SEO metadata and structured application data", async () => {
   const html = await (await render()).text();
-  assert.match(html, /<link rel="canonical" href="https:\/\/getred\.dev\/"\/>/);
-  assert.match(html, /<meta name="theme-color" content="#101014"\/>/);
-  assert.match(html, /Red modal editor alongside a reviewable agent proposal/);
+  assert.match(html, /<meta name="theme-color" content="#fdfcfb"\/>/);
+  assert.match(html, /Red editor website and Rust editing preview/);
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /"@type":"SoftwareApplication"/);
-  assert.match(html, /"softwareVersion":"0\.2\.0"/);
+  assert.match(html, /"softwareVersion":"0\.2\.1"/);
   const robots = await readFile(new URL("../public/robots.txt", import.meta.url), "utf8");
   const sitemap = await readFile(new URL("../public/sitemap.xml", import.meta.url), "utf8");
   assert.match(robots, /Sitemap: https:\/\/getred\.dev\/sitemap\.xml/);
@@ -67,13 +97,30 @@ test("renders a branded 404 page with a real 404 status", async () => {
   assert.match(html, /github\.com\/codersauce\/red/);
 });
 
-test("ships Red-specific preview assets and removes the starter skeleton", async () => {
-  const [favicon, og, ...captures] = await Promise.all([readFile(new URL("../public/favicon.svg", import.meta.url), "utf8"), readFile(new URL("../public/og.png", import.meta.url)), ...["ghostty-code.jpg", "ghostty-picker-demo.jpg", "ghostty-commands-demo.jpg", "ghostty-agent.jpg", "ghostty-git-workspace.jpg", "ghostty-splash.jpg"].map((name) => readFile(new URL(`../public/${name}`, import.meta.url)))]);
+test("ships the replacement editor captures and social card", async () => {
+  const captureNames = [
+    "editing-light.png",
+    "editing-dark.png",
+    "find-files-dark.png",
+    "grep-dark.png",
+    "palette-dark.png",
+    "themes-dark.png",
+    "lsp-dialog-dark.png",
+    "ask-agent-dark.png",
+    "agent-pane-dark.png",
+    "editor-dark.png",
+  ];
+  const [favicon, og, ...captures] = await Promise.all([
+    readFile(new URL("../public/favicon.svg", import.meta.url), "utf8"),
+    readFile(new URL("../public/og.png", import.meta.url)),
+    ...captureNames.map((name) => readFile(new URL(`../public/${name}`, import.meta.url))),
+  ]);
   assert.match(favicon, /#e5484d/i);
+  assert.deepEqual(pngDimensions(og), { width: 1200, height: 630 });
   assert.ok(og.byteLength > 100_000);
-  assert.ok(og.byteLength < 500_000, "og.png should stay well under 500 KB");
-  assert.ok(captures.every((capture) => capture.byteLength > 20_000));
-  assert.deepEqual(captures.map(jpegDimensions), Array.from({ length: 6 }, () => ({ width: 1208, height: 704 })));
+  assert.ok(og.byteLength < 2_000_000);
+  assert.ok(captures.every((capture) => capture.byteLength > 50_000));
+  assert.deepEqual(captures.map(pngDimensions), Array.from({ length: 10 }, () => ({ width: 1880, height: 1500 })));
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
 });
 
@@ -87,5 +134,5 @@ test("ships checksum-verifying installers at stable public paths", async () => {
   assert.match(shell, /--self-check/);
   assert.match(powershell, /Get-FileHash -Algorithm SHA256/);
   assert.match(powershell, /--self-check/);
-  assert.equal(JSON.parse(manifest).version, "0.2.0");
+  assert.equal(JSON.parse(manifest).version, "0.2.1");
 });

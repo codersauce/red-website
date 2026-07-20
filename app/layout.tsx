@@ -1,29 +1,36 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import { headers } from "next/headers";
 import { releaseVersion } from "./installers.generated";
+import { canonicalOrigin, resolvePublicOrigin } from "./public-origin";
 import "./globals.css";
 
-const sans = Geist({ variable: "--font-sans", subsets: ["latin"] });
-const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
-
-const canonicalOrigin = "https://getred.dev";
+const sans = Instrument_Sans({ variable: "--font-sans", subsets: ["latin"] });
+const mono = JetBrains_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();
-  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:4173";
-  const protocol = requestHeaders.get("x-forwarded-proto") === "http" ? "http" : "https";
-  const socialImage = `${protocol}://${host}/og.png?v=2`;
+  const socialImage = `${resolvePublicOrigin(requestHeaders)}/og.png?v=3`;
 
   return {
     metadataBase: new URL(canonicalOrigin),
-    title: "red — the modal editor for the agent era",
-    description: "Fast, familiar modal editing with modern code intelligence and reviewable agent proposals. One self-contained Rust binary for macOS, Linux, and Windows.",
+    title: "red — the editor that respects your muscle memory",
+    description: "A modern modal editor with language intelligence, themes, embedded plugins, and reviewable Codex proposals. One self-contained Rust binary.",
     alternates: { canonical: "/" },
     icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
-    other: { "theme-color": "#101014" },
-    openGraph: { title: "red — the modal editor for the agent era", description: "Every agent edit is a proposal. Nothing touches your files until you accept it.", type: "website", images: [{ url: socialImage, width: 1200, height: 630, alt: "Red modal editor alongside a reviewable agent proposal" }] },
-    twitter: { card: "summary_large_image", title: "red — the modal editor for the agent era", description: "Every agent edit is a proposal. Nothing touches your files until you accept it.", images: [socialImage] },
+    other: { "theme-color": "#fdfcfb" },
+    openGraph: {
+      title: "red — the editor that respects your muscle memory",
+      description: "Modern modal editing, capable defaults, and agent changes you review before they touch your files.",
+      type: "website",
+      images: [{ url: socialImage, width: 1200, height: 630, alt: "Red editor website and Rust editing preview" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "red — the editor that respects your muscle memory",
+      description: "Modern modal editing, capable defaults, and reviewable agent proposals.",
+      images: [socialImage],
+    },
   };
 }
 
@@ -42,8 +49,12 @@ const structuredData = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body className={`${sans.variable} ${mono.variable}`}>
-    {children}
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-  </body></html>;
+  const themeScript = `(function(){try{var s=localStorage.getItem("red-color-theme");var t=s==="light"||s==="dark"?s:(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}catch(e){}})();`;
+  return <html lang="en" suppressHydrationWarning>
+    <head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head>
+    <body className={`${sans.variable} ${mono.variable}`}>
+      {children}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+    </body>
+  </html>;
 }

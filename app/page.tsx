@@ -1,71 +1,139 @@
 import Image from "next/image";
-import { releaseVersion } from "./installers.generated";
+import { headers } from "next/headers";
+import AgentShowcase from "./components/AgentShowcase";
 import InstallPicker from "./components/InstallPicker";
-import PreviewTabs from "./components/PreviewTabs";
+import ProductShowcase from "./components/ProductShowcase";
+import { SiteFooter, SiteNav } from "./components/SiteChrome";
+import { releaseVersion } from "./installers.generated";
+import { resolvePublicOrigin } from "./public-origin";
 
-const shortcuts = [
-  ["Space ?", "discover every command"],
-  ["Ctrl-p", "find a file"],
-  ["Space A", "ask the agent"],
-  [":AgentReview", "review proposals"],
-  ["Space t", "change the theme"],
-  ["Space G", "open git status"],
+const features = [
+  {
+    tag: "LSP",
+    name: "Language servers",
+    description: "Completion, go-to-definition, rename, diagnostics, and inlay hints from the language servers already on your PATH.",
+  },
+  {
+    tag: "TREE-SITTER",
+    name: "Syntax-aware editing",
+    description: "Bundled grammars bring structural highlighting and text objects to the languages you use every day.",
+  },
+  {
+    tag: "THEMES",
+    name: "Theme gallery",
+    description: "Browse and preview the bundled themes live. No plugin manager and no restart required.",
+  },
+  {
+    tag: "HUSK",
+    name: "Embedded plugins",
+    description: "Red's own typed scripting language powers built-in tools while keeping the default experience self-contained.",
+  },
 ];
 
-export default function Home() {
+const shortcuts = [
+  ["Space ?", "discover commands"],
+  ["Ctrl-p", "find a file"],
+  ["Space /", "search the project"],
+  ["Space A", "ask the agent"],
+  [":AgentReview", "review proposals"],
+  ["Space t", "browse themes"],
+];
+
+export default async function Home() {
+  const origin = resolvePublicOrigin(await headers());
+
   return <main>
-    <nav className="nav shell">
-      <a className="brand" href="#top" aria-label="Red home"><span className="brand-name">red</span><span className="dot" /></a>
-      <div className="nav-links"><a href="#editor">Editor</a><a href="#trust">Agent workflow</a><a href="#start">Get started</a></div>
-      <a className="nav-github" href="https://github.com/codersauce/red" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
-    </nav>
+    <div className="nav-wrap"><div className="page-shell"><SiteNav /></div></div>
 
-    <section className="hero" id="top">
-      <div className="hero-grid shell">
-        <div className="hero-copy">
-          <div className="eyebrow"><span className="pulse" /> {releaseVersion} · built in Rust</div>
-          <h1>The modal editor<br /><em>for the agent era.</em></h1>
-          <p className="lead">Fast, familiar editing with modern code intelligence and a safer way to work with agents. One binary. No required configuration. Your files stay yours.</p>
-          <div className="hero-actions">
-            <InstallPicker />
-            <a className="release" href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">Download a release <span aria-hidden="true">→</span></a>
+    <section className="hero page-shell" id="top">
+      <div className="version-pill">{releaseVersion} · Codex review workflow <span aria-hidden="true">→</span></div>
+      <h1>The editor that respects<br className="desktop-break" /> your muscle memory</h1>
+      <p>Red is a modern modal editor for people who think in Vim. Fast editing, language intelligence, themes, and embedded plugins—ready without a setup ritual.</p>
+      <div className="hero-actions">
+        <a className="primary-button" href="#install">Install Red</a>
+        <a className="secondary-button" href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">
+          Download a release <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+      <div className="hero-install"><InstallPicker origin={origin} /></div>
+      <div className="hero-image theme-image">
+        <Image className="theme-image-light" src="/editing-light.png" width={1880} height={1500} alt="Red editing Rust with inline type hints in a light theme" priority unoptimized />
+        <Image className="theme-image-dark" src="/editing-dark.png" width={1880} height={1500} alt="Red editing Rust with inline type hints in a dark theme" priority unoptimized />
+      </div>
+    </section>
+
+    <section className="section page-shell" id="features">
+      <header className="section-heading">
+        <p className="section-kicker">Everything you need</p>
+        <h2>Batteries included</h2>
+        <p>Capable defaults in one Rust binary. Extend Red when you want to, not because you have to.</p>
+      </header>
+      <div className="feature-grid">
+        {features.map((feature) => <article className="feature-card" key={feature.tag}>
+          <span>{feature.tag}</span>
+          <h3>{feature.name}</h3>
+          <p>{feature.description}</p>
+        </article>)}
+      </div>
+    </section>
+
+    <section className="showcase-section">
+      <div className="section page-shell">
+        <header className="section-heading">
+          <p className="section-kicker">Stay on the keyboard</p>
+          <h2>Everything is a keystroke away</h2>
+          <p>Find files, search the project, discover commands, switch themes, and ask the language server without losing your place.</p>
+        </header>
+        <ProductShowcase />
+      </div>
+    </section>
+
+    <section className="split-section section page-shell" id="agent">
+      <div className="split-copy">
+        <p className="section-kicker">Codex integration</p>
+        <h2>Agent edits you can actually trust</h2>
+        <p>Ask Codex without leaving your buffer. Suggested writes arrive as isolated proposals, ready for you to inspect before anything reaches your files.</p>
+        <div className="command-list">
+          <div><kbd>Space A</kbd><span>Ask with editor context</span></div>
+          <div><kbd>:AgentReview</kbd><span>Review pending proposals</span></div>
+        </div>
+        <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/AGENT_WORKFLOW.md" target="_blank" rel="noreferrer">
+          Read the agent workflow docs <span aria-hidden="true">→</span>
+        </a>
+      </div>
+      <AgentShowcase />
+    </section>
+
+    <section className="familiar-section">
+      <div className="split-section section page-shell">
+        <figure className="framed-image">
+          <Image src="/editor-dark.png" width={1880} height={1500} alt="Red welcome screen with command shortcuts" unoptimized />
+        </figure>
+        <div className="split-copy">
+          <p className="section-kicker">Familiar from the first file</p>
+          <h2>Feels like home on day one</h2>
+          <p>Red follows Vim&apos;s modal grammar across the editing operations it supports, then adds discoverable project, language, Git, theme, and agent tools.</p>
+          <div className="shortcut-list">
+            {shortcuts.map(([key, action]) => <div key={key}><kbd>{key}</kbd><span>{action}</span></div>)}
           </div>
-          <p className="platforms">macOS <span /> Linux <span /> Windows</p>
-        </div>
-        <div className="hero-shot">
-          <div className="hero-shot-bar"><span className="preview-dot" /><span>src/editor/rendering.rs</span><span className="hero-shot-note">real capture · Ghostty</span></div>
-          <Image src="/ghostty-code.jpg" width={1208} height={704} alt="Red using the Kanso Ink theme while editing its Rust rendering pipeline with the project file tree open" priority unoptimized />
+          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">
+            View the compatibility matrix <span aria-hidden="true">→</span>
+          </a>
         </div>
       </div>
     </section>
 
-    <PreviewTabs />
-
-    <section className="statement shell"><p>Familiar motions. <span>Modern instincts.</span></p><small>modal editing · tree-sitter · language servers · embedded plugins</small></section>
-
-    <section className="features shell">
-      <article className="feature large"><span className="index">01 / EDIT</span><h2>Stay in flow.</h2><p>Vim-inspired modes, motions, text objects, splits, and pickers feel immediately familiar. Tree-sitter highlighting and asynchronous language tools keep pace as projects grow.</p><div className="mode-row"><span className="mode active">NORMAL</span><span className="mode">INSERT</span><span className="mode">VISUAL</span><span className="mode">COMMAND</span></div></article>
-      <article className="feature"><span className="index">02 / NAVIGATE</span><h2>Find the signal.</h2><p>Jump to definitions, references, symbols, diagnostics, files, or commands without leaving the keyboard.</p><div className="finder"><span className="red">›</span><span>render_window_rows</span><kbd>Ctrl-p</kbd></div></article>
-      <article className="feature"><span className="index">03 / EXTEND</span><h2>Make it yours.</h2><p>Bundled Husk plugins power the file tree, project search, and theme browser. Defaults work on day one; configuration stays optional.</p><div className="tokens"><span className="green">tree</span><span className="amber">search</span><span className="cyan">themes</span><span className="magenta">plugins</span></div></article>
-    </section>
-
-    <section className="capture-grid shell" aria-label="Navigation previews">
-      <figure><Image src="/ghostty-picker-demo.jpg" width={1208} height={704} unoptimized alt="Red using the GitHub Light theme with its file picker and live buffer preview" /><figcaption><span>FIND SOURCE FILES</span><kbd>Ctrl-p</kbd></figcaption></figure>
-      <figure><Image src="/ghostty-commands-demo.jpg" width={1208} height={704} unoptimized alt="Red using the Tokyo Night Storm theme with its Git command palette" /><figcaption><span>DISCOVER COMMANDS</span><kbd>Space ?</kbd></figcaption></figure>
-    </section>
-
-    <section className="trust shell" id="trust">
-      <div className="trust-copy"><span className="eyebrow"><span className="pulse" /> agent workflow</span><h2>Let the agent help.<br /><em>Keep the final say.</em></h2><p>Red can give an agent the context it needs, including unsaved buffers, while staging every suggested write in an isolated proposal filesystem. Review the diff, then accept or reject it explicitly.</p><blockquote>every agent edit is a proposal —<br />nothing touches your files until you accept it</blockquote></div>
-      <div className="trust-side">
-        <figure className="trust-shot"><Image src="/ghostty-agent.jpg" width={1208} height={704} unoptimized alt="Red using the Rosé Pine Dawn theme with an agent prompt over the editor highlighter source" /><figcaption><span>ASK WITH SOURCE CONTEXT</span><kbd>Space A</kbd></figcaption></figure>
-        <div className="trust-steps"><div><span>01</span><h3>Ask</h3><p>Open the agent from the editor with the right workspace context.</p><kbd>Space A</kbd></div><div><span>02</span><h3>Review</h3><p>Inspect attributed changes as clear, isolated proposals.</p><kbd>:AgentReview</kbd></div><div><span>03</span><h3>Decide</h3><p>Accept what helps. Reject what does not. Nothing is silently applied.</p><kbd>your call</kbd></div></div>
+    <section className="install-section section page-shell" id="install">
+      <p className="section-kicker">Ready when you are</p>
+      <h2>Up and running in a minute</h2>
+      <p>Red ships as a self-contained binary for macOS, Linux, and Windows. Supported desktop systems are detected automatically, and you can choose another method at any time.</p>
+      <InstallPicker origin={origin} wide />
+      <div className="install-links">
+        <a href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">Prebuilt archives ↗</a>
+        <a href="/docs#installation">Installation guide →</a>
       </div>
     </section>
 
-    <section className="shortcuts shell"><header><span className="index">A FEW KEYS TO START</span><h2>Hands on the keyboard.</h2></header><div className="shortcut-grid">{shortcuts.map(([key, description]) => <div className="shortcut" key={key}><kbd>{key}</kbd><span>{description}</span><i>↵</i></div>)}</div></section>
-
-    <section className="start shell" id="start"><span className="start-dot" /><p className="start-kicker">READY WHEN YOU ARE</p><h2>Open a file.<br /><em>Start editing.</em></h2><p className="start-copy">Install the self-contained binary and get a capable editor without a setup ritual. Red is early and actively evolving—bring curiosity, and keep backups for critical work.</p><InstallPicker wide /><div className="start-links"><a href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">prebuilt binaries <span>→</span></a><a href="https://github.com/codersauce/red" target="_blank" rel="noreferrer">read the docs <span>→</span></a><a href="https://discord.gg/5PWvAUNRHU" target="_blank" rel="noreferrer">join the community <span>→</span></a></div></section>
-
-    <footer className="footer shell"><a className="brand" href="#top" aria-label="Back to top"><span className="brand-name">red</span><span className="dot" /></a><p>Rusty Editor · MIT licensed · made in the open</p><a href="https://github.com/codersauce/red" target="_blank" rel="noreferrer">github.com/codersauce/red <span>↗</span></a></footer>
+    <SiteFooter />
   </main>;
 }

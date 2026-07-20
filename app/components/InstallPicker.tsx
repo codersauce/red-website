@@ -8,7 +8,7 @@ import {
   type InstallMethod,
 } from "../install-methods";
 
-const methodOrder: InstallMethod[] = ["homebrew", "unix", "windows"];
+const methodOrder: InstallMethod[] = ["unix", "windows", "homebrew"];
 const subscribeToPlatform = () => () => {};
 
 function detectedMethod(): InstallMethod {
@@ -17,7 +17,7 @@ function detectedMethod(): InstallMethod {
     navigator.platform ??
     ""
   );
-  return detectInstallMethod(platform, navigator.userAgent) ?? "homebrew";
+  return detectInstallMethod(platform, navigator.userAgent) ?? "unix";
 }
 
 export default function InstallPicker({
@@ -27,7 +27,7 @@ export default function InstallPicker({
   origin: string;
   wide?: boolean;
 }) {
-  const detected = useSyncExternalStore(subscribeToPlatform, detectedMethod, () => "homebrew");
+  const detected = useSyncExternalStore(subscribeToPlatform, detectedMethod, () => "unix");
   const [selectedMethod, setSelectedMethod] = useState<InstallMethod | null>(null);
   const [copied, setCopied] = useState(false);
   const methods = useMemo(() => installMethods(origin), [origin]);

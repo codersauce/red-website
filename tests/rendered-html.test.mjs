@@ -82,6 +82,17 @@ test("installation snippets preserve each supported website origin", async () =>
   assert.doesNotMatch(untrusted, /attacker\.example\/install\.(sh|ps1)/);
 });
 
+test("prefers the direct installer and keeps Homebrew last", async () => {
+  const html = await (await render()).text();
+  const unixTab = html.indexOf(">macOS + Linux</button>");
+  const windowsTab = html.indexOf(">Windows</button>");
+  const homebrewTab = html.indexOf(">Homebrew</button>");
+  assert.ok(unixTab >= 0);
+  assert.ok(unixTab < windowsTab);
+  assert.ok(windowsTab < homebrewTab);
+  assert.match(html, /aria-selected="true"[^>]*data-method="unix"/);
+});
+
 test("inactive installation commands stay hidden", async () => {
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(css, /\.install-command\[hidden\]\s*\{[^}]*display:\s*none;/s);

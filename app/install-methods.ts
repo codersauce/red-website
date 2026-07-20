@@ -32,7 +32,7 @@ export function detectInstallMethod(platform: string, userAgent = ""): InstallMe
     return null;
   }
   if (signature.includes("win")) return "windows";
-  if (signature.includes("mac")) return "homebrew";
+  if (signature.includes("mac")) return "unix";
   if (signature.includes("linux")) return "unix";
   return null;
 }

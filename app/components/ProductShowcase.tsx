@@ -90,7 +90,7 @@ export default function ProductShowcase() {
       aria-labelledby={`showcase-tab-${selected}`}
       tabIndex={0}
     >
-      <Image src={preview.image} width={1880} height={1500} alt={preview.alt} unoptimized />
+      <Image src={preview.image} width={2104} height={1724} alt={preview.alt} unoptimized />
       <figcaption>{preview.caption}</figcaption>
     </figure>
   </div>;

@@ -32,8 +32,8 @@ export default function AgentShowcase() {
     <figure role="tabpanel">
       <Image
         src={views[selected].image}
-        width={1880}
-        height={1500}
+        width={2104}
+        height={1724}
         alt={views[selected].alt}
         unoptimized
       />

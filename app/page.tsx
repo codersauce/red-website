@@ -58,8 +58,8 @@ export default async function Home() {
       </div>
       <div className="hero-install"><InstallPicker origin={origin} /></div>
       <div className="hero-image theme-image">
-        <Image className="theme-image-light" src="/editing-light.png" width={1880} height={1500} alt="Red editing Rust with inline type hints in a light theme" priority unoptimized />
-        <Image className="theme-image-dark" src="/editing-dark.png" width={1880} height={1500} alt="Red editing Rust with inline type hints in a dark theme" priority unoptimized />
+        <Image className="theme-image-light" src="/editing-light.png" width={2104} height={1724} alt="Red editing Rust with inline type hints in a light theme" priority unoptimized />
+        <Image className="theme-image-dark" src="/editing-dark.png" width={2104} height={1724} alt="Red editing Rust with inline type hints in a dark theme" priority unoptimized />
       </div>
     </section>
 
@@ -108,7 +108,7 @@ export default async function Home() {
     <section className="familiar-section">
       <div className="split-section section page-shell">
         <figure className="framed-image">
-          <Image src="/editor-dark.png" width={1880} height={1500} alt="Red welcome screen with command shortcuts" unoptimized />
+          <Image src="/editor-dark.png" width={2104} height={1724} alt="Red welcome screen with command shortcuts" unoptimized />
         </figure>
         <div className="split-copy">
           <p className="section-kicker">Familiar from the first file</p>

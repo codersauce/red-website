@@ -4,6 +4,7 @@ import test from "node:test";
 
 const publicOrigins = [
   "https://getred.dev",
+  "https://getrededitor.com",
   "https://rededitor.dev",
   "https://rededitor.app",
 ];

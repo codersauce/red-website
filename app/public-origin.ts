@@ -2,6 +2,7 @@ export const canonicalOrigin = "https://getred.dev";
 
 const publicHosts = new Set([
   "getred.dev",
+  "getrededitor.com",
   "rededitor.dev",
   "rededitor.app",
 ]);

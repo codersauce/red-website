@@ -5,6 +5,7 @@ import test from "node:test";
 const publicOrigins = [
   "https://getred.dev",
   "https://getrededitor.com",
+  "https://red-editor.fcoury.chatgpt.site",
   "https://rededitor.dev",
   "https://rededitor.app",
 ];

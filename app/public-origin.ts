@@ -3,6 +3,7 @@ export const canonicalOrigin = "https://getred.dev";
 const publicHosts = new Set([
   "getred.dev",
   "getrededitor.com",
+  "red-editor.fcoury.chatgpt.site",
   "rededitor.dev",
   "rededitor.app",
 ]);

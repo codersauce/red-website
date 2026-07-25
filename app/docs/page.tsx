@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { FaGithub } from "react-icons/fa6";
 import { FiExternalLink } from "react-icons/fi";
 import InstallPicker from "../components/InstallPicker";
+import ReleaseVersion from "../components/ReleaseVersion";
 import { SiteFooter, SiteNav } from "../components/SiteChrome";
 import { releaseVersion } from "../installers.generated";
 import { resolvePublicOrigin } from "../public-origin";
@@ -50,7 +51,7 @@ export default async function DocsPage() {
 
       <article className="docs-content">
         <header>
-          <p className="section-kicker">Getting started · {releaseVersion}</p>
+          <p className="section-kicker">Getting started · <ReleaseVersion fallback={releaseVersion} /></p>
           <h1>Red documentation</h1>
           <p>Install the editor, open your first file, and discover the workflows that ship ready to use.</p>
         </header>

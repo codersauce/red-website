@@ -42,7 +42,7 @@ test("server-renders the replacement website and real docs route", async () => {
   assert.match(html, /editor that respects.*muscle memory/i);
   assert.match(html, /Batteries included/i);
   assert.match(html, /Agent edits you can actually trust/i);
-  assert.match(html, /v0\.2\.3/);
+  assert.match(html, /v0\.2\.4/);
   assert.match(html, /editing-light\.png/);
   assert.match(html, /editing-dark\.png/);
   assert.match(html, /role="tablist"/i);
@@ -104,7 +104,7 @@ test("ships SEO metadata and structured application data", async () => {
   assert.match(html, /Red editor website and Rust editing preview/);
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /"@type":"SoftwareApplication"/);
-  assert.match(html, /"softwareVersion":"0\.2\.3"/);
+  assert.match(html, /"softwareVersion":"0\.2\.4"/);
   const robots = await readFile(new URL("../public/robots.txt", import.meta.url), "utf8");
   const sitemap = await readFile(new URL("../public/sitemap.xml", import.meta.url), "utf8");
   assert.match(robots, /Sitemap: https:\/\/getred\.dev\/sitemap\.xml/);
@@ -156,5 +156,12 @@ test("ships checksum-verifying installers at stable public paths", async () => {
   assert.match(shell, /--self-check/);
   assert.match(powershell, /Get-FileHash -Algorithm SHA256/);
   assert.match(powershell, /--self-check/);
-  assert.equal(JSON.parse(manifest).version, "0.2.3");
+  assert.equal(JSON.parse(manifest).version, "0.2.4");
+});
+
+test("refreshes the visible release version from GitHub with a static fallback", async () => {
+  const component = await readFile(new URL("../app/components/ReleaseVersion.tsx", import.meta.url), "utf8");
+  assert.match(component, /api\.github\.com\/repos\/codersauce\/red\/releases\/latest/);
+  assert.match(component, /aria-live="polite"/);
+  assert.match(component, /useState\(fallback\)/);
 });

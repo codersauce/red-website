@@ -4,6 +4,7 @@ import { FiArrowRight, FiDownload, FiExternalLink } from "react-icons/fi";
 import AgentShowcase from "./components/AgentShowcase";
 import InstallPicker from "./components/InstallPicker";
 import ProductShowcase from "./components/ProductShowcase";
+import ReleaseVersion from "./components/ReleaseVersion";
 import { SiteFooter, SiteNav } from "./components/SiteChrome";
 import { releaseVersion } from "./installers.generated";
 import { resolvePublicOrigin } from "./public-origin";
@@ -47,7 +48,7 @@ export default async function Home() {
     <div className="nav-wrap"><div className="page-shell"><SiteNav /></div></div>
 
     <section className="hero page-shell" id="top">
-      <div className="version-pill">{releaseVersion} · Codex review workflow <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></div>
+      <div className="version-pill"><ReleaseVersion fallback={releaseVersion} /> · Codex review workflow <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></div>
       <h1>The editor that respects<br className="desktop-break" /> your muscle memory</h1>
       <p>Red is a modern modal editor for people who think in Vim. Fast editing, language intelligence, themes, and embedded plugins—ready without a setup ritual.</p>
       <div className="hero-actions">

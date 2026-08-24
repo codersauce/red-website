@@ -2,6 +2,10 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
+const installerManifest = JSON.parse(await readFile(new URL("../public/installers.json", import.meta.url), "utf8"));
+const publishedVersion = `v${installerManifest.version}`;
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const publicOrigins = [
   "https://getred.dev",
   "https://getrededitor.com",
@@ -41,10 +45,13 @@ test("server-renders the replacement website and real docs route", async () => {
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
-  assert.match(html, /editor that respects.*muscle memory/i);
-  assert.match(html, /Batteries included/i);
-  assert.match(html, /Agent edits you can actually trust/i);
-  assert.match(html, /v0\.2\.4/);
+  assert.match(html, /modal editor for the agent era/i);
+  assert.match(html, /The whole workflow, built in/i);
+  assert.match(html, /An agent that knows what you are editing/i);
+  assert.match(html, new RegExp(escapeRegExp(publishedVersion)));
+  assert.match(html, /What is coming next/i);
+  assert.match(html, /not part of the latest published release yet/i);
+  assert.doesNotMatch(html, /:AgentReview|isolated proposal filesystem/i);
   assert.match(html, /editing-light\.png/);
   assert.match(html, /editing-dark\.png/);
   assert.match(html, /role="tablist"/i);
@@ -65,8 +72,22 @@ test("server-renders the replacement website and real docs route", async () => {
   const docs = await docsResponse.text();
   assert.match(docs, /Red documentation/i);
   assert.match(docs, /Installation/);
-  assert.match(docs, /Agent workflow/);
+  assert.match(docs, /Agent workspace/);
+  assert.match(docs, /Inline assistance/);
+  assert.match(docs, /saved to disk/i);
+  assert.match(docs, /unsaved and undoable/i);
+  assert.match(docs, /Coming in the next release/i);
   assert.match(docs, /typed Husk runtime/i);
+  assert.doesNotMatch(docs, /:AgentReview|isolated proposal filesystem/i);
+
+  const releasesResponse = await render("/releases");
+  assert.equal(releasesResponse.status, 200);
+  const releases = await releasesResponse.text();
+  assert.match(releases, /Latest published/i);
+  assert.match(releases, new RegExp(escapeRegExp(publishedVersion)));
+  assert.match(releases, /Available now/i);
+  assert.match(releases, /Coming in the next release/i);
+  assert.match(releases, /not included in the latest published release yet/i);
 });
 
 test("installation snippets preserve each supported website origin", async () => {
@@ -103,14 +124,16 @@ test("inactive installation commands stay hidden", async () => {
 test("ships SEO metadata and structured application data", async () => {
   const html = await (await render()).text();
   assert.match(html, /<meta name="theme-color" content="#fdfcfb"\/>/);
-  assert.match(html, /Red editor website and Rust editing preview/);
+  assert.match(html, /Red modal editor with editor-aware Codex agent workflows/);
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /"@type":"SoftwareApplication"/);
-  assert.match(html, /"softwareVersion":"0\.2\.4"/);
+  assert.match(html, new RegExp(`"softwareVersion":"${escapeRegExp(installerManifest.version)}"`));
   const robots = await readFile(new URL("../public/robots.txt", import.meta.url), "utf8");
   const sitemap = await readFile(new URL("../public/sitemap.xml", import.meta.url), "utf8");
   assert.match(robots, /Sitemap: https:\/\/getred\.dev\/sitemap\.xml/);
   assert.match(sitemap, /<loc>https:\/\/getred\.dev\/<\/loc>/);
+  assert.match(sitemap, /<loc>https:\/\/getred\.dev\/docs<\/loc>/);
+  assert.match(sitemap, /<loc>https:\/\/getred\.dev\/releases<\/loc>/);
 });
 
 test("renders a branded 404 page with a real 404 status", async () => {
@@ -158,7 +181,9 @@ test("ships checksum-verifying installers at stable public paths", async () => {
   assert.match(shell, /--self-check/);
   assert.match(powershell, /Get-FileHash -Algorithm SHA256/);
   assert.match(powershell, /--self-check/);
-  assert.equal(JSON.parse(manifest).version, "0.2.4");
+  const generated = await readFile(new URL("../app/installers.generated.ts", import.meta.url), "utf8");
+  assert.equal(JSON.parse(manifest).version, installerManifest.version);
+  assert.match(generated, new RegExp(`releaseVersion = "${escapeRegExp(publishedVersion)}"`));
 });
 
 test("refreshes the visible release version from GitHub with a static fallback", async () => {

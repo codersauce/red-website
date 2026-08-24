@@ -11,6 +11,7 @@ export function SiteNav() {
     <div className="nav-links">
       <Link href="/#features">Features</Link>
       <Link href="/docs">Docs</Link>
+      <Link href="/releases">Releases</Link>
       <Link className="nav-install" href="/#install">Install</Link>
       <ThemeToggle />
       <a className="github-button" href="https://github.com/codersauce/red" target="_blank" rel="noreferrer">
@@ -31,6 +32,7 @@ export function SiteFooter() {
         Discord <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
       </a>
       <Link href="/docs">Docs</Link>
+      <Link href="/releases">Releases</Link>
     </div>
   </footer>;
 }

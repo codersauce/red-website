@@ -20,7 +20,7 @@ npm run lint
 
 ## Layout
 
-- `app/` — the site (single landing page, layout, global styles, 404)
+- `app/` — the landing page, documentation, release highlights, layout, global styles, and 404
 - `public/` — static assets: editor captures, OG image, favicon, and the
   installers (`install.sh`, `install.ps1`, `installers.json`)
 - `worker/index.ts` — Cloudflare Worker entry (image optimization + app router)
@@ -34,12 +34,16 @@ from the [`codersauce/red`](https://github.com/codersauce/red) repository and
 pinned to a commit in `public/installers.json`:
 
 ```bash
-npm run sync:installers -- --ref <red commit>   # update to a new commit
+npm run sync:installers -- --ref <published release commit>   # sync only an actually published release
 npm run check:installers                        # CI drift guard (part of npm test)
 ```
 
 The sync also regenerates `app/installers.generated.ts`, which feeds the
-release version shown in the hero.
+release version shown across the landing page, documentation, release highlights,
+and structured metadata. Always pin the latest **published** release; work from
+Red main belongs under the explicitly labeled "Coming next" sections until the
+release is public. Keep `app/release-content.ts` aligned with the reviewed
+`release/campaign.toml` in the Red repository.
 
 ## Deployment
 

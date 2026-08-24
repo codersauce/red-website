@@ -5,6 +5,13 @@ import { useEffect, useRef, useState } from "react";
 
 const previews = [
   {
+    key: "Space A",
+    label: "Agent",
+    image: "/agent-pane-dark.png",
+    alt: "Red's persistent Codex Agent conversation beside the active source",
+    caption: "Keep a Codex conversation connected to your open buffers and editor context.",
+  },
+  {
     key: "Ctrl-p",
     label: "Find files",
     image: "/find-files-dark.png",

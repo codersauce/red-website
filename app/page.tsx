@@ -7,28 +7,29 @@ import ProductShowcase from "./components/ProductShowcase";
 import ReleaseVersion from "./components/ReleaseVersion";
 import { SiteFooter, SiteNav } from "./components/SiteChrome";
 import { releaseVersion } from "./installers.generated";
+import { nextReleaseHighlights } from "./release-content";
 import { resolvePublicOrigin } from "./public-origin";
 
 const features = [
   {
-    tag: "LSP",
-    name: "Language servers",
-    description: "Completion, go-to-definition, rename, diagnostics, and inlay hints from the language servers already on your PATH.",
+    tag: "AGENT",
+    name: "An agent inside your editor",
+    description: "Keep a persistent Codex conversation connected to open buffers, unsaved work, diagnostics, and source context.",
   },
   {
-    tag: "TREE-SITTER",
-    name: "Syntax-aware editing",
-    description: "Bundled grammars bring structural highlighting and text objects to the languages you use every day.",
+    tag: "INLINE",
+    name: "Help beside the source",
+    description: "Review, explain, or refactor a focused piece of code without trading your editor for a chat window.",
   },
   {
-    tag: "THEMES",
-    name: "Theme gallery",
-    description: "Browse and preview the bundled themes live. No plugin manager and no restart required.",
+    tag: "VIM",
+    name: "Your hands already know it",
+    description: "Use familiar motions, operators, text objects, macros, registers, splits, and keyboard-first commands.",
   },
   {
-    tag: "HUSK",
-    name: "Embedded plugins",
-    description: "Red's own typed scripting language powers built-in tools while keeping the default experience self-contained.",
+    tag: "LSP + GIT",
+    name: "One binary, ready to work",
+    description: "Language intelligence, Tree-sitter, project search, Git, themes, and embedded plugins ship together.",
   },
 ];
 
@@ -36,8 +37,8 @@ const shortcuts = [
   ["Space ?", "discover commands"],
   ["Ctrl-p", "find a file"],
   ["Space /", "search the project"],
-  ["Space A", "ask the agent"],
-  [":AgentReview", "review proposals"],
+  ["Space A", "open the Agent workspace"],
+  ["Space i", "review or refactor inline"],
   ["Space t", "browse themes"],
 ];
 
@@ -48,9 +49,9 @@ export default async function Home() {
     <div className="nav-wrap"><div className="page-shell"><SiteNav /></div></div>
 
     <section className="hero page-shell" id="top">
-      <div className="version-pill"><ReleaseVersion fallback={releaseVersion} /> · Codex review workflow <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></div>
-      <h1>The editor that respects<br className="desktop-break" /> your muscle memory</h1>
-      <p>Red is a modern modal editor for people who think in Vim. Fast editing, language intelligence, themes, and embedded plugins—ready without a setup ritual.</p>
+      <div className="version-pill"><ReleaseVersion fallback={releaseVersion} /> · Vim muscle memory meets editor-aware agents <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></div>
+      <h1>The modal editor for<br className="desktop-break" /> the agent era</h1>
+      <p>Vim muscle memory, a Codex agent that understands your open buffers, and focused inline assistance—ready in one Rust binary.</p>
       <div className="hero-actions">
         <a className="primary-button" href="#install">Install Red</a>
         <a className="secondary-button" href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">
@@ -66,9 +67,9 @@ export default async function Home() {
 
     <section className="section page-shell" id="features">
       <header className="section-heading">
-        <p className="section-kicker">Everything you need</p>
-        <h2>Batteries included</h2>
-        <p>Capable defaults in one Rust binary. Extend Red when you want to, not because you have to.</p>
+        <p className="section-kicker">Made for the way you work</p>
+        <h2>The whole workflow, built in</h2>
+        <p>Vim fluency, editor-aware agents, and capable defaults in one self-contained Rust binary.</p>
       </header>
       <div className="feature-grid">
         {features.map((feature) => <article className="feature-card" key={feature.tag}>
@@ -79,31 +80,49 @@ export default async function Home() {
       </div>
     </section>
 
+    <section className="split-section section page-shell" id="agent">
+      <div className="split-copy">
+        <p className="section-kicker">Codex integration</p>
+        <h2>An agent that knows what you are editing</h2>
+        <p>The Agent sees the source, selection, diagnostics, and unsaved buffers you are working with. Its revision-checked changes are applied through Red and saved to disk.</p>
+        <p>Prefer a smaller scope? Inline assistance keeps code changes unsaved and undoable; wider proposals require your explicit review.</p>
+        <div className="command-list">
+          <div><kbd>Space A</kbd><span>Open a persistent Agent conversation</span></div>
+          <div><kbd>Space i</kbd><span>Review or refactor beside your code</span></div>
+          <div><kbd>Space H</kbd><span>Return to inline-assist history</span></div>
+        </div>
+        <a className="text-link" href="https://github.com/codersauce/red/blob/main/docs/AGENT_WORKFLOW.md" target="_blank" rel="noreferrer">
+          Read the agent workflow docs <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
+        </a>
+      </div>
+      <AgentShowcase />
+    </section>
+
     <section className="showcase-section">
       <div className="section page-shell">
         <header className="section-heading">
           <p className="section-kicker">Stay on the keyboard</p>
           <h2>Everything is a keystroke away</h2>
-          <p>Find files, search the project, discover commands, switch themes, and ask the language server without losing your place.</p>
+          <p>Move between your Agent, files, project search, commands, language intelligence, and themes without leaving the keyboard.</p>
         </header>
         <ProductShowcase />
       </div>
     </section>
 
-    <section className="split-section section page-shell" id="agent">
-      <div className="split-copy">
-        <p className="section-kicker">Codex integration</p>
-        <h2>Agent edits you can actually trust</h2>
-        <p>Ask Codex without leaving your buffer. Suggested writes arrive as isolated proposals, ready for you to inspect before anything reaches your files.</p>
-        <div className="command-list">
-          <div><kbd>Space A</kbd><span>Ask with editor context</span></div>
-          <div><kbd>:AgentReview</kbd><span>Review pending proposals</span></div>
-        </div>
-        <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/AGENT_WORKFLOW.md" target="_blank" rel="noreferrer">
-          Read the agent workflow docs <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
-        </a>
+    <section className="section page-shell" id="next-release">
+      <header className="section-heading">
+        <p className="section-kicker">Next release · in progress</p>
+        <h2>What is coming next</h2>
+        <p>These changes are already on Red&apos;s development branch and are not part of the latest published release yet.</p>
+      </header>
+      <div className="feature-grid">
+        {nextReleaseHighlights.map((story) => <article className="feature-card" key={story.tag}>
+          <span>{story.tag}</span>
+          <h3>{story.title}</h3>
+          <p>{story.description}</p>
+        </article>)}
       </div>
-      <AgentShowcase />
+      <div className="release-preview-link"><a className="text-link" href="/releases">See release highlights <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></a></div>
     </section>
 
     <section className="familiar-section">
@@ -118,7 +137,7 @@ export default async function Home() {
           <div className="shortcut-list">
             {shortcuts.map(([key, action]) => <div key={key}><kbd>{key}</kbd><span>{action}</span></div>)}
           </div>
-          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">
+          <a className="text-link" href="https://github.com/codersauce/red/blob/main/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">
             View the compatibility matrix <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
           </a>
         </div>

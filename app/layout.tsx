@@ -14,21 +14,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(canonicalOrigin),
-    title: "red — the editor that respects your muscle memory",
-    description: "A modern modal editor with language intelligence, themes, embedded plugins, and reviewable Codex proposals. One self-contained Rust binary.",
+    title: "red — the modal editor for the agent era",
+    description: "Vim-style terminal editor with a Codex agent pane, focused inline assistance, language intelligence, Git, and one self-contained Rust binary.",
     alternates: { canonical: "/" },
     icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
     other: { "theme-color": "#fdfcfb" },
     openGraph: {
-      title: "red — the editor that respects your muscle memory",
-      description: "Modern modal editing, capable defaults, and agent changes you review before they touch your files.",
+      title: "red — the modal editor for the agent era",
+      description: "Vim muscle memory. Editor-aware Codex agents. One self-contained Rust binary.",
       type: "website",
-      images: [{ url: socialImage, width: 1200, height: 630, alt: "Red editor website and Rust editing preview" }],
+      images: [{ url: socialImage, width: 1200, height: 630, alt: "Red modal editor with editor-aware Codex agent workflows" }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "red — the editor that respects your muscle memory",
-      description: "Modern modal editing, capable defaults, and reviewable agent proposals.",
+      title: "red — the modal editor for the agent era",
+      description: "Vim muscle memory, an editor-aware Codex agent, and focused inline assistance.",
       images: [socialImage],
     },
   };
@@ -45,7 +45,7 @@ const structuredData = {
   downloadUrl: "https://github.com/codersauce/red/releases/latest",
   license: "https://github.com/codersauce/red/blob/main/LICENSE",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-  description: "Modal terminal editor with tree-sitter highlighting, language servers, and reviewable agent proposals. Built in Rust.",
+  description: "Vim-style modal terminal editor with Codex Agent conversations, focused inline assistance, language servers, Git, and Tree-sitter. Built in Rust.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

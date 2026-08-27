@@ -6,11 +6,12 @@ import InstallPicker from "../components/InstallPicker";
 import ReleaseVersion from "../components/ReleaseVersion";
 import { SiteFooter, SiteNav } from "../components/SiteChrome";
 import { releaseVersion } from "../installers.generated";
+import { nextReleaseHighlights } from "../release-content";
 import { resolvePublicOrigin } from "../public-origin";
 
 export const metadata: Metadata = {
   title: "Docs — red editor",
-  description: "Install Red and learn the essential editor, language, theme, plugin, and agent workflows.",
+  description: "Install Red and learn its Vim-style editing, Codex Agent workspace, focused inline assistance, language intelligence, and Git workflows.",
   alternates: { canonical: "/docs" },
 };
 
@@ -18,7 +19,9 @@ const navigation = [
   ["installation", "Installation"],
   ["quick-start", "Quick start"],
   ["keybindings", "Keybindings"],
-  ["agent-workflow", "Agent workflow"],
+  ["agent-workflow", "Agent workspace"],
+  ["inline-assistance", "Inline assistance"],
+  ["coming-next", "Coming next"],
   ["themes", "Themes"],
   ["plugins", "Plugins"],
   ["configuration", "Configuration"],
@@ -29,7 +32,9 @@ const keybindings = [
   ["Ctrl-p", "Find a project file with a live preview"],
   ["Space /", "Search across the project"],
   ["Space G", "Open the Git workspace"],
-  ["Space A", "Ask the configured agent with editor context"],
+  ["Space A", "Open a persistent Agent conversation with editor context"],
+  ["Space i", "Review, explain, or refactor a focused piece of source"],
+  ["Space H", "Revisit previous inline-assist results"],
   ["Space t", "Browse themes with a live preview"],
 ];
 
@@ -44,7 +49,7 @@ export default async function DocsPage() {
         <nav aria-label="Documentation sections">
           {navigation.map(([id, label]) => <a href={`#${id}`} key={id}>{label}</a>)}
         </nav>
-        <a className="docs-source" href="https://github.com/codersauce/red/tree/master/docs" target="_blank" rel="noreferrer">
+        <a className="docs-source" href="https://github.com/codersauce/red/tree/main/docs" target="_blank" rel="noreferrer">
           <FaGithub className="inline-icon github-icon" aria-hidden="true" /> Full reference on GitHub
         </a>
       </aside>
@@ -77,22 +82,39 @@ export default async function DocsPage() {
           <div className="docs-key-list">
             {keybindings.map(([key, description]) => <div key={key}><kbd>{key}</kbd><span>{description}</span></div>)}
           </div>
-          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">
+          <a className="text-link" href="https://github.com/codersauce/red/blob/main/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">
             Open the versioned Vim compatibility matrix <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
           </a>
         </section>
 
         <section id="agent-workflow">
-          <h2>Agent workflow</h2>
-          <p>Red gives Codex bounded editor context—including unsaved buffers—while keeping suggested writes in an isolated proposal filesystem.</p>
+          <h2>Agent workspace</h2>
+          <p>Press <kbd>Space A</kbd> to open a persistent Codex conversation connected to the active source, selection, relevant diagnostics, and authoritative unsaved buffer contents.</p>
           <ol>
-            <li><strong>Ask.</strong> Press <kbd>Space A</kbd> with a selection or from the current buffer.</li>
-            <li><strong>Review.</strong> Open <kbd>:AgentReview</kbd> to inspect pending changes.</li>
-            <li><strong>Decide.</strong> Accept useful hunks and reject the rest. Nothing is silently written.</li>
+            <li><strong>Connect.</strong> Install Codex CLI 0.144.1 or newer, run <kbd>codex login</kbd>, and verify setup with <kbd>red --agent-check --strict</kbd>.</li>
+            <li><strong>Ask.</strong> Describe the change or question without leaving the editor. Follow progress and continue the same conversation.</li>
+            <li><strong>Understand the boundary.</strong> Agent changes are revision-checked, applied through Red&apos;s workspace-confined editor tools, and saved to disk.</li>
           </ol>
-          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/AGENT_WORKFLOW.md" target="_blank" rel="noreferrer">
-            Read the complete safety contract <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
+          <p>The full Agent saves accepted editor-tool writes. Inline assistance has a separate, smaller editing boundary.</p>
+          <a className="text-link" href="https://github.com/codersauce/red/blob/main/docs/AGENT_WORKFLOW.md" target="_blank" rel="noreferrer">
+            Read the complete Agent safety contract <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
           </a>
+        </section>
+
+        <section id="inline-assistance">
+          <h2>Inline assistance</h2>
+          <p>Press <kbd>Space i</kbd> to review, explain, or refactor code beside the source. Select text in Visual or Visual Line mode for an exact target, or start from Normal mode for the surrounding code.</p>
+          <p>Applied inline code changes stay <strong>unsaved and undoable</strong>. The published release reviews every code change; upcoming exact foreground edits may apply immediately unless disabled. Background results and wider proposals always require explicit approval.</p>
+          <p>Press <kbd>Space H</kbd> to revisit inline history, or continue in the full Agent when a task needs broader editor access.</p>
+        </section>
+
+        <section id="coming-next">
+          <h2>Coming in the next release</h2>
+          <p>These capabilities are already on Red&apos;s development branch but are not included in the latest published binary:</p>
+          <ul>
+            {nextReleaseHighlights.map((story) => <li key={story.tag}><strong>{story.title}.</strong> {story.description}</li>)}
+          </ul>
+          <a className="text-link" href="/releases">View release highlights <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" /></a>
         </section>
 
         <section id="themes">
@@ -103,7 +125,7 @@ export default async function DocsPage() {
         <section id="plugins">
           <h2>Plugins</h2>
           <p>Red includes a typed Husk runtime. Bundled Husk plugins power core tools such as the file tree, project search, Git workspace, theme browser, progress UI, and agent interface.</p>
-          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/PLUGIN_SYSTEM.md" target="_blank" rel="noreferrer">
+          <a className="text-link" href="https://github.com/codersauce/red/blob/main/docs/PLUGIN_SYSTEM.md" target="_blank" rel="noreferrer">
             Explore the plugin system <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
           </a>
         </section>

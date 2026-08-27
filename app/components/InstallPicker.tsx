@@ -27,7 +27,7 @@ export default function InstallPicker({
   origin: string;
   wide?: boolean;
 }) {
-  const detected = useSyncExternalStore(subscribeToPlatform, detectedMethod, () => "unix");
+  const detected = useSyncExternalStore<InstallMethod>(subscribeToPlatform, detectedMethod, () => "unix");
   const [selectedMethod, setSelectedMethod] = useState<InstallMethod | null>(null);
   const [copied, setCopied] = useState(false);
   const methods = useMemo(() => installMethods(origin), [origin]);

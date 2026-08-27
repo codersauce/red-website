@@ -462,6 +462,10 @@ img {
   line-height: 1.68;
 }
 
+.release-preview-link {
+  text-align: center;
+}
+
 .showcase-section {
   border-block: 1px solid var(--border);
   background: var(--surface);

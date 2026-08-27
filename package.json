@@ -12,7 +12,8 @@
     "sync:installers": "node scripts/sync-installers.mjs",
     "check:installers": "node scripts/sync-installers.mjs --check",
     "test": "npm run check:installers && npm run build && node --test tests/rendered-html.test.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "typecheck": "tsc --noEmit --incremental false"
   },
   "dependencies": {
     "next": "16.2.6",

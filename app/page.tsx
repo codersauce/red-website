@@ -7,7 +7,7 @@ import ProductShowcase from "./components/ProductShowcase";
 import ReleaseVersion from "./components/ReleaseVersion";
 import { SiteFooter, SiteNav } from "./components/SiteChrome";
 import { releaseVersion } from "./installers.generated";
-import { nextReleaseHighlights } from "./release-content";
+import { releaseHighlights } from "./release-content";
 import { resolvePublicOrigin } from "./public-origin";
 
 const features = [
@@ -109,14 +109,14 @@ export default async function Home() {
       </div>
     </section>
 
-    <section className="section page-shell" id="next-release">
+    <section className="section page-shell" id="release-highlights">
       <header className="section-heading">
-        <p className="section-kicker">Next release · in progress</p>
-        <h2>What is coming next</h2>
-        <p>These changes are already on Red&apos;s development branch and are not part of the latest published release yet.</p>
+        <p className="section-kicker">New in Red v0.7.0</p>
+        <h2>Follow your Agent into the source</h2>
+        <p>Source-linked walkthroughs, focused inline help, and multi-cursor editing are ready in the latest release.</p>
       </header>
       <div className="feature-grid">
-        {nextReleaseHighlights.map((story) => <article className="feature-card" key={story.tag}>
+        {releaseHighlights.map((story) => <article className="feature-card" key={story.tag}>
           <span>{story.tag}</span>
           <h3>{story.title}</h3>
           <p>{story.description}</p>

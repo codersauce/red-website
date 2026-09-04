@@ -49,8 +49,9 @@ test("server-renders the replacement website and real docs route", async () => {
   assert.match(html, /The whole workflow, built in/i);
   assert.match(html, /An agent that knows what you are editing/i);
   assert.match(html, new RegExp(escapeRegExp(publishedVersion)));
-  assert.match(html, /What is coming next/i);
-  assert.match(html, /not part of the latest published release yet/i);
+  assert.match(html, /New in Red v0\.7\.0/i);
+  assert.match(html, /Follow your Agent into the source/i);
+  assert.doesNotMatch(html, /not part of the latest published release yet/i);
   assert.doesNotMatch(html, /:AgentReview|isolated proposal filesystem/i);
   assert.match(html, /editing-light\.png/);
   assert.match(html, /editing-dark\.png/);
@@ -76,7 +77,8 @@ test("server-renders the replacement website and real docs route", async () => {
   assert.match(docs, /Inline assistance/);
   assert.match(docs, /saved to disk/i);
   assert.match(docs, /unsaved and undoable/i);
-  assert.match(docs, /Coming in the next release/i);
+  assert.match(docs, /New in v0\.7\.0/i);
+  assert.match(docs, /Exact foreground edits may apply immediately/i);
   assert.match(docs, /typed Husk runtime/i);
   assert.doesNotMatch(docs, /:AgentReview|isolated proposal filesystem/i);
 
@@ -86,8 +88,8 @@ test("server-renders the replacement website and real docs route", async () => {
   assert.match(releases, /Latest published/i);
   assert.match(releases, new RegExp(escapeRegExp(publishedVersion)));
   assert.match(releases, /Available now/i);
-  assert.match(releases, /Coming in the next release/i);
-  assert.match(releases, /not included in the latest published release yet/i);
+  assert.match(releases, /New in v0\.7\.0/i);
+  assert.doesNotMatch(releases, /not included in the latest published release yet/i);
 });
 
 test("installation snippets preserve each supported website origin", async () => {

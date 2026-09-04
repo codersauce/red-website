@@ -1,4 +1,4 @@
-export const nextReleaseHighlights = [
+export const releaseHighlights = [
   {
     tag: "AGENT",
     title: "Explanations that point back to the source",

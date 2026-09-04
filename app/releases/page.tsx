@@ -4,11 +4,11 @@ import { FiArrowRight, FiExternalLink } from "react-icons/fi";
 import ReleaseVersion from "../components/ReleaseVersion";
 import { SiteFooter, SiteNav } from "../components/SiteChrome";
 import { releaseVersion } from "../installers.generated";
-import { nextReleaseHighlights } from "../release-content";
+import { releaseHighlights } from "../release-content";
 
 export const metadata: Metadata = {
   title: "Release highlights — red editor",
-  description: "See what is available in Red today and the Agent, inline-assist, Vim, and workspace improvements coming in the next release.",
+  description: "Explore what shipped in Red v0.7.0, from source-linked Agent walkthroughs to inline assistance and multi-cursor editing.",
   alternates: { canonical: "/releases" },
 };
 
@@ -20,7 +20,7 @@ export default function ReleasesPage() {
         <p>Release highlights</p>
         <nav aria-label="Release sections">
           <a href="#available-now">Available now</a>
-          <a href="#coming-next">Coming next</a>
+          <a href="#release-highlights">New in v0.7.0</a>
           <a href="#release-notes">Complete release notes</a>
         </nav>
       </aside>
@@ -28,7 +28,7 @@ export default function ReleasesPage() {
         <header>
           <p className="section-kicker">Latest published · <ReleaseVersion fallback={releaseVersion} /></p>
           <h1>What Red can do</h1>
-          <p>The published editor and the next release are shown separately, so you always know what is available today.</p>
+          <p>Explore Red&apos;s core workflows and what shipped in v0.7.0.</p>
         </header>
 
         <section id="available-now">
@@ -42,11 +42,11 @@ export default function ReleasesPage() {
           <Link className="text-link" href="/#install">Install the published release <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></Link>
         </section>
 
-        <section id="coming-next">
-          <h2>Coming in the next release</h2>
-          <p>Available on Red&apos;s development branch; not included in the latest published release yet:</p>
+        <section id="release-highlights">
+          <h2>New in v0.7.0</h2>
+          <p>These features are available in the latest published release:</p>
           <ul>
-            {nextReleaseHighlights.map((story) => <li key={story.tag}><strong>{story.title}.</strong> {story.description}</li>)}
+            {releaseHighlights.map((story) => <li key={story.tag}><strong>{story.title}.</strong> {story.description}</li>)}
           </ul>
         </section>
 

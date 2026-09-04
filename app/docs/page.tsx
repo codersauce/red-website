@@ -6,7 +6,7 @@ import InstallPicker from "../components/InstallPicker";
 import ReleaseVersion from "../components/ReleaseVersion";
 import { SiteFooter, SiteNav } from "../components/SiteChrome";
 import { releaseVersion } from "../installers.generated";
-import { nextReleaseHighlights } from "../release-content";
+import { releaseHighlights } from "../release-content";
 import { resolvePublicOrigin } from "../public-origin";
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ const navigation = [
   ["keybindings", "Keybindings"],
   ["agent-workflow", "Agent workspace"],
   ["inline-assistance", "Inline assistance"],
-  ["coming-next", "Coming next"],
+  ["release-highlights", "v0.7.0 highlights"],
   ["themes", "Themes"],
   ["plugins", "Plugins"],
   ["configuration", "Configuration"],
@@ -104,15 +104,15 @@ export default async function DocsPage() {
         <section id="inline-assistance">
           <h2>Inline assistance</h2>
           <p>Press <kbd>Space i</kbd> to review, explain, or refactor code beside the source. Select text in Visual or Visual Line mode for an exact target, or start from Normal mode for the surrounding code.</p>
-          <p>Applied inline code changes stay <strong>unsaved and undoable</strong>. The published release reviews every code change; upcoming exact foreground edits may apply immediately unless disabled. Background results and wider proposals always require explicit approval.</p>
+          <p>Applied inline code changes stay <strong>unsaved and undoable</strong>. Exact foreground edits may apply immediately unless disabled; background results and wider proposals require explicit review.</p>
           <p>Press <kbd>Space H</kbd> to revisit inline history, or continue in the full Agent when a task needs broader editor access.</p>
         </section>
 
-        <section id="coming-next">
-          <h2>Coming in the next release</h2>
-          <p>These capabilities are already on Red&apos;s development branch but are not included in the latest published binary:</p>
+        <section id="release-highlights">
+          <h2>New in v0.7.0</h2>
+          <p>These capabilities are included in the latest published release:</p>
           <ul>
-            {nextReleaseHighlights.map((story) => <li key={story.tag}><strong>{story.title}.</strong> {story.description}</li>)}
+            {releaseHighlights.map((story) => <li key={story.tag}><strong>{story.title}.</strong> {story.description}</li>)}
           </ul>
           <a className="text-link" href="/releases">View release highlights <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" /></a>
         </section>

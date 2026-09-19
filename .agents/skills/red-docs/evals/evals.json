@@ -1,0 +1,102 @@
+{
+  "skill_name": "red-docs",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Improve this Red documentation introduction: 'Red delivers a seamless, AI-native, context-aware editing experience that empowers developers to leverage intelligent agents.' Preserve only claims supported by current product sources.",
+      "expected_output": "Replaces generic AI and corporate language with concise, verified Red behavior.",
+      "files": [],
+      "assertions": [
+        "Removes seamless, AI-native, context-aware, empowers, leverage, and intelligent unless one is required by an exact product term",
+        "Does not invent a command, shortcut, context source, or safety guarantee",
+        "Names observable Red behavior only when current evidence supports it"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Write a public Red installation guide. The website serves /install.sh, /install.ps1, and /installers.json, and the current installer metadata must remain authoritative.",
+      "expected_output": "Creates a task-focused installation guide while preserving and verifying the installer contract.",
+      "files": [],
+      "assertions": [
+        "Treats installer routes and commands as claims that require current verification",
+        "Presents prerequisites before platform-specific instructions",
+        "Does not add unsupported package managers, platforms, or archive names",
+        "Includes an expected verification result or reports that it could not be tested"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Document Delegate Mode with a Space D shortcut based only on an old website prototype. Current Red source and user docs do not establish that command.",
+      "expected_output": "Refuses to publish the prototype shortcut as current behavior and reports the evidence gap.",
+      "files": [],
+      "assertions": [
+        "Does not state that Space D exists",
+        "Separates prototype language from shipped product behavior",
+        "Requests or locates current implementation evidence before publishing"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Simplify a six-section explanation of Red configuration in which each section repeats that configuration is flexible, powerful, and easy. Keep the verified file path, precedence rules, and one runnable example.",
+      "expected_output": "Produces the shortest complete explanation without losing verified configuration behavior.",
+      "files": [],
+      "assertions": [
+        "Removes repeated promotional claims",
+        "Preserves the verified path, precedence rules, and runnable example",
+        "Uses headings only for distinct ideas",
+        "Does not compress away a constraint that changes behavior"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Restructure Red's current single documentation page into a complete docs area. Propose reader-facing destinations without implementing them.",
+      "expected_output": "Builds a compact information architecture from current reader tasks and identifies evidence gaps.",
+      "files": [],
+      "assertions": [
+        "Organizes around reader tasks rather than internal crate or subsystem names",
+        "Uses tutorials, how-to guides, explanations, and reference only where they fit",
+        "Does not create empty categories for framework symmetry",
+        "Keeps marketing, maintainer notes, and public operating documentation separate"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Audit a Red Agent panel guide that alternates among AI, assistant, copilot, model, and agent for the same product surface and says Red 'knows your project.'",
+      "expected_output": "Finds inconsistent terminology and unsupported anthropomorphic claims, then proposes precise replacements.",
+      "files": [],
+      "assertions": [
+        "Uses the current exact product name consistently",
+        "Replaces 'knows your project' with the verified context that Red provides",
+        "Keeps necessary agent or model terminology instead of banning it mechanically",
+        "Reports findings without rewriting unless the request authorizes edits"
+      ]
+    }
+  ],
+  "routing": {
+    "should_trigger": [
+      "Create a Red tutorial that teaches a new user to open a project and discover commands.",
+      "Audit the getred.dev agent documentation for stale shortcuts and AI jargon.",
+      "Split the current Red docs page into task-focused documentation routes.",
+      "Write a reference page for Red configuration keys from the current defaults.",
+      "Simplify this Red how-to without removing necessary caveats."
+    ],
+    "near_miss": [
+      {
+        "prompt": "Write Rust API documentation for the Editor struct.",
+        "expected": "documentation-pass or ordinary Rust documentation workflow"
+      },
+      {
+        "prompt": "Rewrite the getred.dev marketing homepage.",
+        "expected": "Sites or marketing copy workflow"
+      },
+      {
+        "prompt": "Draft release notes and social posts for Red 0.7.",
+        "expected": "release communications workflow"
+      },
+      {
+        "prompt": "Document the internal buffer mutation architecture for maintainers.",
+        "expected": "repository engineering documentation workflow"
+      }
+    ]
+  }
+}

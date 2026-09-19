@@ -1,0 +1,5 @@
+interface:
+  display_name: "Red Docs"
+  short_description: "Author clear, evidence-backed Red documentation"
+  brand_color: "#E5484D"
+  default_prompt: "Use $red-docs to create or improve public documentation for the Red editor."

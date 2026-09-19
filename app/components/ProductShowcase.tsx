@@ -12,7 +12,7 @@ const previews = [
     caption: "Fuzzy-find project files and preview them before opening.",
   },
   {
-    key: "Space /",
+    key: "Space g",
     label: "Find in files",
     image: "/grep-dark.png",
     alt: "Red project-wide search showing highlighted matches",

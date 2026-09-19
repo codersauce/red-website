@@ -10,6 +10,27 @@ const publicOrigins = [
   "https://rededitor.app",
 ];
 
+const documentationRoutes = [
+  ["/docs", "Use Red"],
+  ["/docs/getting-started/install", "Install Red"],
+  ["/docs/getting-started/first-session", "Your first session"],
+  ["/docs/editor/navigation", "Navigate and edit"],
+  ["/docs/editor/search", "Search and replace"],
+  ["/docs/editor/windows", "Buffers and windows"],
+  ["/docs/languages", "Language tools"],
+  ["/docs/git", "Work with Git"],
+  ["/docs/agent", "Agent and inline assist"],
+  ["/docs/configuration", "Configure Red"],
+  ["/docs/keybindings", "Change keybindings"],
+  ["/docs/themes", "Choose and edit themes"],
+  ["/docs/plugins", "Manage plugins"],
+  ["/docs/husk", "Write a Husk plugin"],
+  ["/docs/sessions", "Detach and recover"],
+  ["/docs/reference/cli", "Command-line reference"],
+  ["/docs/reference/vim", "Vim compatibility"],
+  ["/docs/troubleshooting", "Troubleshooting"],
+];
+
 function pngDimensions(bytes) {
   assert.equal(bytes.toString("ascii", 1, 4), "PNG");
   return {
@@ -36,7 +57,7 @@ async function render(path = "/", origin = "https://getred.dev") {
   );
 }
 
-test("server-renders the replacement website and real docs route", async () => {
+test("server-renders the replacement website", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
@@ -60,13 +81,19 @@ test("server-renders the replacement website and real docs route", async () => {
   assert.doesNotMatch(html, /[☀☾↗]/);
   assert.doesNotMatch(html, /ghostty-|codex-preview|react-loading-skeleton|Your site is taking shape/i);
 
-  const docsResponse = await render("/docs");
-  assert.equal(docsResponse.status, 200);
-  const docs = await docsResponse.text();
-  assert.match(docs, /Red documentation/i);
-  assert.match(docs, /Installation/);
-  assert.match(docs, /Agent workflow/);
-  assert.match(docs, /typed Husk runtime/i);
+});
+
+test("server-renders every documentation route with shared navigation", async () => {
+  for (const [path, heading] of documentationRoutes) {
+    const response = await render(path);
+    assert.equal(response.status, 200, path);
+    const html = await response.text();
+    assert.match(html, new RegExp(`>${heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}<`, "i"), path);
+    assert.match(html, /aria-label="Documentation"/i, path);
+    assert.match(html, /Source documentation/i, path);
+    assert.match(html, /href="https:\/\/github\.com\/codersauce\/red\/tree\/main\/docs"/i, path);
+    assert.match(html, new RegExp(`<link rel="canonical" href="https://getred\\.dev${path === "/docs" ? "/docs" : path}"/>`), path);
+  }
 });
 
 test("installation snippets preserve each supported website origin", async () => {
@@ -111,6 +138,9 @@ test("ships SEO metadata and structured application data", async () => {
   const sitemap = await readFile(new URL("../public/sitemap.xml", import.meta.url), "utf8");
   assert.match(robots, /Sitemap: https:\/\/getred\.dev\/sitemap\.xml/);
   assert.match(sitemap, /<loc>https:\/\/getred\.dev\/<\/loc>/);
+  for (const [path] of documentationRoutes) {
+    assert.match(sitemap, new RegExp(`<loc>https://getred\\.dev${path}</loc>`));
+  }
 });
 
 test("renders a branded 404 page with a real 404 status", async () => {

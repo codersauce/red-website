@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { headers } from "next/headers";
 import { FiArrowRight, FiDownload, FiExternalLink } from "react-icons/fi";
 import AgentShowcase from "./components/AgentShowcase";
@@ -35,9 +36,9 @@ const features = [
 const shortcuts = [
   ["Space ?", "discover commands"],
   ["Ctrl-p", "find a file"],
-  ["Space /", "search the project"],
+  ["Space g", "search the project"],
   ["Space A", "ask the agent"],
-  [":AgentReview", "review proposals"],
+  ["Space i", "ask about nearby code"],
   ["Space t", "browse themes"],
 ];
 
@@ -94,14 +95,14 @@ export default async function Home() {
       <div className="split-copy">
         <p className="section-kicker">Codex integration</p>
         <h2>Agent edits you can actually trust</h2>
-        <p>Ask Codex without leaving your buffer. Suggested writes arrive as isolated proposals, ready for you to inspect before anything reaches your files.</p>
+        <p>Ask Codex without leaving your buffer. Full Agent writes use Red&apos;s revision-checked editor tools and leave a receipt in history. Inline edits stay unsaved and undoable.</p>
         <div className="command-list">
-          <div><kbd>Space A</kbd><span>Ask with editor context</span></div>
-          <div><kbd>:AgentReview</kbd><span>Review pending proposals</span></div>
+          <div><kbd>Space A</kbd><span>Open the full Agent workspace</span></div>
+          <div><kbd>Space i</kbd><span>Ask about the current function or selection</span></div>
         </div>
-        <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/AGENT_WORKFLOW.md" target="_blank" rel="noreferrer">
-          Read the agent workflow docs <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
-        </a>
+        <Link className="text-link" href="/docs/agent">
+          Read the agent guide <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" />
+        </Link>
       </div>
       <AgentShowcase />
     </section>
@@ -118,7 +119,7 @@ export default async function Home() {
           <div className="shortcut-list">
             {shortcuts.map(([key, action]) => <div key={key}><kbd>{key}</kbd><span>{action}</span></div>)}
           </div>
-          <a className="text-link" href="https://github.com/codersauce/red/blob/master/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">
+          <a className="text-link" href="https://github.com/codersauce/red/blob/main/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">
             View the compatibility matrix <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
           </a>
         </div>
@@ -134,7 +135,7 @@ export default async function Home() {
         <a href="https://github.com/codersauce/red/releases/latest" target="_blank" rel="noreferrer">
           <FiDownload className="inline-icon download-icon" aria-hidden="true" /> Prebuilt archives
         </a>
-        <a href="/docs#installation">Installation guide <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></a>
+        <Link href="/docs/getting-started/install">Installation guide <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></Link>
       </div>
     </section>
 

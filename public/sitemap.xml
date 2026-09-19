@@ -5,4 +5,22 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  <url><loc>https://getred.dev/docs</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://getred.dev/docs/getting-started/install</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://getred.dev/docs/getting-started/first-session</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://getred.dev/docs/editor/navigation</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/editor/search</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/editor/windows</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/languages</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/git</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/agent</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://getred.dev/docs/configuration</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/keybindings</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/themes</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getred.dev/docs/plugins</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/husk</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getred.dev/docs/sessions</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/reference/cli</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getred.dev/docs/reference/vim</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/troubleshooting</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 </urlset>

@@ -10,7 +10,7 @@ const mono = JetBrains_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();
-  const socialImage = `${resolvePublicOrigin(requestHeaders)}/og.png?v=3`;
+  const socialImage = `${resolvePublicOrigin(requestHeaders)}/og.png?v=4`;
 
   return {
     metadataBase: new URL(canonicalOrigin),

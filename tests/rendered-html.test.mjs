@@ -40,47 +40,34 @@ async function render(path = "/", origin = "https://getred.dev") {
   );
 }
 
-test("server-renders the replacement website and real docs route", async () => {
+test("serves direction A at the root and keeps docs and releases", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
-  assert.match(html, /modal editor for the agent era/i);
-  assert.match(html, /The whole workflow, built in/i);
-  assert.match(html, /An agent that knows what you are editing/i);
-  assert.match(html, new RegExp(escapeRegExp(publishedVersion)));
-  assert.match(html, /New in Red v0\.7\.0/i);
-  assert.match(html, /Follow your Agent into the source/i);
-  assert.doesNotMatch(html, /not part of the latest published release yet/i);
-  assert.doesNotMatch(html, /:AgentReview|isolated proposal filesystem/i);
-  assert.match(html, /editing-light\.png/);
-  assert.match(html, /editing-dark\.png/);
-  assert.match(html, /role="tablist"/i);
-  assert.match(html, /role="tabpanel"/i);
-  assert.match(html, /aria-selected="true"/i);
-  assert.match(html, /Use dark color theme/i);
-  assert.match(html, /red-color-theme/);
-  assert.match(html, /theme-icon/);
-  assert.match(html, /github-icon/);
-  assert.match(html, /copy-icon/);
-  assert.match(html, /download-icon/);
-  assert.match(html, /external-link-icon/);
-  assert.doesNotMatch(html, /[☀☾↗]/);
-  assert.doesNotMatch(html, /ghostty-|codex-preview|react-loading-skeleton|Your site is taking shape/i);
+  assert.match(html, /Vim keys\.<br><em>Agent inside\.<\/em><br>One binary\./);
+  assert.match(html, /The agent works <em>through<\/em> your editor/);
+  assert.match(html, /href="\/docs"/);
+  assert.match(html, /href="\/releases"/);
+  assert.match(html, /\/media\/a-agent\.mp4/);
+  assert.match(html, /\/media\/a-agent-poster\.jpg/);
+  assert.match(html, /brew install codersauce\/tap\/red/);
+  assert.match(html, /https:\/\/getred\.dev\/install\.sh/);
+  assert.match(html, /https:\/\/getred\.dev\/install\.ps1/);
 
   const docsResponse = await render("/docs");
   assert.equal(docsResponse.status, 200);
   const docs = await docsResponse.text();
-  assert.match(docs, /Red documentation/i);
-  assert.match(docs, /Installation/);
-  assert.match(docs, /Agent workspace/);
-  assert.match(docs, /Inline assistance/);
-  assert.match(docs, /saved to disk/i);
-  assert.match(docs, /unsaved and undoable/i);
-  assert.match(docs, /New in v0\.7\.0/i);
-  assert.match(docs, /Exact foreground edits may apply immediately/i);
-  assert.match(docs, /typed Husk runtime/i);
-  assert.doesNotMatch(docs, /:AgentReview|isolated proposal filesystem/i);
+  assert.match(docs, /Use Red/);
+  assert.match(docs, /\/docs\/getting-started\/install/);
+  assert.match(docs, /\/docs\/agent/);
+
+  const agentResponse = await render("/docs/agent");
+  assert.equal(agentResponse.status, 200);
+  assert.match(await agentResponse.text(), /unsaved, undoable/i);
+  const gitResponse = await render("/docs/git");
+  assert.equal(gitResponse.status, 200);
+  assert.match(await gitResponse.text(), /Git workspace/i);
 
   const releasesResponse = await render("/releases");
   assert.equal(releasesResponse.status, 200);
@@ -92,14 +79,14 @@ test("server-renders the replacement website and real docs route", async () => {
   assert.doesNotMatch(releases, /not included in the latest published release yet/i);
 });
 
-test("installation snippets preserve each supported website origin", async () => {
+test("installation snippets use the canonical origin on every supported host", async () => {
   for (const origin of publicOrigins) {
     const html = await (await render("/", origin)).text();
-    assert.match(html, new RegExp(`${origin.replaceAll(".", "\\.")}/install\\.sh`));
-    assert.match(html, new RegExp(`${origin.replaceAll(".", "\\.")}/install\\.ps1`));
+    assert.match(html, /https:\/\/getred\.dev\/install\.sh/);
+    assert.match(html, /https:\/\/getred\.dev\/install\.ps1/);
     assert.match(html, /brew install codersauce\/tap\/red/);
-    assert.match(html, /<link rel="canonical" href="https:\/\/getred\.dev\/"\/>/);
-    assert.match(html, new RegExp(`${origin.replaceAll(".", "\\.")}/og\\.png\\?v=3`));
+    assert.match(html, /<link rel="canonical" href="https:\/\/getred\.dev\/"/);
+    assert.match(html, /https:\/\/getred\.dev\/og\.png/);
   }
 
   const untrusted = await (await render("/", "https://attacker.example")).text();
@@ -107,15 +94,11 @@ test("installation snippets preserve each supported website origin", async () =>
   assert.doesNotMatch(untrusted, /attacker\.example\/install\.(sh|ps1)/);
 });
 
-test("prefers the direct installer and keeps Homebrew last", async () => {
+test("offers Homebrew and direct installers", async () => {
   const html = await (await render()).text();
-  const unixTab = html.indexOf(">macOS + Linux</button>");
-  const windowsTab = html.indexOf(">Windows</button>");
-  const homebrewTab = html.indexOf(">Homebrew</button>");
-  assert.ok(unixTab >= 0);
-  assert.ok(unixTab < windowsTab);
-  assert.ok(windowsTab < homebrewTab);
-  assert.match(html, /aria-selected="true"[^>]*data-method="unix"/);
+  assert.match(html, /<span>Homebrew<\/span>/);
+  assert.match(html, /<span>macOS · Linux<\/span>/);
+  assert.match(html, /<span>Windows<\/span>/);
 });
 
 test("inactive installation commands stay hidden", async () => {
@@ -124,9 +107,11 @@ test("inactive installation commands stay hidden", async () => {
 });
 
 test("ships SEO metadata and structured application data", async () => {
-  const html = await (await render()).text();
-  assert.match(html, /<meta name="theme-color" content="#fdfcfb"\/>/);
-  assert.match(html, /Red modal editor with editor-aware Codex agent workflows/);
+  const home = await (await render()).text();
+  assert.match(home, /<meta name="theme-color" content="#D7182A">/);
+  assert.match(home, /<meta property="og:image" content="https:\/\/getred\.dev\/og\.png">/);
+  assert.match(home, /<meta name="twitter:card" content="summary_large_image">/);
+  const html = await (await render("/docs")).text();
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /"@type":"SoftwareApplication"/);
   assert.match(html, new RegExp(`"softwareVersion":"${escapeRegExp(installerManifest.version)}"`));
@@ -135,6 +120,7 @@ test("ships SEO metadata and structured application data", async () => {
   assert.match(robots, /Sitemap: https:\/\/getred\.dev\/sitemap\.xml/);
   assert.match(sitemap, /<loc>https:\/\/getred\.dev\/<\/loc>/);
   assert.match(sitemap, /<loc>https:\/\/getred\.dev\/docs<\/loc>/);
+  assert.match(sitemap, /<loc>https:\/\/getred\.dev\/docs\/agent<\/loc>/);
   assert.match(sitemap, /<loc>https:\/\/getred\.dev\/releases<\/loc>/);
 });
 
@@ -171,6 +157,19 @@ test("ships the replacement editor captures and social card", async () => {
   assert.ok(captures.every((capture) => capture.byteLength > 50_000));
   assert.deepEqual(captures.map(pngDimensions), Array.from({ length: 10 }, () => ({ width: 2104, height: 1724 })));
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
+});
+
+test("ships every homepage recording and poster in the built assets", async () => {
+  const names = ["a-hero", "a-agent", "a-inline", "a-git", "a-detach", "a-themes"];
+  for (const name of names) {
+    const [video, poster] = await Promise.all([
+      readFile(new URL(`../dist/client/media/${name}.mp4`, import.meta.url)),
+      readFile(new URL(`../dist/client/media/${name}-poster.jpg`, import.meta.url)),
+    ]);
+    assert.equal(video.toString("ascii", 4, 8), "ftyp");
+    assert.ok(video.byteLength > 100_000, name);
+    assert.ok(poster.byteLength > 5_000, name);
+  }
 });
 
 test("ships checksum-verifying installers at stable public paths", async () => {

@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>red — Vim keys. Agent inside.</title>
+<meta name="description" content="A Vim-style terminal editor where your coding agent works through your editor.">
+<link rel="canonical" href="https://getred.dev/">
+<meta name="theme-color" content="#D7182A">
+<!-- Social cards. Image URLs must be absolute; og.png is rendered by site/captures/og/render.sh. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="red">
+<meta property="og:url" content="https://getred.dev/">
+<meta property="og:title" content="red: Vim keys. Agent inside. One binary.">
+<meta property="og:description" content="A Vim-style terminal editor where your coding agent works through your editor, not behind it.">
+<meta property="og:image" content="https://getred.dev/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The red wordmark with a text cursor, the line “Vim keys. Agent inside. One binary.”, and a screenshot of red’s agent fixing a Rust function.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="red: Vim keys. Agent inside. One binary.">
+<meta name="twitter:description" content="A Vim-style terminal editor where your coding agent works through your editor, not behind it.">
+<meta name="twitter:image" content="https://getred.dev/og.png">
+<meta name="twitter:image:alt" content="The red wordmark with a text cursor, the line “Vim keys. Agent inside. One binary.”, and a screenshot of red’s agent fixing a Rust function.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23D7182A'/%3E%3Crect x='11' y='7' width='10' height='18' fill='%230C0B0B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --red:#D7182A; --deep:#8E0E1A; --ink:#0C0B0B; --bone:#FFF3EE; --ash:#B9B3AE;
+  --wide:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono:"DM Mono", ui-monospace, Menlo, monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--red)}
+body{margin:0;background:var(--red);color:var(--ink);font:500 17px/1.5 var(--wide);font-variation-settings:"wdth" 100;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+::selection{background:var(--ink);color:var(--bone)}
+.wrap{max-width:1400px;margin:0 auto;padding-inline:clamp(16px,3vw,40px)}
+kbd,code{font-family:var(--mono);font-size:.9em}
+kbd{display:inline-block;padding:1px 7px;border:1.5px solid currentColor;border-radius:4px;line-height:1.35;font-weight:500}
+
+/* nav */
+nav.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:18px;font-weight:600;font-size:15px}
+nav.top .links{display:flex;gap:clamp(12px,2.5vw,32px);flex-wrap:wrap;justify-content:flex-end;align-items:center}
+nav.top a{text-decoration:none}
+nav.top a:hover{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px}
+nav.top .gh{background:var(--ink);color:var(--bone);padding:8px 12px;border-radius:4px}
+
+/* hero */
+.wordrow{display:flex;justify-content:space-between;align-items:flex-end;gap:12px 24px;flex-wrap:wrap}
+.word{margin:0;font-weight:900;font-variation-settings:"wdth" 125;font-size:clamp(120px,31vw,470px);line-height:.74;letter-spacing:-.065em;margin-left:-.04em;display:flex;align-items:baseline}
+.word .ch.pending{visibility:hidden}
+/* A thin text caret, like Insert mode: in the contrast colour and a little
+   taller than the letters (dipping below the baseline) so it never reads as
+   another glyph. */
+.word .cur{display:inline-block;width:.055em;height:.79em;background:var(--bone);margin-left:.07em;border-radius:.03em;position:relative;top:.05em}
+.word .cur.blink{animation:blink 1.05s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.retype{background:none;border:0;padding:6px 0;font:500 13px/1 var(--mono);color:var(--ink);cursor:pointer;display:inline-flex;gap:8px;align-items:center;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
+.retype:hover{color:var(--bone)}
+.retype:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,8fr);gap:clamp(24px,4vw,56px);padding-block:clamp(28px,4vw,48px) clamp(48px,6vw,80px);align-items:end}
+.claim{margin:0;font-weight:850;font-variation-settings:"wdth" 72;font-size:clamp(40px,5.4vw,84px);line-height:.9;text-transform:uppercase;letter-spacing:-.01em}
+.claim em{font-style:normal;color:var(--bone)}
+.sub{margin:22px 0 0;max-width:38ch;font-size:18px}
+.install{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.cmd{display:flex;align-items:center;gap:14px;background:var(--ink);color:var(--bone);font:500 15px/1 var(--mono);padding:14px 16px;border-radius:5px;border:0;cursor:pointer;max-width:100%;overflow:hidden}
+.cmd span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmd b{font-weight:500;color:var(--ash);font-size:12px;letter-spacing:.08em;text-transform:uppercase;flex:none}
+.cmd:hover b,.cmd:focus-visible b{color:var(--bone)}
+.cmd:focus-visible{outline:3px solid var(--bone);outline-offset:3px}
+.alt{font-size:14px}
+
+/* video slabs */
+.slab{position:relative;background:var(--ink);border-radius:8px;box-shadow:16px 16px 0 var(--deep);max-width:100%}
+.slab.tilt{transform:rotate(-1.1deg)}
+.slab video{display:block;width:100%;height:auto;aspect-ratio:16/9;border-radius:8px;background:#101014;cursor:pointer}
+.slab .meta{position:absolute;left:0;right:0;bottom:-38px;display:flex;justify-content:space-between;gap:12px;font:500 12px/1.3 var(--mono);color:var(--ink);letter-spacing:.02em}
+.onink .slab{box-shadow:16px 16px 0 var(--red)}
+.onink .slab .meta{color:var(--ash)}
+.onbone .slab .meta{color:#5b5552}
+
+/* ticker */
+.tape{background:var(--ink);color:var(--bone);font:500 15px/1 var(--mono);white-space:nowrap;overflow:hidden;padding-block:14px}
+.tape div{display:inline-flex;gap:48px;padding-left:48px;animation:tape 40s linear infinite}
+.tape i{font-style:normal;color:var(--red)}
+@keyframes tape{to{transform:translateX(-50%)}}
+
+/* sections */
+section{padding-block:clamp(72px,9vw,140px)}
+.onink{background:var(--ink);color:var(--bone)}
+.onbone{background:var(--bone);color:var(--ink)}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,8fr);gap:clamp(28px,5vw,72px);align-items:center}
+.split.flip{grid-template-columns:minmax(0,8fr) minmax(0,5fr)}
+.split.flip > .copy{order:2}
+.label{font:500 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;display:flex;gap:10px;align-items:center;margin-bottom:22px}
+.label i{width:10px;height:18px;background:currentColor;display:inline-block}
+.onink .label i{background:var(--red)}
+h2{margin:0;font-weight:850;font-variation-settings:"wdth" 70;font-size:clamp(44px,6.2vw,100px);line-height:.88;text-transform:uppercase;letter-spacing:-.01em;text-wrap:balance}
+h2 em{font-style:normal;color:var(--red)}
+.red h2 em{color:var(--bone)}
+.copy p{margin:24px 0 0;max-width:40ch;font-size:18px}
+.facts{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:14px;max-width:44ch}
+.facts li{display:grid;grid-template-columns:28px 1fr;gap:6px;font-size:16px}
+.facts li::before{content:"";width:10px;height:18px;background:var(--red);margin-top:3px}
+.red .facts li::before{background:var(--ink)}
+.keys{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:15px}
+
+/* big feature list */
+.big{list-style:none;margin:40px 0 0;padding:0;border-top:3px solid var(--ink)}
+.big li{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) auto;gap:20px;align-items:baseline;padding-block:18px;border-bottom:3px solid var(--ink)}
+.big b{font-weight:850;font-variation-settings:"wdth" 72;font-size:clamp(26px,3.4vw,48px);line-height:.95;text-transform:uppercase}
+.big span{font-size:16px}
+.big code{font-size:13px;white-space:nowrap}
+
+/* install */
+.inst h2{font-size:clamp(56px,11vw,190px);line-height:.8;font-variation-settings:"wdth" 125;font-weight:900;letter-spacing:-.05em;text-transform:lowercase}
+.oss{display:grid;gap:14px;margin-top:48px}
+.os{display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px;align-items:center}
+.os > span{font:500 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.os .cmd{width:100%;justify-content:space-between;font-size:16px;padding:18px}
+.fine{margin-top:36px;max-width:60ch;font-size:15px}
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-block:28px 40px;font:500 13px/1.4 var(--mono)}
+footer a{text-decoration:none}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--bone);color:var(--ink);font:500 14px/1 var(--mono);padding:12px 16px;border-radius:5px;transition:.2s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:900px){
+  .hero,.split,.split.flip{grid-template-columns:1fr}
+  .split.flip > .copy{order:0}
+  .big li{grid-template-columns:1fr;gap:6px}
+  .os{grid-template-columns:1fr;gap:8px}
+  .slab{box-shadow:10px 10px 0 var(--deep)}
+  .onink .slab{box-shadow:10px 10px 0 var(--red)}
+}
+@media (prefers-reduced-motion:reduce){
+  .tape div,.word .cur.blink{animation:none}
+  .slab.tilt{transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <nav class="top" aria-label="Primary">
+    <a href="#top" aria-label="red home">getred.dev</a>
+    <div class="links">
+      <a href="#agent">Agent</a>
+      <a href="#inline">Inline</a>
+      <a href="#git">Git</a>
+      <a href="#sessions">Sessions</a>
+      <a href="#install">Install</a>
+      <a href="/docs">Docs</a>
+      <a href="/releases">Releases</a>
+      <a class="gh" href="https://github.com/codersauce/red">GitHub</a>
+    </div>
+  </nav>
+  <div class="wordrow">
+    <h1 class="word" id="top" aria-label="red"><span class="ch" aria-hidden="true">r</span><span class="ch" aria-hidden="true">e</span><span class="ch" aria-hidden="true">d</span><span class="cur" id="cur" aria-hidden="true"></span></h1>
+    <button class="retype" id="retype" type="button" aria-label="Type the wordmark again with sound">↻ type it again, with sound</button>
+  </div>
+  <div class="hero">
+    <div>
+      <p class="claim">Vim keys.<br><em>Agent inside.</em><br>One binary.</p>
+      <p class="sub">A terminal editor for people who think in motions, with a coding agent that edits through your buffers instead of behind them.</p>
+      <div class="install">
+        <button class="cmd" data-copy="brew install codersauce/tap/red"><span>brew install codersauce/tap/red</span><b>copy</b></button>
+      </div>
+      <p class="alt">or <a href="#install">curl, PowerShell, prebuilt archives</a></p>
+    </div>
+    <figure class="slab tilt" style="margin:0">
+      <video src="/media/a-hero.mp4" poster="/media/a-hero-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: search, multi-cursor rename, undo, fuzzy file open in red"></video>
+      <figcaption class="meta"><span>/earned · Ctrl-n ×3 · c · u · Ctrl-p win · dd · u</span><span>real time</span></figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="tape" aria-hidden="true"><div id="tape"></div></div>
+
+<section class="onink" id="agent">
+  <div class="wrap split">
+    <div class="copy">
+      <div class="label"><i></i>Space A</div>
+      <h2>The agent works <em>through</em> your editor.</h2>
+      <p>Codex sees what you see: open buffers, unsaved changes, the selection, and the diagnostics. Its edits go through Red's editor transactions and save paths, never behind your back.</p>
+      <ul class="facts">
+        <li>Reads the live buffer, including edits you haven't saved.</li>
+        <li>Changes are revision-checked and confined to the workspace.</li>
+        <li>Every edit is attributed to its conversation, and you can resume it later.</li>
+      </ul>
+    </div>
+    <figure class="slab" style="margin:0">
+      <video src="/media/a-agent.mp4" poster="/media/a-agent-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: the agent fixes a refill overflow bug in bucket.rs"></video>
+      <figcaption class="meta"><span>26G · Space A · "Cap tokens at capacity."</span><span>real Codex · wait trimmed</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="red" id="inline">
+  <div class="wrap split flip">
+    <div class="copy">
+      <div class="label"><i></i>V · Space i</div>
+      <h2>Ask about <em>this</em> line. Not the whole repo.</h2>
+      <p>Select the exact text, or let Red pick the enclosing function. The answer lands as one unsaved, undoable edit, so <kbd>u</kbd> takes it back.</p>
+      <div class="keys"><span><kbd>v</kbd> view the change</span><span><kbd>u</kbd> undo it</span><span><kbd>Space H</kbd> history</span></div>
+    </div>
+    <figure class="slab tilt" style="margin:0">
+      <video src="/media/a-inline.mp4" poster="/media/a-inline-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: inline assist rounds a wait time up with div_ceil"></video>
+      <figcaption class="meta"><span>/u64 · V · Space i · v · u</span><span>real Codex · wait trimmed</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="onbone" id="git">
+  <div class="wrap split">
+    <div class="copy">
+      <div class="label"><i></i>Space G</div>
+      <h2>Stage. Commit. <em>Stay.</em></h2>
+      <p>A full Git workspace inside the editor: hunks, staging, branches, remotes, stashes, logs, and rebases. Codex can write the commit message from the staged diff.</p>
+      <div class="keys"><span><kbd>s</kbd> stage</span><span><kbd>c</kbd> commit</span><span><kbd>l</kbd> log</span><span><kbd>?</kbd> every action</span></div>
+    </div>
+    <figure class="slab" style="margin:0">
+      <video src="/media/a-git.mp4" poster="/media/a-git-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: staging a hunk and generating a commit message in the Git workspace"></video>
+      <figcaption class="meta"><span>Space G · s · c · Generate message · :wq · l</span><span>real Codex · wait trimmed</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="onink" id="sessions">
+  <div class="wrap split flip">
+    <div class="copy">
+      <div class="label"><i></i>Ctrl-\</div>
+      <h2>Close the terminal. <em>Keep the work.</em></h2>
+      <p>Detached sessions keep buffers, plugins, language servers, and running agents alive across terminal and SSH disconnects on macOS and Linux. Crash recovery covers every platform.</p>
+      <div class="keys"><span><code>red --detach=work</code></span><span><code>red --attach work</code></span></div>
+    </div>
+    <figure class="slab tilt" style="margin:0">
+      <video src="/media/a-detach.mp4" poster="/media/a-detach-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: detaching from a session with unsaved work, then attaching again"></video>
+      <figcaption class="meta"><span>--detach=work · O · Ctrl-\ · --attach work</span><span>real time</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="red" id="themes">
+  <div class="wrap split">
+    <div class="copy">
+      <div class="label"><i></i>Space t</div>
+      <h2>133 themes. <em>One is red.</em></h2>
+      <p>Bundled in the binary and previewed live as you move through the list. VS Code themes work too.</p>
+    </div>
+    <figure class="slab" style="margin:0">
+      <video src="/media/a-themes.mp4" poster="/media/a-themes-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: previewing themes live"></video>
+      <figcaption class="meta"><span>Space t · ↑ ×8 · Esc</span><span>real time</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="onbone" id="features">
+  <div class="wrap">
+    <div class="label"><i></i>Everything else</div>
+    <h2>Included. <em>No config.</em></h2>
+    <ul class="big">
+      <li><b>Every mode</b><span>Normal, Insert, Visual, Visual Line, Visual Block, and Command, with a versioned Vim compatibility matrix.</span><code>ciw · dap · .</code></li>
+      <li><b>Multi-cursor</b><span>Select repeated words or stack cursors vertically, then use normal operators.</span><code>Ctrl-n · Ctrl-↓</code></li>
+      <li><b>Find anything</b><span>Fuzzy files with live preview, buffers, symbols, references, and project search.</span><code>Ctrl-p · Ctrl-e</code></li>
+      <li><b>Language servers</b><span>Built-in defaults for Rust, TypeScript, Markdown, JSON, TOML, YAML, and Lua. Tree-sitter highlighting.</span><code>gd · K</code></li>
+      <li><b>Husk plugins</b><span>An embedded plugin runtime. The file tree, search, Git, and agent are plugins too.</span><code>plugins/*.hk</code></li>
+      <li><b>Safe from other tools</b><span>If something else rewrites a file you're editing, both versions are kept until you choose.</span><code>:diffdisk</code></li>
+    </ul>
+  </div>
+</section>
+
+<section class="red inst" id="install">
+  <div class="wrap">
+    <h2>get red</h2>
+    <div class="oss">
+      <div class="os"><span>Homebrew</span><button class="cmd" data-copy="brew install codersauce/tap/red"><span>brew install codersauce/tap/red</span><b>copy</b></button></div>
+      <div class="os"><span>macOS · Linux</span><button class="cmd" data-copy="curl --proto '=https' --tlsv1.2 -fsSL https://getred.dev/install.sh | sh"><span>curl --proto '=https' --tlsv1.2 -fsSL https://getred.dev/install.sh | sh</span><b>copy</b></button></div>
+      <div class="os"><span>Windows</span><button class="cmd" data-copy="irm https://getred.dev/install.ps1 | iex"><span>irm https://getred.dev/install.ps1 | iex</span><b>copy</b></button></div>
+    </div>
+    <p class="fine">The installers verify the release checksum and run <code>red --self-check</code>. Agent features are optional and need an installed, logged-in Codex CLI.</p>
+  </div>
+  <footer class="wrap">
+    <span>red · MIT · codersauce</span>
+    <span><a href="https://github.com/codersauce/red">GitHub</a> · <a href="/docs">Docs</a> · <a href="/releases">Releases</a> · <a href="https://github.com/codersauce/red/releases/latest">Downloads</a> · <a href="https://discord.gg/5PWvAUNRHU">Discord</a></span>
+  </footer>
+</section>
+
+<div class="toast" id="toast" role="status">Copied</div>
+
+<script>
+// ---- wordmark: blinking cursor, then r-e-d typed with key clicks ----
+(() => {
+  const word = document.getElementById("top");
+  const cur = document.getElementById("cur");
+  const chars = [...word.querySelectorAll(".ch")];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let ctx = null, timers = [];
+
+  function audio() {
+    if (!ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctx = new AC();
+    }
+    return ctx;
+  }
+  // Unlock audio on the first interaction, so later keystrokes can click.
+  const unlock = () => { const a = audio(); if (a && a.state !== "running") a.resume().catch(() => {}); };
+  addEventListener("pointerdown", unlock, { once: true });
+  addEventListener("keydown", unlock, { once: true });
+
+  // A mechanical key: a bright noise tick, a low thump, and a quieter release.
+  function keyClick(strength = 1) {
+    const a = audio();
+    if (!a || a.state !== "running") return;
+    const t = a.currentTime;
+    const out = a.createGain();
+    out.gain.value = 0.55 * strength;
+    out.connect(a.destination);
+
+    const tick = (at, gain, freq) => {
+      const len = Math.floor(a.sampleRate * 0.035);
+      const buf = a.createBuffer(1, len, a.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 6);
+      const src = a.createBufferSource();
+      src.buffer = buf;
+      const bp = a.createBiquadFilter();
+      bp.type = "bandpass"; bp.frequency.value = freq; bp.Q.value = 0.9;
+      const g = a.createGain(); g.gain.value = gain;
+      src.connect(bp).connect(g).connect(out);
+      src.start(at);
+    };
+    const thump = (at, gain) => {
+      const o = a.createOscillator();
+      const g = a.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(190 + Math.random() * 30, at);
+      o.frequency.exponentialRampToValueAtTime(70, at + 0.05);
+      g.gain.setValueAtTime(gain, at);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + 0.06);
+      o.connect(g).connect(out);
+      o.start(at); o.stop(at + 0.07);
+    };
+    const f = 2600 + Math.random() * 1400;
+    tick(t, 1, f);
+    thump(t, 0.5);
+    tick(t + 0.075 + Math.random() * 0.02, 0.35, f * 1.3); // key release
+  }
+
+  function place(n) { // show the first n letters, cursor after them
+    chars.forEach((c, i) => c.classList.toggle("pending", i >= n));
+    word.insertBefore(cur, chars[n] || null);
+  }
+  function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+
+  function play() {
+    timers.forEach(clearTimeout); timers = [];
+    place(0);
+    cur.classList.add("blink");
+    let t = 1600;                          // idle blinking on an empty line
+    at(t, () => cur.classList.remove("blink")); // solid while typing, like a terminal
+    t += 260;
+    chars.forEach((_, i) => {
+      at(t, () => { place(i + 1); keyClick(i === 0 ? 1 : 0.9); });
+      t += 140 + Math.random() * 70;
+    });
+    at(t + 420, () => cur.classList.add("blink"));
+    at(t + 420 + 1050 * 4, () => cur.classList.remove("blink")); // settle solid
+  }
+
+  document.getElementById("retype").addEventListener("click", () => { unlock(); play(); });
+  if (!reduce) play();
+})();
+
+// ticker: duplicate once so the loop is seamless
+const keys=["Ctrl-p bucket ⏎","42G","ciw","Space A <i>make refill saturate</i>","u","V","Space i","Space G","s","c","Ctrl-n ×3","Ctrl-\\","red --attach work","Space t","dap",":wq"];
+const t=document.getElementById("tape");
+const once=keys.map(k=>`<span>${k}</span>`).join("");
+t.innerHTML=once+once;
+
+// play videos only while visible; click toggles
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  const v=e.target;
+  if(e.isIntersecting && !v.dataset.paused && !reduce){v.play().catch(()=>{})}else{v.pause()}
+}),{threshold:.35});
+document.querySelectorAll("video").forEach(v=>{
+  io.observe(v);
+  v.addEventListener("click",()=>{if(v.paused){delete v.dataset.paused;v.play()}else{v.dataset.paused=1;v.pause()}});
+});
+
+// copy buttons
+const toast=document.getElementById("toast");
+document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",async()=>{
+  try{await navigator.clipboard.writeText(b.dataset.copy);toast.textContent="Copied"}
+  catch{toast.textContent="Select the command to copy it"}
+  toast.classList.add("on");setTimeout(()=>toast.classList.remove("on"),1400);
+}));
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>red social card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=DM+Mono:wght@500&display=swap">
+<style>
+/* 1200×630 social card for Direction A. Rendered by render.sh. Text stays
+   inside a 48px safe margin because some feeds crop to 2:1. */
+:root{--red:#D7182A;--deep:#8E0E1A;--ink:#0C0B0B;--bone:#FFF3EE}
+*{box-sizing:border-box}
+html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:var(--red)}
+body{position:relative;font-family:Archivo,"Helvetica Neue",Arial,sans-serif;color:var(--ink)}
+.word{position:absolute;left:40px;top:24px;margin:0;font-weight:900;font-variation-settings:"wdth" 125;font-size:300px;line-height:.9;letter-spacing:-.065em;display:flex;align-items:baseline}
+.cur{display:inline-block;width:.055em;height:.79em;background:var(--bone);margin-left:.07em;border-radius:.03em;position:relative;top:.05em}
+.claim{position:absolute;left:52px;bottom:52px;margin:0;font-weight:850;font-variation-settings:"wdth" 72;font-size:62px;line-height:.9;text-transform:uppercase}
+.claim em{font-style:normal;color:var(--bone)}
+.slab{position:absolute;right:-70px;bottom:-60px;width:640px;aspect-ratio:16/9;border-radius:10px;background:#101014 center/cover no-repeat;box-shadow:16px 16px 0 var(--deep);transform:rotate(-3deg)}
+.url{position:absolute;right:52px;top:48px;font:500 22px/1 "DM Mono",monospace;letter-spacing:.02em}
+</style>
+</head>
+<body>
+  <h1 class="word">red<span class="cur"></span></h1>
+  <span class="url">getred.dev</span>
+  <div class="slab" style="background-image:url('../../public/media/a-agent.png')"></div>
+  <p class="claim">Vim keys.<br><em>Agent inside.</em><br>One binary.</p>
+</body>
+</html>

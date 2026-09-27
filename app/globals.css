@@ -362,11 +362,10 @@ img {
 
 .install-command code {
   min-width: 0;
-  overflow: hidden;
   flex: 1;
-  font: 500 12px var(--font-mono), monospace;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  padding-block: 10px;
+  font: 500 12px/1.4 var(--font-mono), monospace;
+  overflow-wrap: anywhere;
 }
 
 .install-command .copy {

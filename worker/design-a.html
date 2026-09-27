@@ -121,6 +121,7 @@ h2 em{font-style:normal;color:var(--red)}
 .os{display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px;align-items:center}
 .os > span{font:500 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
 .os .cmd{width:100%;justify-content:space-between;font-size:16px;padding:18px}
+.os .cmd span{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.35;text-align:left}
 .fine{margin-top:36px;max-width:60ch;font-size:15px}
 footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-block:28px 40px;font:500 13px/1.4 var(--mono)}
 footer a{text-decoration:none}
@@ -134,6 +135,9 @@ footer a{text-decoration:none}
   .os{grid-template-columns:1fr;gap:8px}
   .slab{box-shadow:10px 10px 0 var(--deep)}
   .onink .slab{box-shadow:10px 10px 0 var(--red)}
+}
+@media (max-width:500px){
+  .os .cmd{font-size:14px;padding:14px 12px;gap:8px}
 }
 @media (prefers-reduced-motion:reduce){
   .tape div,.word .cur.blink{animation:none}
@@ -277,7 +281,7 @@ footer a{text-decoration:none}
     <h2>get red</h2>
     <div class="oss">
       <div class="os"><span>Homebrew</span><button class="cmd" data-copy="brew install codersauce/tap/red"><span>brew install codersauce/tap/red</span><b>copy</b></button></div>
-      <div class="os"><span>macOS · Linux</span><button class="cmd" data-copy="curl --proto '=https' --tlsv1.2 -fsSL https://getred.dev/install.sh | sh"><span>curl --proto '=https' --tlsv1.2 -fsSL https://getred.dev/install.sh | sh</span><b>copy</b></button></div>
+      <div class="os"><span>macOS · Linux</span><button class="cmd" data-copy="curl -fsS https://getred.dev/install.sh | sh"><span>curl -fsS https://getred.dev/install.sh | sh</span><b>copy</b></button></div>
       <div class="os"><span>Windows</span><button class="cmd" data-copy="irm https://getred.dev/install.ps1 | iex"><span>irm https://getred.dev/install.ps1 | iex</span><b>copy</b></button></div>
     </div>
     <p class="fine">The installers verify the release checksum and run <code>red --self-check</code>. Agent features are optional and need an installed, logged-in Codex CLI.</p>

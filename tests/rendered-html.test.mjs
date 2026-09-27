@@ -51,6 +51,7 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(html, /href="\/releases"/);
   assert.match(html, /\/media\/a-agent\.mp4/);
   assert.match(html, /\/media\/a-agent-poster\.jpg/);
+  assert.match(html, /id="hero-install"[^>]*data-copy="curl -fsS https:\/\/getred\.dev\/install\.sh \| sh"/);
   assert.match(html, /brew install codersauce\/tap\/red/);
   assert.match(html, /https:\/\/getred\.dev\/install\.sh/);
   assert.match(html, /https:\/\/getred\.dev\/install\.ps1/);

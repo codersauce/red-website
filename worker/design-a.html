@@ -68,6 +68,7 @@ nav.top .gh{background:var(--ink);color:var(--bone);padding:8px 12px;border-radi
 .install{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .cmd{display:flex;align-items:center;gap:14px;background:var(--ink);color:var(--bone);font:500 15px/1 var(--mono);padding:14px 16px;border-radius:5px;border:0;cursor:pointer;max-width:100%;overflow:hidden}
 .cmd span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.install .cmd span{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.35;text-align:left}
 .cmd b{font-weight:500;color:var(--ash);font-size:12px;letter-spacing:.08em;text-transform:uppercase;flex:none}
 .cmd:hover b,.cmd:focus-visible b{color:var(--bone)}
 .cmd:focus-visible{outline:3px solid var(--bone);outline-offset:3px}
@@ -137,7 +138,7 @@ footer a{text-decoration:none}
   .onink .slab{box-shadow:10px 10px 0 var(--red)}
 }
 @media (max-width:500px){
-  .os .cmd{font-size:14px;padding:14px 12px;gap:8px}
+  .install .cmd,.os .cmd{font-size:14px;padding:14px 12px;gap:8px}
 }
 @media (prefers-reduced-motion:reduce){
   .tape div,.word .cur.blink{animation:none}
@@ -170,9 +171,9 @@ footer a{text-decoration:none}
       <p class="claim">Vim keys.<br><em>Agent inside.</em><br>One binary.</p>
       <p class="sub">A terminal editor for people who think in motions, with a coding agent that edits through your buffers instead of behind them.</p>
       <div class="install">
-        <button class="cmd" data-copy="brew install codersauce/tap/red"><span>brew install codersauce/tap/red</span><b>copy</b></button>
+        <button class="cmd" id="hero-install" type="button" aria-label="Copy macOS and Linux install command" data-copy="curl -fsS https://getred.dev/install.sh | sh"><span>curl -fsS https://getred.dev/install.sh | sh</span><b>copy</b></button>
       </div>
-      <p class="alt">or <a href="#install">curl, PowerShell, prebuilt archives</a></p>
+      <p class="alt">or <a href="#install">Homebrew and other install options</a></p>
     </div>
     <figure class="slab tilt" style="margin:0">
       <video src="/media/a-hero.mp4" poster="/media/a-hero-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: search, multi-cursor rename, undo, fuzzy file open in red"></video>
@@ -280,8 +281,8 @@ footer a{text-decoration:none}
   <div class="wrap">
     <h2>get red</h2>
     <div class="oss">
-      <div class="os"><span>Homebrew</span><button class="cmd" data-copy="brew install codersauce/tap/red"><span>brew install codersauce/tap/red</span><b>copy</b></button></div>
       <div class="os"><span>macOS · Linux</span><button class="cmd" data-copy="curl -fsS https://getred.dev/install.sh | sh"><span>curl -fsS https://getred.dev/install.sh | sh</span><b>copy</b></button></div>
+      <div class="os"><span>Homebrew</span><button class="cmd" data-copy="brew install codersauce/tap/red"><span>brew install codersauce/tap/red</span><b>copy</b></button></div>
       <div class="os"><span>Windows</span><button class="cmd" data-copy="irm https://getred.dev/install.ps1 | iex"><span>irm https://getred.dev/install.ps1 | iex</span><b>copy</b></button></div>
     </div>
     <p class="fine">The installers verify the release checksum and run <code>red --self-check</code>. Agent features are optional and need an installed, logged-in Codex CLI.</p>
@@ -385,6 +386,16 @@ const keys=["Ctrl-p bucket ⏎","42G","ciw","Space A <i>make refill saturate</i>
 const t=document.getElementById("tape");
 const once=keys.map(k=>`<span>${k}</span>`).join("");
 t.innerHTML=once+once;
+
+// Use PowerShell as the primary command on Windows. The full platform list stays below.
+const heroInstall=document.getElementById("hero-install");
+const platform=navigator.userAgentData?.platform || navigator.platform || "";
+if(/^win/i.test(platform) || /Windows NT/i.test(navigator.userAgent)){
+  const command="irm https://getred.dev/install.ps1 | iex";
+  heroInstall.dataset.copy=command;
+  heroInstall.querySelector("span").textContent=command;
+  heroInstall.setAttribute("aria-label","Copy Windows PowerShell install command");
+}
 
 // play videos only while visible; click toggles
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;

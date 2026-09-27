@@ -15,7 +15,7 @@ export function installMethods(origin: string): Record<InstallMethod, InstallMet
     },
     unix: {
       label: "macOS + Linux",
-      command: `curl --proto '=https' --tlsv1.2 -fsSL ${origin}/install.sh | sh`,
+      command: `curl -fsS ${origin}/install.sh | sh`,
       aria: "Copy macOS and Linux install command",
     },
     windows: {

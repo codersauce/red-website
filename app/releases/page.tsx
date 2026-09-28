@@ -8,27 +8,37 @@ import { releaseHighlights } from "../release-content";
 
 export const metadata: Metadata = {
   title: "Release highlights — red editor",
-  description: "Explore what shipped in Red v0.7.0, from source-linked Agent walkthroughs to inline assistance and multi-cursor editing.",
+  description: `Explore what shipped in Red ${releaseVersion}, including directory browsing, mouse selection, and shebang syntax detection.`,
   alternates: { canonical: "/releases" },
 };
+
+function ReleaseNavigation() {
+  return <nav aria-label="Release sections">
+    <div className="docs-nav-group">
+      <a href="#available-now">Available now</a>
+      <a href="#release-highlights">New in {releaseVersion}</a>
+      <a href="#release-notes">Complete release notes</a>
+    </div>
+  </nav>;
+}
 
 export default function ReleasesPage() {
   return <main>
     <div className="nav-wrap"><div className="page-shell"><SiteNav /></div></div>
     <div className="docs-layout page-shell">
-      <aside>
-        <p>Release highlights</p>
-        <nav aria-label="Release sections">
-          <a href="#available-now">Available now</a>
-          <a href="#release-highlights">New in v0.7.0</a>
-          <a href="#release-notes">Complete release notes</a>
-        </nav>
+      <aside className="docs-sidebar">
+        <p className="docs-sidebar-title">Release highlights</p>
+        <ReleaseNavigation />
       </aside>
+      <details className="docs-mobile-nav">
+        <summary>Release sections</summary>
+        <ReleaseNavigation />
+      </details>
       <article className="docs-content">
         <header>
           <p className="section-kicker">Latest published · <ReleaseVersion fallback={releaseVersion} /></p>
           <h1>What Red can do</h1>
-          <p>Explore Red&apos;s core workflows and what shipped in v0.7.0.</p>
+          <p>Explore Red&apos;s core workflows and what shipped in {releaseVersion}.</p>
         </header>
 
         <section id="available-now">
@@ -43,7 +53,7 @@ export default function ReleasesPage() {
         </section>
 
         <section id="release-highlights">
-          <h2>New in v0.7.0</h2>
+          <h2>New in {releaseVersion}</h2>
           <p>These features are available in the latest published release:</p>
           <ul>
             {releaseHighlights.map((story) => <li key={story.tag}><strong>{story.title}.</strong> {story.description}</li>)}

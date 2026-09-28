@@ -1,22 +1,27 @@
 export const releaseHighlights = [
   {
-    tag: "AGENT",
-    title: "Explanations that point back to the source",
-    description: "Ask about a subsystem and follow source-linked annotations through the actual code.",
+    tag: "FILES",
+    title: "Browse a directory in an editor window",
+    description: "Run red . or open a directory with :e, then use normal editor keys and Enter to navigate. Directory buffers are read-only and revisitable.",
   },
   {
-    tag: "INLINE",
-    title: "Ask, review, and refactor where you edit",
-    description: "Work on the enclosing function or exact visual selection without leaving your buffer.",
+    tag: "MOUSE",
+    title: "Select with the mouse, keep editing with Vim keys",
+    description: "Drag for a Visual selection, double-click for a word, triple-click for a line, or quadruple-click for a block.",
   },
   {
-    tag: "VIM",
-    title: "Multi-cursor, with your Vim muscle memory",
-    description: "Press Ctrl-n to select successive occurrences and edit all selections as one undoable change.",
+    tag: "SYNTAX",
+    title: "Highlight extensionless scripts from their shebang",
+    description: "Red recognizes common interpreters from the first line when a filename has no language match; language packs can register more.",
   },
   {
-    tag: "WORKSPACE",
-    title: "Pick models and protect unsaved work",
-    description: "Choose a model per Agent conversation and resolve external file conflicts without losing edits.",
+    tag: "PICKER",
+    title: "Move through picker results with Ctrl-n and Ctrl-p",
+    description: "Use Ctrl-n for the next result and Ctrl-p for the previous one without changing the search query.",
+  },
+  {
+    tag: "RUST",
+    title: "Try Rust Glancer as an optional language server",
+    description: "A documented configuration switches Rust projects to Glancer; rust-analyzer stays the default.",
   },
 ] as const;

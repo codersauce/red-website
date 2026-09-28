@@ -293,6 +293,11 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
+        <h2>Browse directories in a buffer</h2>
+        <p>Run <code>red .</code> or open a directory with <code>:e path/to/dir</code>. Move and search with normal editor keys, press <kbd>Enter</kbd> to open an entry, and press <kbd>-</kbd> to go to the parent directory. Use <kbd>R</kbd> to refresh the listing. Directory buffers are read-only and stay in the buffer list so you can return to them.</p>
+      </section>
+
+      <section>
         <h2>Arrange windows and panes</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Keys</th><th>Action</th></tr></thead>
@@ -702,6 +707,7 @@ export const docPages: DocPageDefinition[] = [
           <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
           <tbody>
             <tr><td><code>red [FILES...]</code></td><td>Open zero or more files</td></tr>
+            <tr><td><code>red .</code> or <code>red PATH/TO/DIR</code></td><td>Browse a directory in a read-only editor buffer</td></tr>
             <tr><td><code>red -r PATH [FILES...]</code></td><td>Set the workspace root before opening files</td></tr>
             <tr><td><code>red -c TOML [FILES...]</code></td><td>Apply a repeatable inline configuration override</td></tr>
             <tr><td><code>red --version</code></td><td>Print the installed version</td></tr>

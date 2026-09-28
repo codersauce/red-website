@@ -76,7 +76,8 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(releases, /Latest published/i);
   assert.match(releases, new RegExp(escapeRegExp(publishedVersion)));
   assert.match(releases, /Available now/i);
-  assert.match(releases, /New in v0\.7\.0/i);
+  assert.match(releases, new RegExp(`New in (?:<!-- -->)?${escapeRegExp(publishedVersion)}`, "i"));
+  assert.match(releases, /Browse a directory in an editor window/);
   assert.doesNotMatch(releases, /not included in the latest published release yet/i);
 });
 

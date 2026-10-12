@@ -77,8 +77,15 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(releases, new RegExp(escapeRegExp(publishedVersion)));
   assert.match(releases, /Available now/i);
   assert.match(releases, new RegExp(`New in (?:<!-- -->)?${escapeRegExp(publishedVersion)}`, "i"));
-  assert.match(releases, /Browse a directory in an editor window/);
+  assert.match(releases, /Make room for long paths in pickers/);
+  assert.match(releases, /Save and quit after formatting finishes/);
   assert.doesNotMatch(releases, /not included in the latest published release yet/i);
+
+  const navigation = await (await render("/docs/editor/navigation")).text();
+  assert.match(navigation, /Alt-p/);
+  assert.match(navigation, /F4/);
+  const languages = await (await render("/docs/languages")).text();
+  assert.match(languages, /format-on-save is pending/);
 });
 
 test("installation snippets use the canonical origin on every supported host", async () => {

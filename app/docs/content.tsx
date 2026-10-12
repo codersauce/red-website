@@ -191,6 +191,7 @@ export const docPages: DocPageDefinition[] = [
         <pre><code>{`red src/main.rs\nred src/main.rs src/lib.rs\nred -r path/to/project src/main.rs`}</code></pre>
         <p>The <code>-r</code> option sets the workspace root explicitly. Inside Red, press <kbd>Ctrl-p</kbd> for the file picker, <kbd>Ctrl-j</kbd> or <kbd>Space b</kbd> for open buffers, and <kbd>Ctrl-e</kbd> for the file tree.</p>
         <p>Add a line number to a file-picker query to open that location. For example, <code>render:240</code> opens the selected matching file at line 240.</p>
+        <p>Press <kbd>Alt-p</kbd> or <kbd>F4</kbd> in the file, buffer, or project-search picker to hide or restore its preview. Your query and selection stay in place while long paths get more room.</p>
       </section>
 
       <section>
@@ -359,6 +360,7 @@ export const docPages: DocPageDefinition[] = [
         <p>Completion combines words from open buffers with candidates from the active language server. Use the arrow keys or <kbd>Ctrl-n</kbd>/<kbd>Ctrl-p</kbd> to choose an item, <kbd>Tab</kbd> or <kbd>Enter</kbd> to accept it, and <kbd>Ctrl-e</kbd> to close the menu.</p>
         <p>Red formats supported documents when saving and reindents pasted code by default. Disable either behavior without disabling explicit formatting:</p>
         <pre><code>{`[formatting]\non_save = false\non_paste = false`}</code></pre>
+        <p>When format-on-save is pending, <kbd>:wq</kbd> waits for the save before exiting. Red stays open if the save fails or the buffer changes during formatting.</p>
       </section>
 
       <section>

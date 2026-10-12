@@ -18,6 +18,18 @@ npm test        # installer drift check + build + SSR assertions
 npm run lint
 ```
 
+Before publication, run `npm audit --omit=dev` and review the full `npm audit`
+for dependencies bundled into the Worker. `react-server-dom-webpack` is declared
+as a development dependency but supplies the server renderer; keep its version
+aligned with React and React DOM.
+
+The `image-size` override selects the patched 2.0.4 release because Vinext 0.0.50
+pins 2.0.2, which is affected by
+[image parser denial of service advisories](https://github.com/advisories/GHSA-5p2g-fcmc-qvqq).
+Remove the override when the selected Vinext version uses a patched dependency.
+The [dependency audit](docs/DEPENDENCY_AUDIT.md) records the release update and
+the applicability of remaining toolchain findings.
+
 ## Layout
 
 - `worker/design-a.html` — the standalone Direction A homepage, including its CSS and interactions

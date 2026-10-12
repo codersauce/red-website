@@ -8,7 +8,7 @@ import { releaseHighlights } from "../release-content";
 
 export const metadata: Metadata = {
   title: "Release highlights — red editor",
-  description: `Explore what shipped in Red ${releaseVersion}, including directory browsing, mouse selection, and shebang syntax detection.`,
+  description: `Explore what shipped in Red ${releaseVersion}, including the picker preview toggle and reliable save and quit after formatting.`,
   alternates: { canonical: "/releases" },
 };
 
@@ -54,7 +54,7 @@ export default function ReleasesPage() {
 
         <section id="release-highlights">
           <h2>New in {releaseVersion}</h2>
-          <p>These features are available in the latest published release:</p>
+          <p>These changes are available in the latest published release:</p>
           <ul>
             {releaseHighlights.map((story) => <li key={story.tag}><strong>{story.title}.</strong> {story.description}</li>)}
           </ul>

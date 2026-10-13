@@ -1,6 +1,6 @@
 # Website dependency audit
 
-Checked on 2026-10-12 for the Red v0.8.1 website update. Rerun the audits before
+Checked on 2026-10-12 for the Red v0.8.2 website update. Rerun the audits before
 publication; advisory counts are a snapshot.
 
 `npm audit --omit=dev` reports zero vulnerabilities. The full `npm audit`

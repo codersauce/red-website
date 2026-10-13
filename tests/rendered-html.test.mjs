@@ -76,10 +76,26 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(releases, /Latest published/i);
   assert.match(releases, new RegExp(escapeRegExp(publishedVersion)));
   assert.match(releases, /Available now/i);
-  assert.match(releases, new RegExp(`New in (?:<!-- -->)?${escapeRegExp(publishedVersion)}`, "i"));
+  const versions = [...releases.matchAll(/<h2>(v0\.8\.[012])<\/h2>/g)].map((match) => match[1]);
+  assert.deepEqual(versions, ["v0.8.2", "v0.8.1", "v0.8.0"]);
+  assert.equal(versions[0], publishedVersion);
+  for (const version of versions) {
+    assert.match(releases, new RegExp(`id="release-${version.replaceAll(".", "-")}"`));
+    assert.match(releases, new RegExp(`https://github.com/codersauce/red/releases/tag/${escapeRegExp(version)}`));
+  }
+  assert.match(releases, /Update from the editor or terminal/);
+  assert.match(releases, /Browse a directory in an editor window/);
+  assert.doesNotMatch(releases, /releases\/tag\/v0\.7/);
   assert.match(releases, /Make room for long paths in pickers/);
   assert.match(releases, /Save and quit after formatting finishes/);
   assert.doesNotMatch(releases, /not included in the latest published release yet/i);
+
+  const updating = await render("/docs/getting-started/updating");
+  assert.equal(updating.status, 200);
+  const updateGuide = await updating.text();
+  assert.match(updateGuide, /red update --check/);
+  assert.match(updateGuide, /Migrate an older standalone installation/);
+  assert.match(updateGuide, /mode = &quot;off&quot;/);
 
   const navigation = await (await render("/docs/editor/navigation")).text();
   assert.match(navigation, /Alt-p/);

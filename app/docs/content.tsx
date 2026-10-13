@@ -7,6 +7,7 @@ import InstallPicker from "../components/InstallPicker";
 export type DocPageId =
   | "overview"
   | "install"
+  | "updating"
   | "first-session"
   | "navigation"
   | "search"
@@ -40,6 +41,7 @@ export const docNavigation = [
     items: [
       { id: "overview" as const, label: "Overview", href: "/docs" },
       { id: "install" as const, label: "Install Red", href: "/docs/getting-started/install" },
+      { id: "updating" as const, label: "Update Red", href: "/docs/getting-started/updating" },
       { id: "first-session" as const, label: "First session", href: "/docs/getting-started/first-session" },
     ],
   },
@@ -102,7 +104,8 @@ export const docPages: DocPageDefinition[] = [
 
       <section>
         <h2>What the installer does</h2>
-        <p>The shell and PowerShell installers download the release archive for your platform, compare it with the published SHA-256 checksum, install the binary, and run Red&apos;s self-check.</p>
+        <p>The shell and PowerShell installers download the release archive for your platform, compare it with the published SHA-256 checksum, install the binary, and run Red&apos;s self-check. They also enable managed updates for your standalone installation.</p>
+        <p>Already have Red? See <Link href="/docs/getting-started/updating">Update Red</Link> for manual updates and migrating an older installation.</p>
         <ul>
           <li>On macOS and Linux, the default destination is <code>~/.local/bin/red</code>.</li>
           <li>On Windows, the default destination is <code>%LOCALAPPDATA%\Programs\Red\bin\red.exe</code>. The installer adds that directory to your user PATH.</li>
@@ -121,6 +124,49 @@ export const docPages: DocPageDefinition[] = [
         <h2>Open a project</h2>
         <pre><code>red -r path/to/project</code></pre>
         <p>Red works without a configuration file. The default configuration, plugins, and themes are embedded in the binary.</p>
+        <p><Link className="text-link" href="/docs/getting-started/first-session">Continue with your first session</Link></p>
+      </section>
+    </>,
+  },
+  {
+    id: "updating",
+    slug: "getting-started/updating",
+    href: "/docs/getting-started/updating",
+    section: "Getting started",
+    title: "Update Red",
+    description: "Check for new releases, update a standalone installation, and migrate an older install.",
+    render: ({ origin }) => <>
+      <section>
+        <h2>Check and install a release</h2>
+        <p>Official standalone installations support macOS Intel and Apple Silicon, x86-64 glibc Linux, and x86-64 Windows. Check for a newer stable release without changing your executable:</p>
+        <pre><code>red update --check</code></pre>
+        <p>Install the latest stable release:</p>
+        <pre><code>red update</code></pre>
+        <p>Inside the editor, run <kbd>:update</kbd> or choose <strong>Update Red</strong> in the command palette. You can continue editing while the update worker runs.</p>
+        <p>The updater verifies the archive's published SHA-256 checksum, candidate version, and bundled runtime before replacing the executable. Restart your editing sessions to use the new version. If a detached session is active, save and stop it before updating.</p>
+      </section>
+      <section>
+        <h2>Migrate an older standalone installation</h2>
+        <p>If you installed Red before v0.8.2, extracted an archive manually, or see an unmanaged-installation message, rerun the official installer once into your existing directory. It writes the installation receipt and lock file needed for managed updates. Save and close Red first, including detached sessions.</p>
+        <h3>macOS and Linux</h3>
+        <p>Use your existing install directory. This example uses the default <code>~/.local/bin</code>:</p>
+        <pre><code>{`curl --proto '=https' --tlsv1.2 -fsSL ${origin}/install.sh -o /tmp/red-install.sh\nRED_INSTALL_DIR="$HOME/.local/bin" sh /tmp/red-install.sh`}</code></pre>
+        <h3>Windows</h3>
+        <p>Replace <code>-InstallDir</code> if you use a directory other than the default:</p>
+        <pre><code>{`$installer = Join-Path $env:TEMP "red-install.ps1"\nInvoke-WebRequest ${origin}/install.ps1 -OutFile $installer\n& $installer -InstallDir (Join-Path $env:LOCALAPPDATA "Programs\\Red\\bin")`}</code></pre>
+        <p>Run <code>red --version</code> and <code>red update --check</code> to verify your installation.</p>
+      </section>
+      <section>
+        <h2>Homebrew and source builds</h2>
+        <p>For Homebrew, run:</p>
+        <pre><code>{`brew update\nbrew upgrade codersauce/tap/red`}</code></pre>
+        <p>Source builds use your existing build and install process. The standalone updater refuses to replace executables it doesn't own.</p>
+      </section>
+      <section>
+        <h2>Disable daily checks</h2>
+        <p>Red checks for a newer stable release once per day by default and only notifies you. Installation requires your command. To disable automatic checks, add this to <code>~/.config/red/config.toml</code> and restart Red:</p>
+        <pre><code>{`[updates]\nmode = "off"`}</code></pre>
+        <p><code>red update --check</code>, <code>red update</code>, and <kbd>:update</kbd> remain available.</p>
         <p><Link className="text-link" href="/docs/getting-started/first-session">Continue with your first session</Link></p>
       </section>
     </>,
@@ -724,6 +770,8 @@ export const docPages: DocPageDefinition[] = [
           <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
           <tbody>
             <tr><td><code>red --self-check</code></td><td>Validate the bundled runtime and plugins</td></tr>
+            <tr><td><code>red update --check</code></td><td>Check for a newer stable release without replacing the executable</td></tr>
+            <tr><td><code>red update</code></td><td>Install the latest stable release for an official standalone installation</td></tr>
             <tr><td><code>red --check-config</code></td><td>Validate the effective user configuration</td></tr>
             <tr><td><code>red --agent-check</code></td><td>Report Codex prerequisites without installing anything</td></tr>
             <tr><td><code>red --agent-check --strict</code></td><td>Exit nonzero when Agent editing isn't ready</td></tr>

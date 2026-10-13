@@ -1397,3 +1397,8 @@ img {
     transition: none;
   }
 }
+
+.release-entry + .release-entry {
+  margin-top: 32px;
+  border-top: 1px solid var(--border);
+}

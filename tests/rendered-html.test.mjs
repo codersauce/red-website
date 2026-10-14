@@ -121,7 +121,7 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   const jsonRpcResponse = await render("/docs/plugins/json-rpc");
   assert.equal(jsonRpcResponse.status, 200);
   const jsonRpc = await jsonRpcResponse.text();
-  assert.match(jsonRpc, /Available in the upcoming v0\.9\.0/);
+  assert.match(jsonRpc, /Available in Red v0\.9\.0 and later/);
   assert.match(jsonRpc, /red\/DocumentSnapshot/);
   assert.match(jsonRpc, /red\/DocumentApply/);
   assert.match(jsonRpc, /red\/DocumentUndo/);

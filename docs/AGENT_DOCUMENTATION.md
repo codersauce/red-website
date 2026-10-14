@@ -15,7 +15,9 @@ GET and HEAD work without JavaScript, cookies, or authentication. Responses use 
 
 The human documentation pages advertise their Markdown alternate and link to `/llms.txt`. View Markdown opens the export; Copy Markdown fetches those same bytes. The separate `/docs/agent` page still describes Red's built-in Agent feature.
 
-Canonical HTML URLs continue to return HTML in this first delivery. Accept negotiation is a separate dependent change.
+Canonical documentation URLs also support content negotiation in the dependent delivery. GET and HEAD requests with `Accept: text/markdown` return the exact bytes and validators from the corresponding `.md` endpoint. Missing Accept and wildcard ties select HTML. Quality and specificity take precedence; equally explicit preferences follow their order in Accept. `q=0` excludes a representation, unsupported charsets do not match UTF-8, and requests accepting neither HTML nor Markdown receive 406. Known trailing-slash URLs redirect with 308 before ordinary representation selection.
+
+Framework requests (RSC/router/action headers, `_rsc`, and accepted `text/x-component`) bypass negotiation. `.rsc`, unrelated pages/assets, and non-GET/HEAD requests retain their existing routing. Canonical responses preserve existing `Vary` dimensions and add Accept plus the framework request headers. They use `Cache-Control: no-store, must-revalidate` for HTML, negotiated Markdown, framework responses, redirects, and 406s; explicit `.md` URLs retain their revalidation policy. This avoids shared representation caching without relying on CDN support for Vary.
 
 ## Build, routing, and freshness
 
@@ -59,9 +61,12 @@ curl -I http://127.0.0.1:8788/docs.md
 curl -i http://127.0.0.1:8788/docs/missing.md
 curl -i 'http://127.0.0.1:8788/docs.md/?download=1'
 curl -i http://127.0.0.1:8788/llms.txt
+curl -i -H 'Accept: text/markdown' http://127.0.0.1:8788/docs/plugins/json-rpc
+curl -I -H 'Accept: text/markdown' http://127.0.0.1:8788/docs/for-agents
+curl -i -H 'Accept: application/json' http://127.0.0.1:8788/docs
 ```
 
-The first delivery passed 28 automated tests, generated 22 pages plus the index, and verified 80 code blocks. Eighteen additional checks exercised the real local Worker/assets runtime, including the conditional behavior that differed from the filesystem test adapter. Browser checks passed 16 page/theme/viewport combinations, including exact Markdown clipboard bytes, language tabs, installer copy, error feedback, and narrow-screen overflow. Browser and fresh-agent evidence are reported separately from automated tests; the three retrieval/task evaluations are recorded in [the evaluation report](AGENT_DOCUMENTATION_EVALUATION.md). Those evaluations did not execute Red itself.
+The complete stack passes 34 automated tests, generates 22 pages plus the index, and verifies 80 code blocks. The explicit-export delivery passed 28 tests; negotiation adds six focused cases covering all pages and the preference/cache matrix. Eighteen additional checks exercised the real local Worker/assets runtime, including the conditional behavior that differed from the filesystem test adapter. The negotiation delivery adds 36 actual-runtime checks for media preferences, validators, framework bypasses, redirects, and alternating representations. Browser checks passed 16 page/theme/viewport combinations, including exact Markdown clipboard bytes, language tabs, installer copy, error feedback, and narrow-screen overflow. Browser and fresh-agent evidence are reported separately from automated tests; the three retrieval/task evaluations are recorded in [the evaluation report](AGENT_DOCUMENTATION_EVALUATION.md). Those evaluations did not execute Red itself.
 
 ## Publication checklist
 

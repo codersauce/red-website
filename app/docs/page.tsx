@@ -35,6 +35,7 @@ const topics = [
       ["Keybindings", "/docs/keybindings"],
       ["Themes", "/docs/themes"],
       ["Plugins", "/docs/plugins"],
+      ["JSON-RPC plugins", "/docs/plugins/json-rpc"],
       ["Husk", "/docs/husk"],
     ],
   },

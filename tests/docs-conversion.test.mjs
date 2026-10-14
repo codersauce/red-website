@@ -48,6 +48,19 @@ test("exports both hidden language panels and every installer platform", async (
   assert.equal(result.codeBlocks[2].value, "curl https://getred.dev/install.sh | sh");
 });
 
+test("rejects whole examples lost by a transform while excluding deliberate chrome", async () => {
+  const block = '<pre data-language="shell"><code>red --version</code></pre>';
+  const installer = '<div class="install-command" role="tabpanel" data-doc-label="Homebrew"><code data-language="shell">brew install codersauce/tap/red</code></div>';
+  for (const example of [block, installer]) {
+    // Cards export their title and description, so an example inserted inside
+    // one must be rejected instead of silently disappearing from the export.
+    const html = wrap(`<a class="docs-card" href="/docs/test"><h3>Guide</h3><p>Description</p>${example}</a>`);
+    await assert.rejects(convert(html), /Markdown dropped or changed code/);
+  }
+  const result = await convert(wrap(`<div data-doc-ignore>${block}</div><nav class="docs-pagination">${block}</nav>`));
+  assert.deepEqual(result.codeBlocks, []);
+});
+
 test("preserves callouts, GFM tables, inline notation, images, and substantive landing navigation", async () => {
   const html = wrap(`
     <aside class="docs-callout"><strong>Requires v0.9.0</strong><span>Install <code>node</code> separately.</span></aside>
@@ -56,6 +69,7 @@ test("preserves callouts, GFM tables, inline notation, images, and substantive l
     <nav><a href="/docs/test">Test guide</a></nav>
     <a class="docs-card" href="/docs/test"><span class="docs-card-number">01</span><div><h3>Start here</h3><p>Follow this guide.</p></div><svg>arrow</svg></a>
     <img src="/images/example.png" alt="Red showing two language servers" />
+    <img src="images/relative.png" alt="Document-relative illustration" />
     <div data-doc-ignore><button>Copy Markdown</button><p>Loading</p></div>`);
   const { markdown } = await convert(html);
   assert.match(markdown, /> \*\*Requires v0\.9\.0\*\*/);
@@ -66,6 +80,7 @@ test("preserves callouts, GFM tables, inline notation, images, and substantive l
   assert.match(markdown, /\[Test guide\]\(https:\/\/getred.dev\/docs\/test.md\)/);
   assert.match(markdown, /\[\*\*Start here\*\*\]\(https:\/\/getred.dev\/docs\/test.md\)/);
   assert.match(markdown, /!\[Red showing two language servers\]\(https:\/\/getred.dev\/images\/example.png\)/);
+  assert.match(markdown, /!\[Document-relative illustration\]\(https:\/\/getred.dev\/docs\/images\/relative.png\)/);
 });
 
 test("preserves explicit anchors and validates rewritten documentation links", async () => {

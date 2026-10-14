@@ -44,6 +44,29 @@ function articleFromHtml(html) {
   return article;
 }
 
+// Inventory examples before transforming the article. This must not reuse the
+// semantic converter: a transform that drops an entire example must fail too.
+function sourceCodeBlocks(article) {
+  const blocks = [];
+  function collect(node) {
+    if (node.properties?.dataDocIgnore !== undefined
+      || ["docs-pagination", "docs-markdown-controls"].some((name) => hasClass(node, name))
+      || ["button", "script", "style", "svg"].includes(node.tagName)) return;
+    if (node.tagName === "pre" || hasClass(node, "install-command")) {
+      const code = node.children.find((child) => child.tagName === "code");
+      assert.ok(code, "Documentation example needs a code child");
+      blocks.push({
+        language: String(node.properties.dataLanguage ?? code.properties?.dataLanguage ?? "text"),
+        value: nodeText(code),
+      });
+      return;
+    }
+    for (const child of node.children ?? []) collect(child);
+  }
+  collect(article);
+  return blocks;
+}
+
 // Keep hidden tab panels: they hold equally authoritative examples. Only known
 // presentation controls are removed, never all navigation or hidden elements.
 function semanticContent(node) {
@@ -165,8 +188,10 @@ export function markdownCodeBlocks(markdown) {
 
 /** Convert locally rendered documentation; throws on lossy code conversion. */
 export async function convertDocumentation(html, options) {
-  const tree = preparedDocument(html);
-  const codeBlocks = [];
+  const article = articleFromHtml(html);
+  const codeBlocks = sourceCodeBlocks(article);
+  const tree = { type: "root", children: semanticContent(article) };
+  const pageUrl = new URL(options.page.href, options.origin);
   const links = [];
   walk(tree, (node) => {
     if (node.tagName === "a" && node.properties.href) {
@@ -174,7 +199,7 @@ export async function convertDocumentation(html, options) {
       links.push(node.properties.href);
     }
     if (node.tagName === "img" && node.properties.src) {
-      node.properties.src = new URL(String(node.properties.src), options.origin).href;
+      node.properties.src = new URL(String(node.properties.src), pageUrl).href;
     }
   });
   preserveAnchors(tree);
@@ -186,7 +211,6 @@ export async function convertDocumentation(html, options) {
         assert.ok(code, "Documentation pre element needs a code child");
         const language = String(node.properties.dataLanguage ?? code.properties?.dataLanguage ?? "text");
         const value = nodeText(code);
-        codeBlocks.push({ language, value });
         return { type: "code", lang: language, value };
       },
       code(_state, node) {
@@ -198,7 +222,7 @@ export async function convertDocumentation(html, options) {
     },
   }).run(tree);
 
-  const canonical = new URL(options.page.href, options.origin).href;
+  const canonical = pageUrl.href;
   const metadata = {
     type: "paragraph",
     children: [
@@ -213,7 +237,7 @@ export async function convertDocumentation(html, options) {
   assert.ok(headingIndex >= 0, `${options.page.href}: missing title`);
   markdownTree.children.splice(headingIndex + 1, 0, metadata);
   const markdown = markdownWriter.stringify(markdownTree);
-  assert.deepEqual(markdownCodeBlocks(markdown), codeBlocks, `${options.page.href}: Markdown changed code text or language`);
+  assert.deepEqual(markdownCodeBlocks(markdown), codeBlocks, `${options.page.href}: Markdown dropped or changed code text or language`);
   return { markdown, codeBlocks, links, anchors: documentationAnchors(html) };
 }
 

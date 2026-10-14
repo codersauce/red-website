@@ -61,7 +61,7 @@ curl -i 'http://127.0.0.1:8788/docs.md/?download=1'
 curl -i http://127.0.0.1:8788/llms.txt
 ```
 
-The first implementation passed 27 automated tests, generated 22 pages plus the index, and verified 80 code blocks. Eighteen additional checks exercised the real local Worker/assets runtime, including the conditional behavior that differed from the filesystem test adapter. Browser and fresh-agent evidence are reported separately in the PR; the three retrieval/task evaluations are recorded in [the evaluation report](AGENT_DOCUMENTATION_EVALUATION.md). Those evaluations did not execute Red itself.
+The first delivery passed 28 automated tests, generated 22 pages plus the index, and verified 80 code blocks. Eighteen additional checks exercised the real local Worker/assets runtime, including the conditional behavior that differed from the filesystem test adapter. Browser checks passed 16 page/theme/viewport combinations, including exact Markdown clipboard bytes, language tabs, installer copy, error feedback, and narrow-screen overflow. Browser and fresh-agent evidence are reported separately from automated tests; the three retrieval/task evaluations are recorded in [the evaluation report](AGENT_DOCUMENTATION_EVALUATION.md). Those evaluations did not execute Red itself.
 
 ## Publication checklist
 

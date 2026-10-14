@@ -816,7 +816,7 @@ export const docPages: DocPageDefinition[] = [
         <p>The copy in your configuration directory shadows the bundled file. Remove the copy to return to the version shipped with Red.</p>
         <p>Plugins that spawn processes need an explicit allowlist:</p>
         <pre><code>{`[plugin_permissions.project_search]\nprocess = ["rg"]`}</code></pre>
-        <p>In the upcoming <strong>v0.9.0</strong> release, external packages can also declare a standalone <code>[rpc]</code> process in <code>red-plugin.toml</code> and talk to Red over newline-delimited JSON-RPC 2.0 in any language. <Link className="text-link" href="/docs/plugins/json-rpc">Write a JSON-RPC plugin in Python or Node.js</Link></p>
+        <p>Starting with <strong>v0.9.0</strong>, external packages can also declare a standalone <code>[rpc]</code> process in <code>red-plugin.toml</code> and talk to Red over newline-delimited JSON-RPC 2.0 in any language. <Link className="text-link" href="/docs/plugins/json-rpc">Write a JSON-RPC plugin in Python or Node.js</Link></p>
       </section>
     </>,
   },
@@ -830,7 +830,7 @@ export const docPages: DocPageDefinition[] = [
     render: () => <>
       <section>
         <h2>Overview and required Red version</h2>
-        <aside className="docs-callout"><strong>Available in the upcoming v0.9.0</strong><span>Standalone JSON-RPC plugins (PR #380) and the <code>0.19.0</code> host API surface (PR #381) are merged on <code>main</code> and ship in the upcoming <strong>v0.9.0</strong> release. They are not included in Red v0.8.2.</span></aside>
+        <aside className="docs-callout"><strong>Available in Red v0.9.0 and later</strong><span>Use <strong>Red v0.9.0 or later</strong> for standalone JSON-RPC plugins and the <code>0.19.0</code> host API surface. They are not included in Red v0.8.2.</span></aside>
         <p>A JSON-RPC plugin is an external package with a <code>red-plugin.toml</code> manifest and a child process that speaks JSON-RPC 2.0 over UTF-8 standard input and output. Red remains the owner of buffers, undo history, focus, panels, and sessions; your process requests attributed operations through Red&apos;s versioned <code>red/*</code> host methods.</p>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Rule</th><th>Protocol version 1 behavior</th></tr></thead>

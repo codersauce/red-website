@@ -415,7 +415,7 @@ export const docPages: DocPageDefinition[] = [
         <h2>Add or override a server</h2>
         <pre><code>{`[lsp.servers.go]\ncommand = "gopls"\nlanguage_id = "go"\nfile_extensions = ["go"]\nroot_markers = ["go.mod", ".git"]`}</code></pre>
         <p>Restart Red after changing a server definition, or run <kbd>:languages reload</kbd> after changing a unified language definition.</p>
-        <p>In the upcoming <strong>v0.9.0</strong> release, multiple configured servers with overlapping file extensions or filenames attach to the same buffer automatically, combining diagnostics and code actions while routing completion, hover, and navigation by server capability. <Link className="text-link" href="/docs/languages/typescript-eslint">Configure TypeScript and ESLint together</Link></p>
+        <p>Starting with <strong>v0.9.0</strong>, multiple configured servers with overlapping file extensions or filenames attach to the same buffer automatically, combining diagnostics and code actions while routing completion, hover, and navigation by server capability. <Link className="text-link" href="/docs/languages/typescript-eslint">Configure TypeScript and ESLint together</Link></p>
       </section>
 
       <section>
@@ -437,7 +437,7 @@ export const docPages: DocPageDefinition[] = [
     render: () => <>
       <section>
         <h2>Goal and required Red version</h2>
-        <aside className="docs-callout"><strong>Available in the upcoming v0.9.0</strong><span>Attaching multiple language servers to a single document is merged on <code>main</code> (PR #383) and ships in the upcoming <strong>v0.9.0</strong> release. In Red v0.8.2 and earlier, only one matching server attaches to each file.</span></aside>
+        <aside className="docs-callout"><strong>Available in Red v0.9.0 and later</strong><span>Use <strong>Red v0.9.0 or later</strong> to attach multiple language servers to a single document. In Red v0.8.2 and earlier, only one matching server attaches to each file.</span></aside>
         <p>This guide configures <code>typescript-language-server</code> and <code>vscode-eslint-language-server</code> to work together in the same <code>.ts</code>, <code>.tsx</code>, <code>.js</code>, or <code>.jsx</code> buffer while keeping Prettier as the external formatter. TypeScript serves completion, hover, signature help, symbols, and go-to-definition; ESLint publishes lint diagnostics and rule code actions alongside TypeScript's own diagnostics and quick fixes.</p>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Layer</th><th>Where it lives</th><th>Responsibility</th></tr></thead>
@@ -461,7 +461,7 @@ export const docPages: DocPageDefinition[] = [
         <h3>2. Install project dependencies</h3>
         <p><code>vscode-eslint-language-server</code> loads ESLint from the project's local <code>node_modules</code>, and <code>typescript-language-server</code> uses the workspace TypeScript compiler when present. Inside your project directory, install the compiler, linter, and formatter:</p>
         <pre><code>npm install --save-dev eslint@10.4.1 @eslint/js@10.0.1 typescript-eslint@8.60.1 typescript@6.0.3 prettier@3.8.3</code></pre>
-        <aside className="docs-callout"><strong>Tested compatibility baseline</strong><span>The steps in this guide were verified against the upcoming v0.9.0 build (<code>bf2c2039d</code>) on Node.js <code>v24.22.0</code> with <code>vscode-langservers-extracted</code> <code>4.8.0</code>, <code>typescript-language-server</code> <code>6.0.1</code>, TypeScript <code>6.0.3</code>, ESLint <code>10.4.1</code>, <code>@eslint/js</code> <code>10.0.1</code>, <code>typescript-eslint</code> <code>8.60.1</code>, and Prettier <code>3.8.3</code>. Other recent versions that use stdio LSP and ESLint flat configs follow the same setup, though diagnostic text and rule actions can vary across ESLint and plugin releases.</span></aside>
+        <aside className="docs-callout"><strong>Tested compatibility baseline</strong><span>The steps in this guide were verified against the v0.9.0 implementation (<code>bf2c2039d</code>) on Node.js <code>v24.22.0</code> with <code>vscode-langservers-extracted</code> <code>4.8.0</code>, <code>typescript-language-server</code> <code>6.0.1</code>, TypeScript <code>6.0.3</code>, ESLint <code>10.4.1</code>, <code>@eslint/js</code> <code>10.0.1</code>, <code>typescript-eslint</code> <code>8.60.1</code>, and Prettier <code>3.8.3</code>. Other recent versions that use stdio LSP and ESLint flat configs follow the same setup, though diagnostic text and rule actions can vary across ESLint and plugin releases.</span></aside>
       </section>
 
       <section>
@@ -785,6 +785,20 @@ export const docPages: DocPageDefinition[] = [
         <h2>Install a package</h2>
         <pre><code>{`red plugin catalog\nred plugin install --catalog go-language\nred plugin install owner/repository\nred plugin install --path ~/code/my-red-plugin`}</code></pre>
         <p>Catalog packages use immutable release archives with recorded checksums. GitHub and local-path sources remain explicitly unreviewed. Installing a package never grants implicit approval to execute a native Tree-sitter grammar.</p>
+      </section>
+
+      <section>
+        <h2>Run plugins written in other languages</h2>
+        <p>Starting with Red v0.9.0, external plugins can run as JSON-RPC processes over stdio. They can provide commands, panels, pickers, statusline content, and checked document edits. Install and manage these packages with the same <code>red plugin</code> commands as Husk packages; install any interpreter or executable required by the package separately.</p>
+        <p><a className="text-link" href="https://github.com/codersauce/red/blob/v0.9.0/docs/RPC_PLUGIN_PROTOCOL.md" target="_blank" rel="noreferrer">Read the JSON-RPC plugin protocol</a></p>
+      </section>
+
+      <section>
+        <h2>Try JSON Workbench</h2>
+        <p>JSON Workbench is an example JSON-RPC plugin for live jq previews, result exploration, and undoable transformations. It requires Python 3.9 or newer and <code>jq</code> on <code>PATH</code>. Install it separately from the versioned Red examples:</p>
+        <pre><code>{`git clone --branch v0.9.0 --depth 1 https://github.com/codersauce/red.git red-plugin-examples\nred plugin install --path ./red-plugin-examples/examples/rpc-json-workbench`}</code></pre>
+        <p>Restart Red, open a JSON file, and run <code>:JsonWorkbench</code>. Edit the query document, run <code>:JsonRun</code>, or enable <code>:JsonLive</code> for previews as you edit. Use <code>:JsonApply</code> to apply a successful result, <code>:JsonUndo</code> to restore the source, and <code>:JsonCancel</code> to stop a live or panel preview. Foreground <code>:JsonRun</code> and <code>:JsonQuery</code> commands finish or reach their query timeout before another command can run in that plugin.</p>
+        <p><a className="text-link" href="https://github.com/codersauce/red/blob/v0.9.0/examples/rpc-json-workbench/README.md" target="_blank" rel="noreferrer">See JSON Workbench commands and configuration</a></p>
       </section>
 
       <section>

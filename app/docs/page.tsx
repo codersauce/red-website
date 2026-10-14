@@ -18,6 +18,7 @@ const topics = [
       ["Search and replace", "/docs/editor/search"],
       ["Buffers and windows", "/docs/editor/windows"],
       ["Language tools", "/docs/languages"],
+      ["TypeScript and ESLint", "/docs/languages/typescript-eslint"],
       ["Git", "/docs/git"],
     ],
   },

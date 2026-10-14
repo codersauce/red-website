@@ -49,7 +49,7 @@ export default function ReleasesPage() {
           <ul>
             {release.highlights.map((story) => <li key={story.id}><strong>{story.title}.</strong> {story.description}</li>)}
           </ul>
-          {release.version === "v0.8.2" && <p><Link className="text-link" href="/docs/getting-started/updating">Update an existing installation <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></Link></p>}
+          {index === 0 && <p><Link className="text-link" href="/docs/getting-started/updating">Update an existing installation <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></Link></p>}
           <a className="text-link" href={`https://github.com/codersauce/red/releases/tag/${release.version}`} target="_blank" rel="noreferrer">
             Full {release.version} release notes <FiExternalLink className="inline-icon external-link-icon" aria-hidden="true" />
           </a>
@@ -61,7 +61,7 @@ export default function ReleasesPage() {
             <li><strong>A persistent Codex Agent workspace.</strong> Continue a conversation with access to editor context, relevant diagnostics, and unsaved buffers.</li>
             <li><strong>Focused inline assistance.</strong> Review, explain, or refactor source in a bounded editor workflow.</li>
             <li><strong>Vim-style modal editing.</strong> Use familiar motions, operators, text objects, splits, macros, and registers.</li>
-            <li><strong>A complete developer workspace.</strong> Language servers, project search, Git, themes, Tree-sitter, and plugins ship in one Rust binary.</li>
+            <li><strong>A complete developer workspace.</strong> Language-server integration, project search, Git, themes, Tree-sitter, and plugins ship in one Rust binary.</li>
           </ul>
           <Link className="text-link" href="/#install">Install the published release <FiArrowRight className="inline-icon arrow-icon" aria-hidden="true" /></Link>
         </section>

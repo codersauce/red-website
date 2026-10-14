@@ -1,4 +1,32 @@
 export const releases = [
+{
+  "version": "v0.9.0",
+  "id": "release-v0-9-0",
+  "headline": "TypeScript and ESLint together, plugins in your language",
+  "summary": "Red v0.9.0 lets multiple language servers work on the same file and adds a JSON-RPC plugin interface for external programs. JSON Workbench demonstrates the new interface with live jq queries and reviewable document transformations.",
+  "highlights": [
+    {
+      "id": "multiple-language-servers",
+      "title": "Use TypeScript and ESLint together",
+      "description": "Attach multiple configured language servers to the same document. Diagnostics and code actions are combined, while completion, hover, and navigation use a capable server. Install the server executables and configure ESLint in Red's user config; attachment is automatic afterward. External Prettier formatting keeps its precedence."
+    },
+    {
+      "id": "json-rpc-plugins",
+      "title": "Write plugins in your language",
+      "description": "Run external plugins as supervised JSON-RPC processes over stdio. Plugins can contribute commands, panels, pickers, statusline content, and revision-checked document edits, with owner-scoped configuration and storage. Existing Husk plugins remain supported."
+    },
+    {
+      "id": "json-workbench",
+      "title": "Query and transform JSON with JSON Workbench",
+      "description": "Install the example plugin to run jq filters against a pinned document or selection, edit queries with live previews, explore results, and apply or undo checked transformations. Saved query history, result documents, and copying are included. Requires Python 3.9 or newer and jq on PATH; the plugin is installed separately."
+    },
+    {
+      "id": "wasmtime-security-update",
+      "title": "Update the WebAssembly runtime",
+      "description": "Wasmtime is updated to 48.0.6, addressing the security advisories reported against the previously pinned 48.0.5 release."
+    }
+  ]
+},
   {
     version: "v0.8.2",
     id: "release-v0-8-2",

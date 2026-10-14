@@ -76,13 +76,16 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(releases, /Latest published/i);
   assert.match(releases, new RegExp(escapeRegExp(publishedVersion)));
   assert.match(releases, /Available now/i);
-  const versions = [...releases.matchAll(/<h2>(v0\.8\.[012])<\/h2>/g)].map((match) => match[1]);
-  assert.deepEqual(versions, ["v0.8.2", "v0.8.1", "v0.8.0"]);
+  const versions = [...releases.matchAll(/<h2>(v0\.(?:8\.[012]|9\.0))<\/h2>/g)].map((match) => match[1]);
+  assert.deepEqual(versions, ["v0.9.0", "v0.8.2", "v0.8.1", "v0.8.0"]);
   assert.equal(versions[0], publishedVersion);
   for (const version of versions) {
     assert.match(releases, new RegExp(`id="release-${version.replaceAll(".", "-")}"`));
     assert.match(releases, new RegExp(`https://github.com/codersauce/red/releases/tag/${escapeRegExp(version)}`));
   }
+  assert.match(releases, /Use TypeScript and ESLint together/);
+  assert.match(releases, /Write plugins in your language/);
+  assert.match(releases, /Query and transform JSON with JSON Workbench/);
   assert.match(releases, /Update from the editor or terminal/);
   assert.match(releases, /Browse a directory in an editor window/);
   assert.doesNotMatch(releases, /releases\/tag\/v0\.7/);
@@ -107,7 +110,7 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   const tsEslintResponse = await render("/docs/languages/typescript-eslint");
   assert.equal(tsEslintResponse.status, 200);
   const tsEslint = await tsEslintResponse.text();
-  assert.match(tsEslint, /Available in the upcoming v0\.9\.0/);
+  assert.match(tsEslint, /Available in Red v0\.9\.0 and later/);
   assert.match(tsEslint, /vscode-eslint-language-server/);
   assert.match(tsEslint, /typescript-language-server/);
   assert.match(tsEslint, /Disable @typescript-eslint\/no-unused-vars for this line/);

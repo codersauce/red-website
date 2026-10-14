@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useId, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { FiCheck, FiCopy } from "react-icons/fi";
 import {
   detectInstallMethod,
@@ -21,9 +21,11 @@ function detectedMethod(): InstallMethod {
 }
 
 export default function InstallPicker({
+  highlightedCommands,
   origin,
   wide = false,
 }: {
+  highlightedCommands?: Partial<Record<InstallMethod, ReactNode>>;
   origin: string;
   wide?: boolean;
 }) {
@@ -95,7 +97,9 @@ export default function InstallPicker({
       key={method}
     >
       <span className="prompt" aria-hidden="true">$</span>
-      <code>{methods[method].command}</code>
+      <code data-language={method === "windows" ? "powershell" : "shell"}>
+        {highlightedCommands?.[method] ?? methods[method].command}
+      </code>
       <button type="button" className="copy" onClick={() => copyInstall(method)} aria-label={methods[method].aria}>
         {copied && installMethod === method
           ? <><FiCheck className="button-icon check-icon" aria-hidden="true" /> copied</>

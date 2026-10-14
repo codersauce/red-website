@@ -16,10 +16,13 @@
     "typecheck": "tsc --noEmit --incremental false"
   },
   "dependencies": {
+    "@shikijs/langs": "3.13.0",
+    "@shikijs/themes": "3.13.0",
     "next": "16.4.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "react-icons": "^5.7.0"
+    "react-icons": "^5.7.0",
+    "shiki": "3.13.0"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",

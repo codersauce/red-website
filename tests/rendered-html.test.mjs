@@ -1,10 +1,25 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 const installerManifest = JSON.parse(await readFile(new URL("../public/installers.json", import.meta.url), "utf8"));
 const publishedVersion = `v${installerManifest.version}`;
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+function decodeHtmlText(value) {
+  return value
+    .replace(/&#x([0-9a-f]+);/gi, (_, codePoint) => String.fromCodePoint(Number.parseInt(codePoint, 16)))
+    .replace(/&#([0-9]+);/g, (_, codePoint) => String.fromCodePoint(Number(codePoint)))
+    .replaceAll("&quot;", "\"")
+    .replaceAll("&apos;", "'")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&amp;", "&");
+}
+
+function visibleText(html) {
+  return decodeHtmlText(html.replace(/<[^>]*>/g, ""));
+}
 
 const publicOrigins = [
   "https://getred.dev",
@@ -96,9 +111,10 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   const updating = await render("/docs/getting-started/updating");
   assert.equal(updating.status, 200);
   const updateGuide = await updating.text();
-  assert.match(updateGuide, /red update --check/);
-  assert.match(updateGuide, /Migrate an older standalone installation/);
-  assert.match(updateGuide, /mode = &quot;off&quot;/);
+  const updateText = visibleText(updateGuide);
+  assert.match(updateText, /red update --check/);
+  assert.match(updateText, /Migrate an older standalone installation/);
+  assert.match(updateText, /mode = "off"/);
 
   const navigation = await (await render("/docs/editor/navigation")).text();
   assert.match(navigation, /Alt-p/);
@@ -110,10 +126,11 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   const tsEslintResponse = await render("/docs/languages/typescript-eslint");
   assert.equal(tsEslintResponse.status, 200);
   const tsEslint = await tsEslintResponse.text();
-  assert.match(tsEslint, /Available in Red v0\.9\.0 and later/);
-  assert.match(tsEslint, /vscode-eslint-language-server/);
-  assert.match(tsEslint, /typescript-language-server/);
-  assert.match(tsEslint, /Disable @typescript-eslint\/no-unused-vars for this line/);
+  const tsEslintText = visibleText(tsEslint);
+  assert.match(tsEslintText, /Available in Red v0\.9\.0 and later/);
+  assert.match(tsEslintText, /vscode-eslint-language-server/);
+  assert.match(tsEslintText, /typescript-language-server/);
+  assert.match(tsEslintText, /Disable @typescript-eslint\/no-unused-vars for this line/);
 
   const plugins = await (await render("/docs/plugins")).text();
   assert.match(plugins, /\/docs\/plugins\/json-rpc/);
@@ -121,12 +138,73 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   const jsonRpcResponse = await render("/docs/plugins/json-rpc");
   assert.equal(jsonRpcResponse.status, 200);
   const jsonRpc = await jsonRpcResponse.text();
-  assert.match(jsonRpc, /Available in Red v0\.9\.0 and later/);
-  assert.match(jsonRpc, /red\/DocumentSnapshot/);
-  assert.match(jsonRpc, /red\/DocumentApply/);
-  assert.match(jsonRpc, /red\/DocumentUndo/);
-  assert.match(jsonRpc, /Array\.from\(text\)\.length/);
-  assert.match(jsonRpc, /rpc-hello-node-plugin/);
+  const jsonRpcText = visibleText(jsonRpc);
+  assert.match(jsonRpcText, /Available in Red v0\.9\.0 and later/);
+  assert.match(jsonRpcText, /red\/DocumentSnapshot/);
+  assert.match(jsonRpcText, /red\/DocumentApply/);
+  assert.match(jsonRpcText, /red\/DocumentUndo/);
+  assert.match(jsonRpcText, /Array\.from\(text\)\.length/);
+  assert.match(jsonRpcText, /rpc-hello-node-plugin/);
+});
+
+test("syntax-highlights every documentation example without changing its text", async () => {
+  const docsSource = await readFile(new URL("../app/docs/content.tsx", import.meta.url), "utf8");
+  const guidePaths = [...new Set([...docsSource.matchAll(/href: "(\/docs[^"]*)"/g)].map((match) => match[1]))];
+  const expectedBlocks = [...docsSource.matchAll(/<CodeBlock language="([^"]+)"/g)];
+  const expectedInline = [...docsSource.matchAll(/<InlineCode language="([^"]+)"/g)];
+  let renderedBlocks = 0;
+  let renderedInline = 0;
+
+  for (const path of guidePaths) {
+    const response = await render(path);
+    assert.equal(response.status, 200, path);
+    const html = await response.text();
+    assert.doesNotMatch(html, /<pre(?! class="syntax-block")/, path);
+
+    for (const match of html.matchAll(/<pre class="syntax-block" data-language="([^"]+)" data-grammar="([^"]+)"><code>([\s\S]*?)<\/code><\/pre>/g)) {
+      const [, language, grammar, code] = match;
+      assert.ok(visibleText(code).length > 0, `${path}: empty ${language} block`);
+      if (language === "text") {
+        assert.equal(grammar, "plaintext");
+        assert.doesNotMatch(code, /syntax-token/);
+      } else {
+        assert.match(code, /class="syntax-token syntax-token-dark"/);
+        assert.match(code, /--syntax-dark:/);
+        assert.match(code, /--syntax-light:/);
+      }
+      renderedBlocks += 1;
+    }
+
+    for (const match of html.matchAll(/<code class="syntax-inline" data-language="([^"]+)" data-grammar="([^"]+)">([\s\S]*?)<\/code>/g)) {
+      const [, language, , code] = match;
+      assert.ok(visibleText(code).length > 0, `${path}: empty ${language} inline expression`);
+      assert.match(code, /class="syntax-token syntax-token-theme"/);
+      assert.match(code, /--syntax-dark:/);
+      assert.match(code, /--syntax-light:/);
+      renderedInline += 1;
+    }
+  }
+
+  assert.equal(renderedBlocks, expectedBlocks.length);
+  assert.equal(renderedInline, expectedInline.length);
+
+  const installGuide = await (await render("/docs/getting-started/install")).text();
+  assert.equal([...installGuide.matchAll(/<code data-language="(?:shell|powershell)">/g)].length, 3);
+  assert.match(installGuide, /<code>~\/.local\/bin\/red<\/code>/);
+
+  const huskGuide = await (await render("/docs/husk")).text();
+  assert.match(huskGuide, /data-language="husk" data-grammar="rust"/);
+  assert.match(huskGuide, /<code>hello\.hk<\/code>/);
+
+  const firstSession = await (await render("/docs/getting-started/first-session")).text();
+  assert.match(firstSession, /data-language="red-command" data-grammar="vimscript"/);
+});
+
+test("keeps the syntax highlighter out of browser chunks", async () => {
+  const assets = new URL("../dist/client/assets/", import.meta.url);
+  const chunks = (await readdir(assets)).filter((name) => name.endsWith(".js"));
+  const clientJavaScript = (await Promise.all(chunks.map((name) => readFile(new URL(name, assets), "utf8")))).join("\n");
+  assert.doesNotMatch(clientJavaScript, /github-dark-default|oniguruma-to-es|source\.shell/);
 });
 
 test("installation snippets use the canonical origin on every supported host", async () => {

@@ -852,6 +852,18 @@ img {
   font: 500 14px/1.8 var(--font-mono), monospace;
 }
 
+.syntax-token-dark {
+  color: var(--syntax-dark, inherit);
+}
+
+.syntax-token-theme {
+  color: var(--syntax-light, inherit);
+}
+
+:root[data-theme="dark"] .syntax-token-theme {
+  color: var(--syntax-dark, inherit);
+}
+
 .docs-content .install-selector {
   margin-top: 18px;
 }

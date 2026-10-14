@@ -102,6 +102,15 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(navigation, /F4/);
   const languages = await (await render("/docs/languages")).text();
   assert.match(languages, /format-on-save is pending/);
+  assert.match(languages, /\/docs\/languages\/typescript-eslint/);
+
+  const tsEslintResponse = await render("/docs/languages/typescript-eslint");
+  assert.equal(tsEslintResponse.status, 200);
+  const tsEslint = await tsEslintResponse.text();
+  assert.match(tsEslint, /Available in the upcoming v0\.9\.0/);
+  assert.match(tsEslint, /vscode-eslint-language-server/);
+  assert.match(tsEslint, /typescript-language-server/);
+  assert.match(tsEslint, /Disable @typescript-eslint\/no-unused-vars for this line/);
 });
 
 test("installation snippets use the canonical origin on every supported host", async () => {

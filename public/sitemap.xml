@@ -12,6 +12,7 @@
   <url><loc>https://getred.dev/docs/editor/search</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://getred.dev/docs/editor/windows</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://getred.dev/docs/languages</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/languages/typescript-eslint</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://getred.dev/docs/git</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://getred.dev/docs/agent</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://getred.dev/docs/configuration</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>

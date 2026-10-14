@@ -13,6 +13,7 @@ export type DocPageId =
   | "search"
   | "windows"
   | "languages"
+  | "typescript-eslint"
   | "git"
   | "agent"
   | "configuration"
@@ -52,6 +53,7 @@ export const docNavigation = [
       { id: "search" as const, label: "Search and replace", href: "/docs/editor/search" },
       { id: "windows" as const, label: "Buffers and windows", href: "/docs/editor/windows" },
       { id: "languages" as const, label: "Language tools", href: "/docs/languages" },
+      { id: "typescript-eslint" as const, label: "TypeScript and ESLint", href: "/docs/languages/typescript-eslint" },
       { id: "git" as const, label: "Git", href: "/docs/git" },
     ],
   },
@@ -413,6 +415,7 @@ export const docPages: DocPageDefinition[] = [
         <h2>Add or override a server</h2>
         <pre><code>{`[lsp.servers.go]\ncommand = "gopls"\nlanguage_id = "go"\nfile_extensions = ["go"]\nroot_markers = ["go.mod", ".git"]`}</code></pre>
         <p>Restart Red after changing a server definition, or run <kbd>:languages reload</kbd> after changing a unified language definition.</p>
+        <p>In the upcoming <strong>v0.9.0</strong> release, multiple configured servers with overlapping file extensions or filenames attach to the same buffer automatically, combining diagnostics and code actions while routing completion, hover, and navigation by server capability. <Link className="text-link" href="/docs/languages/typescript-eslint">Configure TypeScript and ESLint together</Link></p>
       </section>
 
       <section>
@@ -421,6 +424,151 @@ export const docPages: DocPageDefinition[] = [
         <pre><code>{`red plugin catalog\nred plugin install --catalog go-language\nred plugin install --catalog python-language --trust-native-grammars`}</code></pre>
         <p>Native Tree-sitter grammars execute inside the editor. Installing a pack doesn't approve them automatically; trust only the exact verified grammar bytes you intend to load.</p>
         <pre><code>{`red language trust LANGUAGE_ID\nred language untrust LANGUAGE_ID`}</code></pre>
+      </section>
+    </>,
+  },
+  {
+    id: "typescript-eslint",
+    slug: "languages/typescript-eslint",
+    href: "/docs/languages/typescript-eslint",
+    section: "Editor",
+    title: "TypeScript and ESLint (multiple language servers)",
+    description: "Attach TypeScript and ESLint language servers to the same buffer, keep Prettier formatting, and troubleshoot multi-server setups.",
+    render: () => <>
+      <section>
+        <h2>Goal and required Red version</h2>
+        <aside className="docs-callout"><strong>Available in the upcoming v0.9.0</strong><span>Attaching multiple language servers to a single document is merged on <code>main</code> (PR #383) and ships in the upcoming <strong>v0.9.0</strong> release. In Red v0.8.2 and earlier, only one matching server attaches to each file.</span></aside>
+        <p>This guide configures <code>typescript-language-server</code> and <code>vscode-eslint-language-server</code> to work together in the same <code>.ts</code>, <code>.tsx</code>, <code>.js</code>, or <code>.jsx</code> buffer while keeping Prettier as the external formatter. TypeScript serves completion, hover, signature help, symbols, and go-to-definition; ESLint publishes lint diagnostics and rule code actions alongside TypeScript's own diagnostics and quick fixes.</p>
+        <div className="docs-table-wrap"><table>
+          <thead><tr><th>Layer</th><th>Where it lives</th><th>Responsibility</th></tr></thead>
+          <tbody>
+            <tr><td>Embedded in Red</td><td>Red binary</td><td>Tree-sitter syntax support for JS, JSX, TS, and TSX, plus a default <code>typescript</code> server definition</td></tr>
+            <tr><td>Server executables</td><td>Your <code>PATH</code></td><td><code>typescript-language-server</code> and <code>vscode-eslint-language-server</code> installed separately from Red</td></tr>
+            <tr><td>Red user configuration</td><td><code>~/.config/red/config.toml</code> or <code>$XDG_CONFIG_HOME/red/config.toml</code></td><td>ESLint server registration, ESLint <code>workspace/configuration</code> settings, and optional external formatter definitions</td></tr>
+            <tr><td>Project workspace</td><td>Project directory</td><td><code>package.json</code>, local <code>node_modules</code> (<code>eslint</code>, <code>typescript</code>, <code>prettier</code>), <code>tsconfig.json</code>, <code>eslint.config.js</code>, and <code>prettier.config.js</code></td></tr>
+          </tbody>
+        </table></div>
+        <p>Red does not automatically discover or register ESLint from a project's <code>eslint.config.js</code> or <code>package.json</code>. Once matching servers are configured in <code>config.toml</code>, Red attaches all of them automatically without an extra multi-LSP flag. Each server's <code>root_markers</code> only select the workspace root directory passed to that server; they do not install or register a server.</p>
+      </section>
+
+      <section>
+        <h2>Install the required tools</h2>
+        <p>Keep language-server binaries on <code>PATH</code> separate from the packages installed inside your project's <code>node_modules</code>.</p>
+        <h3>1. Install the language-server executables on PATH</h3>
+        <p>Install <code>typescript-language-server</code>, <code>typescript</code>, and <code>vscode-langservers-extracted</code> (which provides <code>vscode-eslint-language-server</code>):</p>
+        <pre><code>{`npm install -g typescript-language-server@6.0.1 typescript@6.0.3 vscode-langservers-extracted@4.8.0\nwhich typescript-language-server\nwhich vscode-eslint-language-server\ntypescript-language-server --version`}</code></pre>
+        <p>Installing <code>typescript</code> alone provides <code>tsc</code> and <code>tsserver</code>, not the <code>typescript-language-server</code> executable that Red launches.</p>
+        <h3>2. Install project dependencies</h3>
+        <p><code>vscode-eslint-language-server</code> loads ESLint from the project's local <code>node_modules</code>, and <code>typescript-language-server</code> uses the workspace TypeScript compiler when present. Inside your project directory, install the compiler, linter, and formatter:</p>
+        <pre><code>npm install --save-dev eslint@10.4.1 @eslint/js@10.0.1 typescript-eslint@8.60.1 typescript@6.0.3 prettier@3.8.3</code></pre>
+        <aside className="docs-callout"><strong>Tested compatibility baseline</strong><span>The steps in this guide were verified against the upcoming v0.9.0 build (<code>bf2c2039d</code>) on Node.js <code>v24.22.0</code> with <code>vscode-langservers-extracted</code> <code>4.8.0</code>, <code>typescript-language-server</code> <code>6.0.1</code>, TypeScript <code>6.0.3</code>, ESLint <code>10.4.1</code>, <code>@eslint/js</code> <code>10.0.1</code>, <code>typescript-eslint</code> <code>8.60.1</code>, and Prettier <code>3.8.3</code>. Other recent versions that use stdio LSP and ESLint flat configs follow the same setup, though diagnostic text and rule actions can vary across ESLint and plugin releases.</span></aside>
+      </section>
+
+      <section>
+        <h2>Create a small TypeScript + ESLint project</h2>
+        <p>If you want a self-contained project to verify the setup before opening a larger repository, create a directory with the following files and install the devDependencies above.</p>
+        <p><code>package.json</code>:</p>
+        <pre><code>{`{\n  "name": "red-ts-eslint-demo",\n  "private": true,\n  "type": "module",\n  "devDependencies": {\n    "@eslint/js": "10.0.1",\n    "eslint": "10.4.1",\n    "prettier": "3.8.3",\n    "typescript": "6.0.3",\n    "typescript-eslint": "8.60.1"\n  }\n}`}</code></pre>
+        <p><code>tsconfig.json</code>:</p>
+        <pre><code>{`{\n  "compilerOptions": {\n    "target": "ES2022",\n    "module": "NodeNext",\n    "moduleResolution": "NodeNext",\n    "strict": true,\n    "noUnusedLocals": true\n  },\n  "include": ["src"]\n}`}</code></pre>
+        <p><code>eslint.config.js</code>:</p>
+        <pre><code>{`import js from '@eslint/js';\nimport { defineConfig } from 'eslint/config';\nimport ts from 'typescript-eslint';\n\nexport default defineConfig(\n  js.configs.recommended,\n  ts.configs.recommended,\n);`}</code></pre>
+        <p><code>prettier.config.js</code>:</p>
+        <pre><code>{`export default {\n  singleQuote: true,\n  semi: true,\n};`}</code></pre>
+        <p><code>src/index.ts</code>:</p>
+        <pre><code>{`export const test = 'variable test';\nconst unusedTest = 'unused variable test';`}</code></pre>
+        <p>Confirm that ESLint reports <code>@typescript-eslint/no-unused-vars</code> on <code>src/index.ts</code> from the terminal:</p>
+        <pre><code>npx eslint src/index.ts</code></pre>
+      </section>
+
+      <section>
+        <h2>Configure Red</h2>
+        <p>Red reads its user configuration from <code>$XDG_CONFIG_HOME/red/config.toml</code> when <code>XDG_CONFIG_HOME</code> is set and non-empty, or <code>~/.config/red/config.toml</code> otherwise. Add the following configuration:</p>
+        <pre><code>{`[formatting]\nprovider = "auto"\n\n[languages.typescript.formatter]\nname = "Prettier"\ncommand = "prettier"\nargs = ["--stdin-filepath", "{file}"]\nroot_markers = ["prettier.config.js", "package.json", ".git"]\n\n[lsp.servers.eslint]\ncommand = "vscode-eslint-language-server"\nargs = ["--stdio"]\ndocuments = [\n  { language_id = "javascript", file_extensions = ["js"] },\n  { language_id = "javascriptreact", file_extensions = ["jsx"] },\n  { language_id = "typescript", file_extensions = ["ts"] },\n  { language_id = "typescriptreact", file_extensions = ["tsx"] },\n]\nroot_markers = ["eslint.config.js", "package.json", ".git"]\n\n[lsp.servers.eslint.settings.""]\nvalidate = "on"\nrun = "onType"\npackageManager = "npm"\nworkingDirectory = { mode = "auto" }\nnodePath = ""\nuseESLintClass = false\nquiet = false\noptions = {}\nexperimental = {}\nformat = false\nonIgnoredFiles = "off"\nrulesCustomizations = []\ncodeActionOnSave = { mode = "all" }\nproblems = { shortenToSingleLine = false }\n\n[lsp.servers.eslint.settings."".codeAction]\ndisableRuleComment = { enable = true, location = "separateLine", commentStyle = "line" }\nshowDocumentation = { enable = true }\n\n[lsp.servers.typescript]\ncommand = "typescript-language-server"\nargs = ["--stdio"]\ndocuments = [\n  { language_id = "javascript", file_extensions = ["js"] },\n  { language_id = "javascriptreact", file_extensions = ["jsx"] },\n  { language_id = "typescript", file_extensions = ["ts"] },\n  { language_id = "typescriptreact", file_extensions = ["tsx"] },\n]\nroot_markers = ["tsconfig.json", "package.json", ".git"]`}</code></pre>
+        <p>The <code>[lsp.servers.eslint.settings.&quot;&quot;]</code> and <code>[lsp.servers.eslint.settings.&quot;&quot;.codeAction]</code> tables are required by <code>vscode-eslint-language-server</code>. After initialization, the server sends a <code>workspace/configuration</code> request with <code>section = &quot;&quot;</code>; Red returns the contents of <code>settings.&quot;&quot;</code>. Without that table, Red replies with <code>null</code> and the ESLint server does not validate buffers or offer rule-disable code actions.</p>
+        <h3>Merge into an existing config.toml safely</h3>
+        <ul>
+          <li><strong>Avoid duplicate TOML table headers.</strong> If your <code>config.toml</code> already has <code>[formatting]</code>, <code>[languages.typescript.formatter]</code>, <code>[lsp.servers.eslint]</code>, or <code>[lsp.servers.typescript]</code>, merge the keys into the existing table instead of adding a second header with the same name.</li>
+          <li><strong>Server entries replace as a unit.</strong> Red already embeds a default <code>typescript</code> server definition. You can omit <code>[lsp.servers.typescript]</code> to keep the embedded default, or include the complete <code>[lsp.servers.typescript]</code> block above. Do not write a partial <code>[lsp.servers.typescript]</code> table without <code>command</code> and selectors, because a user server entry replaces the built-in entry with the same name.</li>
+        </ul>
+        <p>Validate your configuration from the terminal, then reload languages in a running editor or restart Red:</p>
+        <pre><code>{`red --check-config\n:languages reload`}</code></pre>
+      </section>
+
+      <section>
+        <h2>Use the right language IDs and selectors</h2>
+        <p>Red uses two distinct sets of identifiers for JavaScript and TypeScript files: LSP <code>language_id</code> values sent to language servers in <code>textDocument/didOpen</code>, and Red&apos;s own <code>[languages.ID]</code> table names used for syntax and external formatters.</p>
+        <div className="docs-table-wrap"><table>
+          <thead><tr><th>Extension</th><th>LSP <code>documents</code> <code>language_id</code></th><th>Red <code>[languages.ID]</code> key</th></tr></thead>
+          <tbody>
+            <tr><td><code>.js</code>, <code>.mjs</code>, <code>.cjs</code></td><td><code>javascript</code></td><td><code>javascript</code></td></tr>
+            <tr><td><code>.jsx</code></td><td><code>javascriptreact</code></td><td><code>jsx</code></td></tr>
+            <tr><td><code>.ts</code></td><td><code>typescript</code></td><td><code>typescript</code></td></tr>
+            <tr><td><code>.tsx</code></td><td><code>typescriptreact</code></td><td><code>tsx</code></td></tr>
+          </tbody>
+        </table></div>
+        <p>Keep separate entries in <code>documents</code> for each extension rather than mapping <code>language_id = &quot;typescriptreact&quot;</code> to <code>[&quot;js&quot;, &quot;jsx&quot;, &quot;ts&quot;, &quot;tsx&quot;]</code>. Each attached server receives the <code>language_id</code> from the matching selector entry when a file opens.</p>
+        <p>If you also format <code>.tsx</code>, <code>.js</code>, and <code>.jsx</code> files with Prettier, add matching formatter tables under Red&apos;s language keys (<code>[languages.tsx.formatter]</code>, <code>[languages.javascript.formatter]</code>, and <code>[languages.jsx.formatter]</code>) using the same Prettier command and arguments.</p>
+      </section>
+
+      <section>
+        <h2>How Red routes requests across attached servers</h2>
+        <ul>
+          <li><strong>Attachment and lifecycle:</strong> Every configured server whose <code>documents</code> selector matches the file attaches to the buffer. Each attached server receives open, change, save, and close notifications with its own <code>language_id</code>, workspace root, and document version counter.</li>
+          <li><strong>Diagnostics:</strong> Push and pull diagnostics remain scoped to the server that produced them and are combined for display. An empty diagnostic report, server reload, or crash clears only that server&apos;s diagnostics.</li>
+          <li><strong>Code actions:</strong> Pressing <kbd>Space .</kbd> or <kbd>Space c a</kbd> queries every attached server that advertises <code>codeActionProvider</code>, sending each server only the diagnostics it owns. Red merges the returned actions into one picker and routes the selected edit or command back to its originating server.</li>
+          <li><strong>Single-result requests:</strong> Completion, hover, go-to-definition, references, document and workspace symbols, signature help, inlay hints, and rename go to the first ready attached server that advertises the required capability. When multiple attached servers advertise the same capability, Red uses the server configuration name (<code>[lsp.servers.NAME]</code>) in alphabetical order as the tie-breaker. Because <code>eslint</code> does not advertise hover, completion, definition, or symbol providers, those requests go to <code>typescript</code> even though <code>eslint</code> sorts first alphabetically.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Verify TypeScript and ESLint in the same buffer</h2>
+        <ol className="docs-steps">
+          <li><span>1</span><div><strong>Open the file.</strong><p>From the project directory, run <code>red -r . src/index.ts</code>.</p></div></li>
+          <li><span>2</span><div><strong>Check TypeScript hover.</strong><p>Move to <code>test</code> on line 1 (<kbd>w</kbd> <kbd>w</kbd>) and press <kbd>K</kbd>. Red displays the hover popup from <code>typescript-language-server</code> (<code>const test: &quot;variable test&quot;</code>). Press <kbd>Esc</kbd> to close the popup.</p></div></li>
+          <li><span>3</span><div><strong>Check TypeScript completion.</strong><p>Press <kbd>G</kbd> then <kbd>o</kbd> to open a new line, and type <code>test.</code> (or press <kbd>Ctrl-Space</kbd>). String members from <code>typescript-language-server</code> such as <code>slice</code>, <code>trim</code>, and <code>length</code> appear in the completion menu. Press <kbd>Esc</kbd> and <kbd>u</kbd> to undo the test line.</p></div></li>
+          <li><span>4</span><div><strong>Check combined diagnostics.</strong><p>Move to <code>unusedTest</code> on line 2 (<kbd>gg</kbd> <kbd>j</kbd> <kbd>w</kbd>) and press <kbd>D</kbd> (or press <kbd>Space d</kbd> to open the workspace diagnostics picker). Both diagnostics appear for <code>unusedTest</code>: ESLint&apos;s <code>&apos;unusedTest&apos; is assigned a value but never used.</code> (<code>@typescript-eslint/no-unused-vars</code>) and TypeScript&apos;s <code>&apos;unusedTest&apos; is declared but its value is never read.</code> (<code>6133</code>).</p></div></li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Apply an ESLint code action</h2>
+        <p>With the cursor on <code>unusedTest</code> on line 2, press <kbd>Space .</kbd> or <kbd>Space c a</kbd>. The code-action picker lists actions from both attached servers, including ESLint&apos;s rule actions and TypeScript&apos;s quick fixes.</p>
+        <p>Choose <strong>Disable @typescript-eslint/no-unused-vars for this line</strong> and press <kbd>Enter</kbd>. Red applies the workspace edit from <code>vscode-eslint-language-server</code>:</p>
+        <pre><code>{`export const test = 'variable test';\n// eslint-disable-next-line @typescript-eslint/no-unused-vars\nconst unusedTest = 'unused variable test';`}</code></pre>
+        <p>ESLint&apos;s <code>@typescript-eslint/no-unused-vars</code> error clears immediately, while TypeScript&apos;s own unused-variable diagnostic on <code>unusedTest</code> remains until the variable is read, prefixed with <code>_</code>, or removed.</p>
+      </section>
+
+      <section>
+        <h2>Keep Prettier formatting</h2>
+        <p>External formatters remain independent of language-server attachments. With <code>formatting.provider = &quot;auto&quot;</code> (the default) and <code>[languages.typescript.formatter]</code> configured for Prettier, pressing <kbd>Space f</kbd> or saving with <kbd>:w</kbd> runs Prettier instead of formatting through either language server.</p>
+        <p>Red looks for <code>prettier</code> in the project&apos;s <code>node_modules/.bin</code> before searching <code>PATH</code>, and passes the current buffer over stdin with <code>--stdin-filepath &#123;file&#125;</code>. Setting <code>format = false</code> under <code>[lsp.servers.eslint.settings.&quot;&quot;]</code> also prevents ESLint from advertising LSP formatting if Red ever falls back to LSP formatting.</p>
+        <p>To verify, change single quotes to double quotes on line 1 (<code>export const test = &quot;variable test&quot;;</code>) and press <kbd>Space f</kbd>. Red rewrites the line to single quotes and reports <code>formatted with Prettier</code>.</p>
+      </section>
+
+      <section>
+        <h2>Troubleshoot common setup failures</h2>
+        <div className="docs-table-wrap"><table>
+          <thead><tr><th>Symptom</th><th>Cause and fix</th></tr></thead>
+          <tbody>
+            <tr><td>TypeScript works, but ESLint diagnostics never appear</td><td>Confirm <code>which vscode-eslint-language-server</code> succeeds on <code>PATH</code> (note that <code>~</code> is not expanded in <code>command</code>). When ESLint cannot start, Red isolates the failure so TypeScript completion, hover, and diagnostics keep working; check <kbd>Space m</kbd> (<kbd>:messages</kbd>) and <code>red.log</code> in your Red configuration directory. After installing a missing executable, run <kbd>:languages reload</kbd> or restart Red.</td></tr>
+            <tr><td><code>red --check-config</code> reports an error or LSP is disabled</td><td>Duplicate TOML headers such as two <code>[lsp.servers.eslint]</code> tables make the file malformed (<code>CFG002</code>) and start Red in its fail-closed fallback profile with LSP disabled. An invalid field inside one server table reports <code>CFG102</code> and disables only that server. Fix the reported line and re-run <code>red --check-config</code>.</td></tr>
+            <tr><td><code>.tsx</code> or <code>.jsx</code> files miss diagnostics, or <code>.ts</code> files parse as JSX</td><td>Check the <code>documents</code> array on both servers. Map <code>.ts</code> to <code>typescript</code>, <code>.tsx</code> to <code>typescriptreact</code>, <code>.js</code> to <code>javascript</code>, and <code>.jsx</code> to <code>javascriptreact</code>.</td></tr>
+            <tr><td>ESLint server starts, but reports no diagnostics or code actions</td><td>Run <code>npx eslint src/index.ts</code> in the project root to verify local <code>node_modules/eslint</code> and <code>eslint.config.js</code> outside Red. Then confirm <code>[lsp.servers.eslint.settings.&quot;&quot;]</code> and <code>[lsp.servers.eslint.settings.&quot;&quot;.codeAction]</code> are present in <code>config.toml</code> so <code>workspace/configuration</code> does not return <code>null</code>.</td></tr>
+            <tr><td>TypeScript completion and hover stop working after editing <code>config.toml</code></td><td>A <code>[lsp.servers.typescript]</code> table in <code>config.toml</code> replaces Red&apos;s embedded <code>typescript</code> server entry in full, and a <code>[languages.typescript.lsp]</code> block without <code>server = &quot;eslint&quot;</code> also writes to the <code>typescript</code> server key. Either include the complete <code>[lsp.servers.typescript]</code> definition shown above or remove your custom <code>[lsp.servers.typescript]</code> block to restore the built-in default.</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section>
+        <h2>Use the same pattern for other language servers</h2>
+        <p>You can attach any combination of language servers to the same file type by giving each server its own <code>[lsp.servers.NAME]</code> table with overlapping <code>file_extensions</code> or <code>filenames</code> selectors:</p>
+        <ul>
+          <li>Diagnostics from all attached servers merge automatically while keeping per-server ownership.</li>
+          <li>Code actions aggregate across every attached server that advertises <code>codeActionProvider</code>.</li>
+          <li>Single-result requests go to the first ready attached server that advertises the capability, using the server key name (<code>NAME</code>) in alphabetical order as a tie-breaker when more than one server supports the same request. Red does not guess a universally &ldquo;best&rdquo; server beyond capability checks and configuration-name order, so name server keys intentionally or disable overlapping capabilities in a secondary server&apos;s settings when two servers advertise the same single-result feature.</li>
+        </ul>
+        <p><Link className="text-link" href="/docs/languages">Return to Language tools</Link></p>
       </section>
     </>,
   },

@@ -114,6 +114,19 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(tsEslint, /vscode-eslint-language-server/);
   assert.match(tsEslint, /typescript-language-server/);
   assert.match(tsEslint, /Disable @typescript-eslint\/no-unused-vars for this line/);
+
+  const plugins = await (await render("/docs/plugins")).text();
+  assert.match(plugins, /\/docs\/plugins\/json-rpc/);
+
+  const jsonRpcResponse = await render("/docs/plugins/json-rpc");
+  assert.equal(jsonRpcResponse.status, 200);
+  const jsonRpc = await jsonRpcResponse.text();
+  assert.match(jsonRpc, /Available in the upcoming v0\.9\.0/);
+  assert.match(jsonRpc, /red\/DocumentSnapshot/);
+  assert.match(jsonRpc, /red\/DocumentApply/);
+  assert.match(jsonRpc, /red\/DocumentUndo/);
+  assert.match(jsonRpc, /Array\.from\(text\)\.length/);
+  assert.match(jsonRpc, /rpc-hello-node-plugin/);
 });
 
 test("installation snippets use the canonical origin on every supported host", async () => {

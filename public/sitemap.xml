@@ -19,6 +19,7 @@
   <url><loc>https://getred.dev/docs/keybindings</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://getred.dev/docs/themes</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://getred.dev/docs/plugins</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getred.dev/docs/plugins/json-rpc</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://getred.dev/docs/husk</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://getred.dev/docs/sessions</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://getred.dev/docs/reference/cli</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>

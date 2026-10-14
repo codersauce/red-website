@@ -92,6 +92,7 @@ export default function InstallPicker({
       id={`${id}-${method}-panel`}
       role="tabpanel"
       aria-labelledby={`${id}-${method}-tab`}
+      data-doc-label={methods[method].label}
       tabIndex={installMethod === method ? 0 : -1}
       hidden={installMethod !== method}
       key={method}

@@ -2,14 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
 import DocsShell from "./_components/DocsShell";
+import MarkdownControls from "./_components/MarkdownControls";
+import { docMetadata, markdownPath } from "./manifest";
+
+const overview = docMetadata("overview");
 
 export const metadata: Metadata = {
   title: "Documentation — Red editor",
   description: "Install Red, complete your first editing session, and find current guides for the editor.",
-  alternates: { canonical: "/docs" },
+  alternates: { canonical: overview.href, types: { "text/markdown": markdownPath(overview.href) } },
 };
 
 const topics = [
+  {
+    title: "Coding agents",
+    description: "Version-aware guidance for agents configuring and extending Red.",
+    links: [["For coding agents", "/docs/for-agents"]],
+  },
   {
     title: "Editor",
     description: "Files, editing, search, windows, language tools, and Git.",
@@ -56,9 +65,11 @@ export default function DocsPage() {
     <article className="docs-content docs-landing">
       <header className="docs-header">
         <p className="docs-eyebrow">Documentation</p>
-        <h1>Use Red</h1>
-        <p>Install the editor, complete a short first session, then move into the parts of Red you need.</p>
+        <h1>{overview.title}</h1>
+        <p>{overview.description}</p>
       </header>
+
+      <MarkdownControls href={markdownPath(overview.href)} key={overview.href} />
 
       <section aria-labelledby="start-here">
         <h2 id="start-here">Start here</h2>

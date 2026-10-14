@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa6";
 import { SiteFooter, SiteNav } from "../../components/SiteChrome";
-import { docNavigation, type DocPageId } from "../content";
+import { docNavigation, type DocPageId } from "../manifest";
 
 function DocsNavigation({ current }: { current: DocPageId }) {
   return <nav aria-label="Documentation">
@@ -33,6 +33,7 @@ export default function DocsShell({
       <aside className="docs-sidebar">
         <Link className="docs-sidebar-title" href="/docs">Red documentation</Link>
         <DocsNavigation current={current} />
+        <a className="docs-source" href="/llms.txt" rel="index" type="text/markdown">Documentation index for agents</a>
         <a className="docs-source" href="https://github.com/codersauce/red/tree/main/docs" target="_blank" rel="noreferrer">
           <FaGithub className="inline-icon github-icon" aria-hidden="true" /> Source documentation
         </a>
@@ -41,6 +42,7 @@ export default function DocsShell({
       <details className="docs-mobile-nav">
         <summary>{currentLabel}</summary>
         <DocsNavigation current={current} />
+        <a className="docs-source" href="/llms.txt" rel="index" type="text/markdown">Documentation index for agents</a>
       </details>
 
       {children}

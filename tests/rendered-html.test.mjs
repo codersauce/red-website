@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
+import { docManifest } from "../app/docs/manifest.ts";
 
 const installerManifest = JSON.parse(await readFile(new URL("../public/installers.json", import.meta.url), "utf8"));
 const publishedVersion = `v${installerManifest.version}`;
@@ -148,8 +149,8 @@ test("serves direction A at the root and keeps docs and releases", async () => {
 });
 
 test("syntax-highlights every documentation example without changing its text", async () => {
-  const docsSource = await readFile(new URL("../app/docs/content.tsx", import.meta.url), "utf8");
-  const guidePaths = [...new Set([...docsSource.matchAll(/href: "(\/docs[^"]*)"/g)].map((match) => match[1]))];
+  const docsSource = (await Promise.all(["../app/docs/content.tsx", "../app/docs/_components/ForAgents.tsx"].map((path) => readFile(new URL(path, import.meta.url), "utf8")))).join("\n");
+  const guidePaths = docManifest.map((page) => page.href);
   const expectedBlocks = [...docsSource.matchAll(/<CodeBlock language="([^"]+)"/g)];
   const expectedInline = [...docsSource.matchAll(/<InlineCode language="([^"]+)"/g)];
   let renderedBlocks = 0;

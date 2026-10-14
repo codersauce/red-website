@@ -89,6 +89,7 @@ export default function LanguageTabs({
       id={`${id}-${language}-panel`}
       role="tabpanel"
       aria-labelledby={`${id}-${language}-tab`}
+      data-doc-label={languageLabels[language]}
       tabIndex={selected === language ? 0 : -1}
       hidden={selected !== language}
       key={language}

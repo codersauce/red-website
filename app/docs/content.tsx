@@ -6,101 +6,17 @@ import { CodeBlock, InlineCode } from "./_components/Code";
 import HighlightedInstallPicker from "./_components/HighlightedInstallPicker";
 import LanguageTabs from "./_components/LanguageTabs";
 
-export type DocPageId =
-  | "overview"
-  | "install"
-  | "updating"
-  | "first-session"
-  | "navigation"
-  | "search"
-  | "windows"
-  | "languages"
-  | "typescript-eslint"
-  | "git"
-  | "agent"
-  | "configuration"
-  | "keybindings"
-  | "themes"
-  | "plugins"
-  | "json-rpc-plugins"
-  | "husk"
-  | "sessions"
-  | "cli"
-  | "vim"
-  | "troubleshooting";
+import ForAgents from "./_components/ForAgents";
+import { docMetadata, type DocMetadata } from "./manifest";
+export { docNavigation, type DocPageId } from "./manifest";
 
-export interface DocPageDefinition {
-  id: DocPageId;
-  slug: string;
-  href: string;
-  section: string;
-  title: string;
-  description: string;
+export type DocPageDefinition = DocMetadata & {
   render: (context: { origin: string }) => ReactNode;
-}
-
-export const docNavigation = [
-  {
-    label: "Getting started",
-    items: [
-      { id: "overview" as const, label: "Overview", href: "/docs" },
-      { id: "install" as const, label: "Install Red", href: "/docs/getting-started/install" },
-      { id: "updating" as const, label: "Update Red", href: "/docs/getting-started/updating" },
-      { id: "first-session" as const, label: "First session", href: "/docs/getting-started/first-session" },
-    ],
-  },
-  {
-    label: "Editor",
-    items: [
-      { id: "navigation" as const, label: "Navigate and edit", href: "/docs/editor/navigation" },
-      { id: "search" as const, label: "Search and replace", href: "/docs/editor/search" },
-      { id: "windows" as const, label: "Buffers and windows", href: "/docs/editor/windows" },
-      { id: "languages" as const, label: "Language tools", href: "/docs/languages" },
-      { id: "typescript-eslint" as const, label: "TypeScript and ESLint", href: "/docs/languages/typescript-eslint" },
-      { id: "git" as const, label: "Git", href: "/docs/git" },
-    ],
-  },
-  {
-    label: "Agent",
-    items: [
-      { id: "agent" as const, label: "Agent and inline assist", href: "/docs/agent" },
-    ],
-  },
-  {
-    label: "Customize",
-    items: [
-      { id: "configuration" as const, label: "Configuration", href: "/docs/configuration" },
-      { id: "keybindings" as const, label: "Keybindings", href: "/docs/keybindings" },
-      { id: "themes" as const, label: "Themes", href: "/docs/themes" },
-      { id: "plugins" as const, label: "Plugins", href: "/docs/plugins" },
-      { id: "json-rpc-plugins" as const, label: "JSON-RPC plugins", href: "/docs/plugins/json-rpc" },
-      { id: "husk" as const, label: "Husk", href: "/docs/husk" },
-    ],
-  },
-  {
-    label: "Sessions",
-    items: [
-      { id: "sessions" as const, label: "Detach and recover", href: "/docs/sessions" },
-    ],
-  },
-  {
-    label: "Reference",
-    items: [
-      { id: "cli" as const, label: "Command line", href: "/docs/reference/cli" },
-      { id: "vim" as const, label: "Vim compatibility", href: "/docs/reference/vim" },
-      { id: "troubleshooting" as const, label: "Troubleshooting", href: "/docs/troubleshooting" },
-    ],
-  },
-];
+};
 
 export const docPages: DocPageDefinition[] = [
   {
-    id: "install",
-    slug: "getting-started/install",
-    href: "/docs/getting-started/install",
-    section: "Getting started",
-    title: "Install Red",
-    description: "Install the Red binary for your platform, then check that its bundled runtime is ready.",
+    ...docMetadata("install"),
     render: ({ origin }) => <>
       <section>
         <h2>Choose an installation method</h2>
@@ -135,12 +51,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "updating",
-    slug: "getting-started/updating",
-    href: "/docs/getting-started/updating",
-    section: "Getting started",
-    title: "Update Red",
-    description: "Check for new releases, update a standalone installation, and migrate an older install.",
+    ...docMetadata("updating"),
     render: ({ origin }) => <>
       <section>
         <h2>Check and install a release</h2>
@@ -178,12 +89,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "first-session",
-    slug: "getting-started/first-session",
-    href: "/docs/getting-started/first-session",
-    section: "Getting started",
-    title: "Your first session",
-    description: "Open a project, edit and save a file, and learn where Red keeps its commands and shortcuts.",
+    ...docMetadata("first-session"),
     render: () => <>
       <section>
         <h2>Start Red</h2>
@@ -230,13 +136,9 @@ export const docPages: DocPageDefinition[] = [
       </section>
     </>,
   },
+  { ...docMetadata("for-agents"), render: () => <ForAgents /> },
   {
-    id: "navigation",
-    slug: "editor/navigation",
-    href: "/docs/editor/navigation",
-    section: "Editor",
-    title: "Navigate and edit",
-    description: "Move through a project with Red's file tools and use its Vim-style editing model without guessing which commands are available.",
+    ...docMetadata("navigation"),
     render: () => <>
       <section>
         <h2>Open files and projects</h2>
@@ -288,12 +190,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "search",
-    slug: "editor/search",
-    href: "/docs/editor/search",
-    section: "Editor",
-    title: "Search and replace",
-    description: "Search one buffer, the whole project, or the file tree, and make controlled replacements with Red's regular-expression syntax.",
+    ...docMetadata("search"),
     render: () => <>
       <section>
         <h2>Search the current buffer</h2>
@@ -326,12 +223,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "windows",
-    slug: "editor/windows",
-    href: "/docs/editor/windows",
-    section: "Editor",
-    title: "Buffers and windows",
-    description: "Arrange files in splits, move between editor and plugin panes, and resolve files that changed outside Red.",
+    ...docMetadata("windows"),
     render: () => <>
       <section>
         <h2>Move between buffers</h2>
@@ -383,12 +275,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "languages",
-    slug: "languages",
-    href: "/docs/languages",
-    section: "Editor",
-    title: "Language tools",
-    description: "Use completion, diagnostics, navigation, formatting, and language packs for the files in your workspace.",
+    ...docMetadata("languages"),
     render: () => <>
       <section>
         <h2>Use a language server</h2>
@@ -432,12 +319,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "typescript-eslint",
-    slug: "languages/typescript-eslint",
-    href: "/docs/languages/typescript-eslint",
-    section: "Editor",
-    title: "TypeScript and ESLint (multiple language servers)",
-    description: "Attach TypeScript and ESLint language servers to the same buffer, keep Prettier formatting, and troubleshoot multi-server setups.",
+    ...docMetadata("typescript-eslint"),
     render: () => <>
       <section>
         <h2>Goal and required Red version</h2>
@@ -500,7 +382,7 @@ export const docPages: DocPageDefinition[] = [
         <CodeBlock language="toml">{`[lsp.servers.typescript]\ncommand = "typescript-language-server"\nargs = ["--stdio"]\ndocuments = [\n  { language_id = "javascript", file_extensions = ["js", "mjs", "cjs"] },\n  { language_id = "javascriptreact", file_extensions = ["jsx"] },\n  { language_id = "typescript", file_extensions = ["ts"] },\n  { language_id = "typescriptreact", file_extensions = ["tsx"] },\n]\nroot_markers = ["package.json", "tsconfig.json", "jsconfig.json", ".git"]`}</CodeBlock>
         <p>Validate your configuration from the terminal:</p>
         <CodeBlock language="shell">red --check-config</CodeBlock>
-        <p>Then reload languages in a running editor, or restart Red:</p>
+        <p>Restart Red after changing server definitions or installing server executables. For changes limited to unified language definitions, such as external formatters, you can reload those definitions inside Red:</p>
         <CodeBlock language="red-command">:languages reload</CodeBlock>
       </section>
 
@@ -550,7 +432,7 @@ export const docPages: DocPageDefinition[] = [
 
       <section>
         <h2>Keep Prettier formatting</h2>
-        <p>External formatters remain independent of language-server attachments. With <InlineCode language="toml">formatting.provider = &quot;auto&quot;</InlineCode> (the default) and <InlineCode language="toml">[languages.typescript.formatter]</InlineCode> configured for Prettier, pressing <kbd>Space f</kbd> or saving with <kbd>:w</kbd> runs Prettier instead of formatting through either language server.</p>
+        <p>External formatters remain independent of language-server attachments. With <InlineCode language="toml">formatting.provider = &quot;auto&quot;</InlineCode> (the default) and <InlineCode language="toml">[languages.typescript.formatter]</InlineCode> configured for Prettier, pressing <kbd>Space f</kbd> runs Prettier instead of formatting through either language server. Saving with <kbd>:w</kbd> also formats when <InlineCode language="toml">formatting.on_save = true</InlineCode>; preserve the user&apos;s existing preference.</p>
         <p>Red looks for <code>prettier</code> in the project&apos;s <code>node_modules/.bin</code> before searching <code>PATH</code>, and passes the current buffer over stdin with <InlineCode language="shell">--stdin-filepath &#123;file&#125;</InlineCode>. Setting <InlineCode language="toml">format = false</InlineCode> under <InlineCode language="toml">[lsp.servers.eslint.settings.&quot;&quot;]</InlineCode> also prevents ESLint from advertising LSP formatting if Red ever falls back to LSP formatting.</p>
         <p>To verify, change single quotes to double quotes on line 1 (<InlineCode language="typescript">export const test = &quot;variable test&quot;;</InlineCode>) and press <kbd>Space f</kbd>. Red rewrites the line to single quotes and reports <code>formatted with Prettier</code>.</p>
       </section>
@@ -582,12 +464,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "git",
-    slug: "git",
-    href: "/docs/git",
-    section: "Editor",
-    title: "Work with Git",
-    description: "Review changes, stage hunks or lines, write commits, and use repository operations without leaving Red.",
+    ...docMetadata("git"),
     render: () => <>
       <section>
         <h2>Open the Git workspace</h2>
@@ -624,12 +501,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "agent",
-    slug: "agent",
-    href: "/docs/agent",
-    section: "Agent",
-    title: "Agent and inline assist",
-    description: "Set up Codex, use the full Agent workspace or a bounded inline request, and know when a change is saved to disk.",
+    ...docMetadata("agent"),
     render: () => <>
       <section>
         <h2>Set up Codex</h2>
@@ -671,12 +543,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "configuration",
-    slug: "configuration",
-    href: "/docs/configuration",
-    section: "Customize",
-    title: "Configure Red",
-    description: "Keep the embedded defaults and add only the settings you want to change.",
+    ...docMetadata("configuration"),
     render: () => <>
       <section>
         <h2>Start with a small file</h2>
@@ -710,12 +577,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "keybindings",
-    slug: "keybindings",
-    href: "/docs/keybindings",
-    section: "Customize",
-    title: "Change keybindings",
-    description: "Map actions, action sequences, chords, and plugin commands without changing how keys behave in other modes.",
+    ...docMetadata("keybindings"),
     render: () => <>
       <section>
         <h2>Find the current binding first</h2>
@@ -748,12 +610,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "themes",
-    slug: "themes",
-    href: "/docs/themes",
-    section: "Customize",
-    title: "Choose and edit themes",
-    description: "Preview bundled themes, keep a selection, or eject a JSON theme into your configuration directory.",
+    ...docMetadata("themes"),
     render: () => <>
       <section>
         <h2>Browse themes</h2>
@@ -774,12 +631,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "plugins",
-    slug: "plugins",
-    href: "/docs/plugins",
-    section: "Customize",
-    title: "Manage plugins",
-    description: "Inspect bundled plugins, install external packages, control their lifecycle, and keep native grammar approval explicit.",
+    ...docMetadata("plugins"),
     render: () => <>
       <section>
         <h2>Inspect what Red loaded</h2>
@@ -817,19 +669,14 @@ export const docPages: DocPageDefinition[] = [
         <h2>Customize a bundled plugin</h2>
         <CodeBlock language="shell">red --eject plugins/fidget.hk</CodeBlock>
         <p>The copy in your configuration directory shadows the bundled file. Remove the copy to return to the version shipped with Red.</p>
-        <p>Plugins that spawn processes need an explicit allowlist:</p>
+        <p>Husk plugins that spawn processes through the host API need an explicit allowlist:</p>
         <CodeBlock language="toml">{`[plugin_permissions.project_search]\nprocess = ["rg"]`}</CodeBlock>
         <p>Starting with <strong>v0.9.0</strong>, external packages can also declare a standalone <InlineCode language="toml">[rpc]</InlineCode> process in <code>red-plugin.toml</code> and talk to Red over newline-delimited JSON-RPC 2.0 in any language. <Link className="text-link" href="/docs/plugins/json-rpc">Write a JSON-RPC plugin in Python or Node.js</Link></p>
       </section>
     </>,
   },
   {
-    id: "json-rpc-plugins",
-    slug: "plugins/json-rpc",
-    href: "/docs/plugins/json-rpc",
-    section: "Customize",
-    title: "Write a JSON-RPC plugin",
-    description: "Build, install, and test a standalone JSON-RPC 2.0 plugin in Python or Node.js using Red's versioned host API.",
+    ...docMetadata("json-rpc-plugins"),
     render: () => <>
       <section>
         <h2>Overview and required Red version</h2>
@@ -918,7 +765,7 @@ export const docPages: DocPageDefinition[] = [
       <section>
         <h2>5. Handle events, lifecycle, and complete package files</h2>
         <p>Protocol version 1 delivers three low-frequency global editor events when declared in both <InlineCode language="toml">[activation].events</InlineCode> and <code>initialize</code>: <code>editor:ready</code>, <code>file:opened</code>, and <code>file:saved</code>. Each arrives as a one-way <code>event/notify</code> notification with <InlineCode language="json">&#123;&quot;name&quot;: &quot;file:saved&quot;, &quot;payload&quot;: &#123;&quot;file&quot;: &quot;...&quot;, &quot;buffer_index&quot;: 0, &quot;document_id&quot;: 42&#125;&#125;</InlineCode>.</p>
-        <p>Here are the complete, runnable packages matching <a href="https://github.com/codersauce/red/tree/main/examples/rpc-hello-plugin" target="_blank" rel="noreferrer"><code>examples/rpc-hello-plugin</code></a> and <a href="https://github.com/codersauce/red/tree/main/examples/rpc-hello-node-plugin" target="_blank" rel="noreferrer"><code>examples/rpc-hello-node-plugin</code></a>, including configuration, persistent storage, statusline, picker, panel, document apply/undo, and <code>file:saved</code> event tracking:</p>
+        <p>The complete packages below use the v0.9.0 protocol. The Python package matches <a href="https://github.com/codersauce/red/tree/eb5e2b6be15325abd12adbfac816f7844afff42c/examples/rpc-hello-plugin" target="_blank" rel="noreferrer"><code>examples/rpc-hello-plugin</code></a>; the Node.js version implements the same operations, including configuration, persistent storage, statusline, picker, panel, document apply/undo, and <code>file:saved</code> event tracking:</p>
         <LanguageTabs
           label="Complete runnable plugin package"
           python={<>
@@ -967,17 +814,12 @@ export const docPages: DocPageDefinition[] = [
             <tr><td>Command hangs for 30 seconds and times out</td><td>The command handler either called a <code>red/*</code> method before receiving the <code>initialized</code> notification or blocked waiting for a response without reading from <code>stdin</code>. Ensure your request helper reads from the active <code>stdin</code> loop while awaiting the host reply.</td></tr>
           </tbody>
         </table></div>
-        <p><a className="text-link" href="https://github.com/codersauce/red/blob/main/docs/RPC_PLUGIN_PROTOCOL.md" target="_blank" rel="noreferrer">Open the complete JSON-RPC protocol specification</a></p>
+        <p><a className="text-link" href="https://github.com/codersauce/red/blob/eb5e2b6be15325abd12adbfac816f7844afff42c/docs/RPC_PLUGIN_PROTOCOL.md" target="_blank" rel="noreferrer">Open the complete JSON-RPC protocol specification</a></p>
       </section>
     </>,
   },
   {
-    id: "husk",
-    slug: "husk",
-    href: "/docs/husk",
-    section: "Customize",
-    title: "Write a Husk plugin",
-    description: "Use Red's embedded Husk language to register commands, keep private state, and request editor-owned operations.",
+    ...docMetadata("husk"),
     render: () => <>
       <section>
         <h2>Create the smallest plugin</h2>
@@ -1007,7 +849,7 @@ export const docPages: DocPageDefinition[] = [
           </tbody>
         </table></div>
         <p>Red remains the owner of buffers, undo history, focus, confirmations, sessions, and filesystem reconciliation. Plugins request attributed operations through the versioned host API rather than changing editor state directly.</p>
-        <p><a className="text-link" href="https://github.com/codersauce/red/blob/main/docs/PLUGIN_API.md" target="_blank" rel="noreferrer">Open the complete host API reference</a></p>
+        <p><a className="text-link" href="https://github.com/codersauce/red/blob/eb5e2b6be15325abd12adbfac816f7844afff42c/docs/PLUGIN_API.md" target="_blank" rel="noreferrer">Open the complete host API reference</a></p>
       </section>
 
       <section>
@@ -1019,12 +861,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "sessions",
-    slug: "sessions",
-    href: "/docs/sessions",
-    section: "Sessions",
-    title: "Detach and recover",
-    description: "Keep a live editor across terminal disconnects on macOS and Linux, or restore an atomic snapshot after the editor stops.",
+    ...docMetadata("sessions"),
     render: () => <>
       <section>
         <h2>Keep a live session running</h2>
@@ -1062,12 +899,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "cli",
-    slug: "reference/cli",
-    href: "/docs/reference/cli",
-    section: "Reference",
-    title: "Command-line reference",
-    description: "Look up Red's editor, validation, runtime asset, Agent, session, plugin, language, and keyboard commands.",
+    ...docMetadata("cli"),
     render: () => <>
       <section>
         <h2>Open the editor</h2>
@@ -1132,12 +964,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "vim",
-    slug: "reference/vim",
-    href: "/docs/reference/vim",
-    section: "Reference",
-    title: "Vim compatibility",
-    description: "See which Vim-style editing behaviors Red supports and where its defaults or command language intentionally differ.",
+    ...docMetadata("vim"),
     render: () => <>
       <section>
         <h2>Supported editing model</h2>
@@ -1176,12 +1003,7 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
-    id: "troubleshooting",
-    slug: "troubleshooting",
-    href: "/docs/troubleshooting",
-    section: "Reference",
-    title: "Troubleshooting",
-    description: "Use Red's focused checks to separate installation, configuration, runtime asset, language-server, Agent, keyboard, and recovery problems.",
+    ...docMetadata("troubleshooting"),
     render: () => <>
       <section>
         <h2>Start with the narrow check</h2>

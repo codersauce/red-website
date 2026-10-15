@@ -1,3 +1,15 @@
+/* Google's JetBrains Mono subsets omit box drawing, so tree diagrams would mix
+   in a fallback font with different glyph widths. This OFL-licensed subset
+   (U+2500-257F, variable weight) joins the same family. */
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-box-drawing.woff2") format("woff2");
+  unicode-range: U+2500-257F;
+}
+
 :root {
   color-scheme: light;
   --bg: #fdfcfb;
@@ -9,6 +21,11 @@
   --border: #e3ded7;
   --code-bg: #1c1a17;
   --code-text: #f0eee9;
+  --block-bg: #ffffff;
+  --block-header: #f5f3f0;
+  --block-border: #e3ded7;
+  --block-text: #1f2328;
+  --block-dim: #8a847b;
   --red: #e5484d;
   --red-hover: #cf3f44;
   --red-soft: rgba(229, 72, 77, .09);
@@ -26,6 +43,11 @@
   --border: #2e2e34;
   --code-bg: #0c0c0e;
   --code-text: #e8e6e1;
+  --block-bg: #0e0e10;
+  --block-header: #18181c;
+  --block-border: #2e2e34;
+  --block-text: #e6edf3;
+  --block-dim: #7d786f;
   --red-soft: rgba(229, 72, 77, .13);
   --shadow: rgba(0, 0, 0, .44);
 }
@@ -881,18 +903,109 @@ img {
   font: 500 .86em var(--font-mono), monospace;
 }
 
+.code-frame {
+  overflow: hidden;
+  margin: 21px 0;
+  border: 1px solid var(--block-border);
+  border-radius: 9px;
+  background: var(--block-bg);
+}
+
+.code-frame-header {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 6px 0 14px;
+  border-bottom: 1px solid var(--block-border);
+  background: var(--block-header);
+  font: 500 12px var(--font-mono), monospace;
+}
+
+.code-frame-label {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.code-frame-title {
+  overflow: hidden;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.code-frame-language {
+  flex: none;
+  color: var(--block-dim);
+}
+
+.code-frame-copy {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: 500 12px var(--font-mono), monospace;
+}
+
+.code-frame-copy:hover {
+  border-color: var(--block-border);
+  background: var(--block-bg);
+  color: var(--text);
+}
+
+.code-frame-copy:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 1px;
+}
+
 .docs-content pre {
   overflow-x: auto;
-  margin: 21px 0;
-  padding: 19px 21px;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: var(--code-bg);
-  color: var(--code-text);
+  margin: 0;
+  padding: 16px 20px;
+  /* Edge shadows appear only while more code is scrolled out of view. */
+  background:
+    linear-gradient(to right, var(--block-bg) 30%, transparent) left / 40px 100% no-repeat local,
+    linear-gradient(to left, var(--block-bg) 30%, transparent) right / 40px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--block-text) 16%, transparent), transparent) left / 12px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--block-text) 16%, transparent), transparent) right / 12px 100% no-repeat scroll,
+    var(--block-bg);
+  color: var(--block-text);
 }
 
 .docs-content pre code {
-  font: 500 14px/1.8 var(--font-mono), monospace;
+  font: 500 14px/1.75 var(--font-mono), monospace;
+}
+
+/* Generated content is not selectable, so copied commands never include the prompt. */
+.docs-content pre[data-language="shell"] .syntax-line::before {
+  content: "$ ";
+  color: var(--block-dim);
+}
+
+/* Box-drawing glyphs span 1.32em (ascender to descender). Stretching only the
+   connectors to the row height joins them across rows without tightening the text. */
+.code-frame-tree pre code {
+  line-height: 1.6;
+}
+
+.code-frame-tree .tree-guide {
+  display: inline-block;
+  color: var(--block-dim);
+  transform: scaleY(calc(1.6 / 1.32));
+}
+
+.code-frame-tree .tree-dir {
+  color: var(--text);
+  font-weight: 650;
 }
 
 .syntax-token-dark {

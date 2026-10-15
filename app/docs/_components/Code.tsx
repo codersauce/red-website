@@ -12,6 +12,7 @@ import typescript from "@shikijs/langs/typescript";
 import vimscript from "@shikijs/langs/vimscript";
 import githubDark from "@shikijs/themes/github-dark-default";
 import githubLight from "@shikijs/themes/github-light-default";
+import CopyCodeButton from "./CopyCodeButton";
 
 export type SyntaxLanguage =
   | "husk"
@@ -43,6 +44,19 @@ const grammarByLanguage: Record<Exclude<SyntaxLanguage, "text">, string> = {
   toml: "toml",
   typescript: "typescript",
 } as const;
+
+const languageLabels: Record<SyntaxLanguage, string> = {
+  husk: "Husk",
+  javascript: "JavaScript",
+  json: "JSON",
+  powershell: "PowerShell",
+  python: "Python",
+  "red-command": "Red command",
+  shell: "Shell",
+  text: "Text",
+  toml: "TOML",
+  typescript: "TypeScript",
+};
 
 const highlighter = createHighlighterCoreSync({
   engine: createJavaScriptRegexEngine(),
@@ -102,18 +116,47 @@ export function SyntaxTokens({
   ))}</>;
 }
 
+const treeGuide = /[│├└]/;
+
+/** Directory trees: dim the connectors and set folders apart without changing the text. */
+function TreeLines({ code }: { code: string }) {
+  const lines = code.split("\n");
+  return <>{lines.map((line, index) => {
+    const [, guide, name] = /^([\s│├└─]*)(.*)$/u.exec(line)!;
+    return <span className="tree-line" key={index}>
+      {guide ? <span className="tree-guide">{guide}</span> : null}
+      {name ? <span className={name.endsWith("/") ? "tree-dir" : "tree-file"}>{name}</span> : null}
+      {index < lines.length - 1 ? "\n" : null}
+    </span>;
+  })}</>;
+}
+
 export function CodeBlock({
   children,
   language,
+  title,
 }: {
   children: string;
   language: SyntaxLanguage;
+  /** A file name. The Markdown export renders it as a label paragraph before the fence. */
+  title?: string;
 }) {
   const grammar = language === "text" ? "plaintext" : grammarByLanguage[language];
+  const tree = language === "text" && treeGuide.test(children);
+  const languageLabel = tree ? "Files" : languageLabels[language];
   return (
-    <pre className="syntax-block" data-language={language} data-grammar={grammar}>
-      <code><SyntaxTokens code={children} language={language} palette="dark" /></code>
-    </pre>
+    <div className={tree ? "code-frame code-frame-tree" : "code-frame"} data-title={title}>
+      <div className="code-frame-header" data-doc-ignore>
+        <span className="code-frame-label">
+          {title ? <span className="code-frame-title">{title}</span> : null}
+          <span className="code-frame-language">{languageLabel}</span>
+        </span>
+        <CopyCodeButton code={children} label={title ?? `${languageLabel} code`} />
+      </div>
+      <pre className="syntax-block" data-language={language} data-grammar={grammar}>
+        <code>{tree ? <TreeLines code={children} /> : <SyntaxTokens code={children} language={language} />}</code>
+      </pre>
+    </div>
   );
 }
 

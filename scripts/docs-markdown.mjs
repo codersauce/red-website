@@ -102,6 +102,16 @@ function semanticContent(node) {
     return [labelNode, ...node.children.flatMap(semanticContent)];
   }
 
+  if (hasClass(node, "code-frame")) {
+    const pre = node.children.find((child) => child.tagName === "pre");
+    assert.ok(pre, "Code frame needs a pre child");
+    const title = properties.dataTitle;
+    return [
+      ...(title ? [element("p", [element("code", [text(String(title))]), text(":")])] : []),
+      ...semanticContent(pre),
+    ];
+  }
+
   if (hasClass(node, "docs-card")) {
     const heading = find(node, (child) => /^h[1-6]$/.test(child.tagName ?? ""));
     const description = find(node, (child) => child.tagName === "p");

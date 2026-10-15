@@ -31,6 +31,20 @@ test("preserves code bytes, languages, fences, and trailing whitespace", async (
   assert.doesNotMatch(result.markdown, /syntax-token|data-grammar|Shell navigation|Next page|window.secret/);
 });
 
+test("exports code frame titles as labels and drops the frame header", async () => {
+  const frame = (title, value) => `<div class="code-frame"${title ? ` data-title="${title}"` : ""}>
+    <div class="code-frame-header" data-doc-ignore="true"><span class="code-frame-label">${title ? `<span class="code-frame-title">${title}</span>` : ""}<span class="code-frame-language">TOML</span></span><button>Copy</button><span class="sr-only" role="status"></span></div>
+    <pre data-language="toml"><code>${value}</code></pre>
+  </div>`;
+  const result = await convert(wrap(frame("rpc-hello-plugin/red-plugin.toml", "schema_version = 1") + frame(undefined, "theme = &quot;red.json&quot;")));
+  assert.deepEqual(result.codeBlocks, [
+    { language: "toml", value: "schema_version = 1" },
+    { language: "toml", value: 'theme = "red.json"' },
+  ]);
+  assert.match(result.markdown, /`rpc-hello-plugin\/red-plugin\.toml`:\n\n```toml\nschema_version = 1\n```/);
+  assert.doesNotMatch(result.markdown, /TOML|Copy/);
+});
+
 test("exports both hidden language panels and every installer platform", async () => {
   const html = wrap(`
     <div role="tablist"><button>Python</button><button>Node.js</button></div>

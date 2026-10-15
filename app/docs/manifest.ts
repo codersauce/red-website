@@ -33,6 +33,14 @@ export const docManifest = [
     "description": "Open a project, edit and save a file, and learn where Red keeps its commands and shortcuts."
   },
   {
+    "id": "agent-docs",
+    "slug": "getting-started/agent-docs",
+    "href": "/docs/getting-started/agent-docs",
+    "section": "Getting started",
+    "title": "Use these docs with your agent",
+    "description": "Give a coding agent Red's documentation as Markdown through the llms.txt index, per-page exports, and your agent's instruction file."
+  },
+  {
     "id": "for-agents",
     "slug": "for-agents",
     "href": "/docs/for-agents",
@@ -204,6 +212,7 @@ export const docNavigation = [
       { ...docMetadata("install"), label: "Install Red" },
       { ...docMetadata("updating"), label: "Update Red" },
       { ...docMetadata("first-session"), label: "First session" },
+      { ...docMetadata("agent-docs"), label: "Docs for your agent" },
       { ...docMetadata("for-agents"), label: "For coding agents" },
     ],
   },

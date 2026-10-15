@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import DocsShell from "./DocsShell";
-import MarkdownControls from "./MarkdownControls";
+import CopyPageMenu from "./CopyPageMenu";
 import { docPages, type DocPageDefinition } from "../content";
 import { markdownPath } from "../manifest";
 
@@ -14,12 +14,13 @@ export default function DocPage({ page, body }: { page: DocPageDefinition; body:
   return <DocsShell current={page.id} currentLabel={page.title}>
     <article className="docs-content">
       <header className="docs-header">
-        <p className="docs-eyebrow">{page.section}</p>
+        <div className="docs-header-top">
+          <p className="docs-eyebrow">{page.section}</p>
+          <CopyPageMenu href={markdownPath(page.href)} key={page.href} />
+        </div>
         <h1>{page.title}</h1>
         <p>{page.description}</p>
       </header>
-
-      <MarkdownControls href={markdownPath(page.href)} key={page.href} />
 
       <div className="docs-body">{body}</div>
 

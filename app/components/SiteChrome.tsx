@@ -33,6 +33,7 @@ export function SiteFooter() {
       </a>
       <Link href="/docs">Docs</Link>
       <Link href="/releases">Releases</Link>
+      <a href="/llms.txt" type="text/markdown">For agents: llms.txt</a>
     </div>
   </footer>;
 }

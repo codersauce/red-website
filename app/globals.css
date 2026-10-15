@@ -783,6 +783,41 @@ img {
   color: var(--red);
 }
 
+.docs-agent-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 30px 0 0 11px;
+  font-size: 13px;
+}
+
+.docs-agent-links > a:first-child {
+  width: 100%;
+  margin-bottom: 2px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.docs-agent-links code {
+  display: inline-block;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: 500 12px var(--font-mono), monospace;
+}
+
+.docs-agent-links a:hover,
+.docs-agent-links a:hover code {
+  color: var(--red);
+}
+
+.docs-agent-links + .docs-source {
+  margin-top: 18px;
+}
+
 .docs-mobile-nav {
   display: none;
 }
@@ -816,46 +851,143 @@ img {
   line-height: 1.65;
 }
 
-.docs-markdown-controls {
+.docs-header-top {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 10px 18px;
-  padding-top: 18px;
-  color: var(--muted);
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.docs-header-top .docs-eyebrow {
+  margin: 0;
+}
+
+.copy-page {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
   font-size: 13px;
 }
 
-.docs-markdown-controls a,
-.docs-markdown-controls button {
+.copy-page-main {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 0;
+  gap: 7px;
+  padding: 6px 12px;
   border: 0;
+  border-radius: 7px 0 0 7px;
   background: transparent;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-
-.docs-markdown-controls a:hover,
-.docs-markdown-controls button:hover {
   color: var(--text);
+  cursor: pointer;
+  font: 600 13px var(--font-sans), sans-serif;
 }
 
-.docs-markdown-controls :focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 4px;
-}
-
-.docs-markdown-controls button:disabled {
+.copy-page-main:disabled {
   cursor: wait;
   opacity: .65;
 }
 
-.docs-markdown-controls [role="status"]:empty {
+.copy-page-more summary {
+  display: grid;
+  width: 32px;
+  height: 100%;
+  place-items: center;
+  border-left: 1px solid var(--border);
+  border-radius: 0 7px 7px 0;
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+}
+
+.copy-page-more summary::-webkit-details-marker {
   display: none;
+}
+
+.copy-page-main:hover,
+.copy-page-more summary:hover,
+.copy-page-more[open] summary {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.copy-page :focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+.copy-page-menu {
+  position: absolute;
+  z-index: 15;
+  top: calc(100% + 6px);
+  right: 0;
+  display: grid;
+  width: 268px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  box-shadow: 0 14px 36px var(--shadow);
+}
+
+.copy-page-menu a,
+.copy-page-menu button {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: 550 13px/1.35 var(--font-sans), sans-serif;
+  text-align: left;
+}
+
+.copy-page-menu svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--muted);
+}
+
+.copy-page-menu a:hover,
+.copy-page-menu button:hover {
+  background: var(--surface);
+}
+
+.copy-page-menu small {
+  display: block;
+  margin-top: 2px;
+  color: var(--dim);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.copy-page-menu hr {
+  width: 100%;
+  margin: 4px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.copy-page-status:empty {
+  display: none;
+}
+
+.copy-page-status:not(:has(.sr-only)) {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: max-content;
+  max-width: min(320px, 80vw);
+  color: var(--red);
+  font-size: 12px;
 }
 
 .docs-content section,
@@ -885,6 +1017,36 @@ img {
 
 .docs-content li + li {
   margin-top: 10px;
+}
+
+/* Links in running text. .text-link is the marketing pages' block-style link;
+   inside guides it must stay inline so it doesn't open a gap above its line. */
+.docs-body :is(p, li, td) a,
+.docs-body .text-link {
+  display: inline;
+  margin: 0;
+  color: var(--text);
+  font-size: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--red) 55%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.docs-body :is(p, li, td) a:hover,
+.docs-body .text-link:hover {
+  color: var(--red);
+  text-decoration-color: var(--red);
+}
+
+.docs-body :is(p, li, td) a:has(> code:only-child) {
+  text-decoration: none;
+}
+
+.docs-body :is(p, li, td) a:hover > code {
+  border-color: color-mix(in srgb, var(--red) 45%, var(--border));
+  color: var(--red);
 }
 
 .docs-content strong {
@@ -1070,6 +1232,84 @@ img {
   font-size: 19px;
 }
 
+.docs-agent-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px 32px;
+  align-items: center;
+  padding: 26px 28px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--code-bg);
+  color: var(--code-text);
+}
+
+.docs-content .docs-agent-strip h2 {
+  margin: 0 0 8px;
+  color: var(--code-text);
+  font-size: 22px;
+}
+
+.docs-content .docs-agent-strip p {
+  margin: 0;
+  color: color-mix(in srgb, var(--code-text) 68%, transparent);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.docs-content .docs-agent-strip p a {
+  color: var(--code-text);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--code-text) 35%, transparent);
+  text-underline-offset: 3px;
+}
+
+.docs-content .docs-agent-strip p a:hover {
+  text-decoration-color: var(--red);
+}
+
+.docs-agent-urls {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-content .docs-agent-urls li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 0;
+  padding: 5px 5px 5px 12px;
+  border: 1px solid color-mix(in srgb, var(--code-text) 14%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--code-text) 6%, transparent);
+}
+
+.docs-content .docs-agent-urls code {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--code-text);
+  font: 500 13px var(--font-mono), monospace;
+}
+
+.docs-agent-urls a:hover code {
+  color: var(--red);
+}
+
+.docs-agent-urls .code-frame-copy {
+  color: color-mix(in srgb, var(--code-text) 70%, transparent);
+}
+
+.docs-agent-urls .code-frame-copy:hover {
+  border-color: color-mix(in srgb, var(--code-text) 18%, transparent);
+  background: color-mix(in srgb, var(--code-text) 10%, transparent);
+  color: var(--code-text);
+}
+
 .docs-topic-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1241,6 +1481,11 @@ img {
 
 .docs-content td {
   color: var(--muted);
+}
+
+.docs-url-table td:first-child code {
+  overflow-wrap: normal;
+  white-space: nowrap;
 }
 
 .docs-callout {
@@ -1487,6 +1732,7 @@ img {
     padding-top: 0;
   }
 
+  .docs-agent-strip,
   .docs-card-grid,
   .docs-topic-grid,
   .docs-section-heading {

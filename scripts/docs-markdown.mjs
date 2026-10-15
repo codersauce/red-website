@@ -260,8 +260,11 @@ const discoveryGroups = [
   ["Diagnose problems", ["troubleshooting"]],
 ];
 
-export function discoveryMarkdown(manifest, origin, releaseVersion) {
-  const listed = new Set();
+// Pages for people rather than agents; listed under the optional section.
+const optionalIds = ["agent-docs"];
+
+function discoveryLayout(manifest) {
+  const listed = new Set(optionalIds);
   const groups = discoveryGroups.map(([title, ids]) => {
     const pages = ids.map((id) => manifest.find((page) => page.id === id)).filter(Boolean);
     for (const page of pages) listed.add(page.id);
@@ -269,28 +272,49 @@ export function discoveryMarkdown(manifest, origin, releaseVersion) {
   });
   const remaining = manifest.filter((page) => !listed.has(page.id));
   if (remaining.length) groups.push({ title: "More documentation", pages: remaining });
+  const optional = optionalIds.map((id) => manifest.find((page) => page.id === id)).filter(Boolean);
+  return { groups, optional };
+}
+
+/** Every manifest page, in the order the discovery index lists them. */
+export function discoveryOrder(manifest) {
+  const { groups, optional } = discoveryLayout(manifest);
+  return [...groups.flatMap(({ pages }) => pages), ...optional];
+}
+
+const pageListItem = (page, origin) => ({
+  type: "listItem", spread: false,
+  children: [{ type: "paragraph", children: [
+    { type: "link", url: new URL(markdownPath(page), origin).href, children: [text(page.title)] },
+    text(`: ${page.description}`),
+  ] }],
+});
+
+const indexSummary = "Red is a modal text editor with Vim-style editing, language-server support, and extensible plugins.";
+
+export function discoveryMarkdown(manifest, origin, releaseVersion) {
+  const { groups, optional } = discoveryLayout(manifest);
   const tree = {
     type: "root",
     children: [
       { type: "heading", depth: 1, children: [text("Red documentation")] },
-      { type: "blockquote", children: [{ type: "paragraph", children: [text("Red is a modal text editor with Vim-style editing, language-server support, and extensible plugins.")] }] },
+      { type: "blockquote", children: [{ type: "paragraph", children: [text(indexSummary)] }] },
       { type: "paragraph", children: [text(`These pages document Red ${releaseVersion}. Check red --version first and follow each guide's minimum version and tested-baseline notes. The published release is not a claim that every page was tested against that version. Start with the guide for agents when choosing commands or APIs.`)] },
       ...groups.flatMap(({ title, pages }) => pages.length ? [
         { type: "heading", depth: 2, children: [text(title)] },
         {
           type: "list", ordered: false, spread: false,
-          children: pages.map((page) => ({
-            type: "listItem", spread: false,
-            children: [{ type: "paragraph", children: [
-              { type: "link", url: new URL(markdownPath(page), origin).href, children: [text(page.title)] },
-              text(`: ${page.description}`),
-            ] }],
-          })),
+          children: pages.map((page) => pageListItem(page, origin)),
         },
       ] : []),
       { type: "heading", depth: 2, children: [text("Optional background and releases")] },
       { type: "list", ordered: false, spread: false, children: [
-        { type: "listItem", children: [{ type: "paragraph", children: [
+        { type: "listItem", spread: false, children: [{ type: "paragraph", children: [
+          { type: "link", url: new URL("/llms-full.txt", origin).href, children: [text("Complete documentation")] },
+          text(": Every guide above in a single Markdown file."),
+        ] }] },
+        ...optional.map((page) => pageListItem(page, origin)),
+        { type: "listItem", spread: false, children: [{ type: "paragraph", children: [
           { type: "link", url: new URL("/releases", origin).href, children: [text("Release notes")] },
           text(": Published Red releases and compatibility changes."),
         ] }] },
@@ -298,4 +322,21 @@ export function discoveryMarkdown(manifest, origin, releaseVersion) {
     ],
   };
   return markdownWriter.stringify(tree);
+}
+
+/** All guides in one file, in discovery order. Each keeps its own title and provenance line. */
+export function fullDocumentationMarkdown(pageMarkdown, origin, releaseVersion) {
+  const intro = markdownWriter.stringify({
+    type: "root",
+    children: [
+      { type: "heading", depth: 1, children: [text("Red documentation (complete)")] },
+      { type: "blockquote", children: [{ type: "paragraph", children: [text(indexSummary)] }] },
+      { type: "paragraph", children: [
+        text(`This file joins every guide listed in the `),
+        { type: "link", url: new URL("/llms.txt", origin).href, children: [text("documentation index")] },
+        text(`. These pages document Red ${releaseVersion}. Check red --version first and follow each guide's minimum version and tested-baseline notes.`),
+      ] },
+    ],
+  });
+  return [intro, ...pageMarkdown].map((part) => part.trimEnd()).join("\n\n") + "\n";
 }

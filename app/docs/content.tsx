@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
+import Callout from "./_components/Callout";
 import { CodeBlock, InlineCode } from "./_components/Code";
 import HighlightedInstallPicker from "./_components/HighlightedInstallPicker";
 import LanguageTabs from "./_components/LanguageTabs";
@@ -20,31 +21,31 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("install"),
     render: ({ origin }) => <>
       <section>
-        <h2>Choose an installation method</h2>
+        <h2 id="choose-an-installation-method">Choose an installation method</h2>
         <p>The install scripts support Apple Silicon and Intel Macs, x86-64 glibc Linux, and 64-bit x86-64 Windows. Homebrew is also available on macOS and Linux.</p>
         <HighlightedInstallPicker origin={origin} wide />
       </section>
 
       <section>
-        <h2>What the installer does</h2>
+        <h2 id="what-the-installer-does">What the installer does</h2>
         <p>The shell and PowerShell installers download the release archive for your platform, compare it with the published SHA-256 checksum, install the binary, and run Red&apos;s self-check. They also enable managed updates for your standalone installation.</p>
         <p>Already have Red? See <Link href="/docs/getting-started/updating">Update Red</Link> for manual updates and migrating an older installation.</p>
         <ul>
           <li>On macOS and Linux, the default destination is <code>~/.local/bin/red</code>.</li>
           <li>On Windows, the default destination is <code>%LOCALAPPDATA%\Programs\Red\bin\red.exe</code>. The installer adds that directory to your user PATH.</li>
         </ul>
-        <aside className="docs-callout"><strong>Linux support</strong><span>The release archive targets x86-64 glibc Linux. Linux ARM64 and musl-based distributions currently require a source build.</span></aside>
+        <Callout title="Linux support">The release archive targets x86-64 glibc Linux. Linux ARM64 and musl-based distributions currently require a source build.</Callout>
       </section>
 
       <section>
-        <h2>Check the installation</h2>
+        <h2 id="check-the-installation">Check the installation</h2>
         <p>Open a new terminal if the <InlineCode language="shell">red</InlineCode> command is not available immediately, then run:</p>
         <CodeBlock language="shell">{`red --version\nred --self-check`}</CodeBlock>
         <p>The self-check lists the bundled plugins and finishes with <code>red self-check ok</code>. Agent support is optional and has its own setup check.</p>
       </section>
 
       <section>
-        <h2>Open a project</h2>
+        <h2 id="open-a-project">Open a project</h2>
         <CodeBlock language="shell">red -r path/to/project</CodeBlock>
         <p>Red works without a configuration file. The default configuration, plugins, and themes are embedded in the binary.</p>
         <p><Link className="text-link" href="/docs/getting-started/first-session">Continue with your first session</Link></p>
@@ -55,7 +56,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("updating"),
     render: ({ origin }) => <>
       <section>
-        <h2>Check and install a release</h2>
+        <h2 id="check-and-install-a-release">Check and install a release</h2>
         <p>Official standalone installations support macOS Intel and Apple Silicon, x86-64 glibc Linux, and x86-64 Windows. Check for a newer stable release without changing your executable:</p>
         <CodeBlock language="shell">red update --check</CodeBlock>
         <p>Install the latest stable release:</p>
@@ -64,7 +65,7 @@ export const docPages: DocPageDefinition[] = [
         <p>The updater verifies the archive's published SHA-256 checksum, candidate version, and bundled runtime before replacing the executable. Restart your editing sessions to use the new version. If a detached session is active, save and stop it before updating.</p>
       </section>
       <section>
-        <h2>Migrate an older standalone installation</h2>
+        <h2 id="migrate-an-older-standalone-installation">Migrate an older standalone installation</h2>
         <p>If you installed Red before v0.8.2, extracted an archive manually, or see an unmanaged-installation message, rerun the official installer once into your existing directory. It writes the installation receipt and lock file needed for managed updates. Save and close Red first, including detached sessions.</p>
         <h3>macOS and Linux</h3>
         <p>Use your existing install directory. This example uses the default <code>~/.local/bin</code>:</p>
@@ -75,13 +76,13 @@ export const docPages: DocPageDefinition[] = [
         <p>Run <InlineCode language="shell">red --version</InlineCode> and <InlineCode language="shell">red update --check</InlineCode> to verify your installation.</p>
       </section>
       <section>
-        <h2>Homebrew and source builds</h2>
+        <h2 id="homebrew-and-source-builds">Homebrew and source builds</h2>
         <p>For Homebrew, run:</p>
         <CodeBlock language="shell">{`brew update\nbrew upgrade codersauce/tap/red`}</CodeBlock>
         <p>Source builds use your existing build and install process. The standalone updater refuses to replace executables it doesn't own.</p>
       </section>
       <section>
-        <h2>Disable daily checks</h2>
+        <h2 id="disable-daily-checks">Disable daily checks</h2>
         <p>Red checks for a newer stable release once per day by default and only notifies you. Installation requires your command. To disable automatic checks, add this to <code>~/.config/red/config.toml</code> and restart Red:</p>
         <CodeBlock language="toml">{`[updates]\nmode = "off"`}</CodeBlock>
         <p><InlineCode language="shell">red update --check</InlineCode>, <InlineCode language="shell">red update</InlineCode>, and <kbd>:update</kbd> remain available.</p>
@@ -93,7 +94,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("first-session"),
     render: () => <>
       <section>
-        <h2>Start Red</h2>
+        <h2 id="start-red">Start Red</h2>
         <p>Open a file, or set the workspace root explicitly:</p>
         <CodeBlock language="shell">{`red src/main.rs\nred -r path/to/project`}</CodeBlock>
         <p>The first interactive launch opens Red&apos;s welcome screen. Press <kbd>Esc</kbd> to enter the editor, or start the guided tour. The tour uses a disposable practice buffer and simulated Git and Agent screens; it doesn&apos;t change your repository or start Codex.</p>
@@ -101,7 +102,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Edit and save a file</h2>
+        <h2 id="edit-and-save-a-file">Edit and save a file</h2>
         <ol className="docs-steps">
           <li><span>1</span><div><strong>Find a file.</strong><p>Press <kbd>Ctrl-p</kbd>, type part of its name, and press <kbd>Enter</kbd>.</p></div></li>
           <li><span>2</span><div><strong>Enter Insert mode.</strong><p>Press <kbd>i</kbd> and type your change. Press <kbd>Esc</kbd> to return to Normal mode.</p></div></li>
@@ -111,7 +112,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Know which mode you are in</h2>
+        <h2 id="know-which-mode-you-are-in">Know which mode you are in</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Mode</th><th>Enter with</th><th>Use it for</th></tr></thead>
           <tbody>
@@ -124,7 +125,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Find the next command</h2>
+        <h2 id="find-the-next-command">Find the next command</h2>
         <p>Press <kbd>Space ?</kbd> to open the command palette. It shows available commands, descriptions, and active keybindings. Press <kbd>F1</kbd> for keyboard help in the current editor, pane, or dialog.</p>
         <div className="docs-key-grid">
           <div><kbd>Ctrl-p</kbd><span>Find a project file</span></div>
@@ -143,7 +144,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("navigation"),
     render: () => <>
       <section>
-        <h2>Open files and projects</h2>
+        <h2 id="open-files-and-projects">Open files and projects</h2>
         <CodeBlock language="shell">{`red src/main.rs\nred src/main.rs src/lib.rs\nred -r path/to/project src/main.rs`}</CodeBlock>
         <p>The <InlineCode language="shell">-r</InlineCode> option sets the workspace root explicitly. Inside Red, press <kbd>Ctrl-p</kbd> for the file picker, <kbd>Ctrl-j</kbd> or <kbd>Space b</kbd> for open buffers, and <kbd>Ctrl-e</kbd> for the file tree.</p>
         <p>Add a line number to a file-picker query to open that location. For example, <code>render:240</code> opens the selected matching file at line 240.</p>
@@ -151,7 +152,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Move in Normal mode</h2>
+        <h2 id="move-in-normal-mode">Move in Normal mode</h2>
         <div className="docs-key-grid">
           <div><kbd>h j k l</kbd><span>Move left, down, up, and right</span></div>
           <div><kbd>w b e</kbd><span>Move by word</span></div>
@@ -164,7 +165,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Edit with motions</h2>
+        <h2 id="edit-with-motions">Edit with motions</h2>
         <p>Operators combine with motions and text objects. <kbd>dw</kbd> deletes a word, <kbd>ci(</kbd> changes inside parentheses, and <kbd>y$</kbd> copies to the end of the line. Counts work with supported actions: <kbd>3dw</kbd> deletes three words.</p>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Keys</th><th>Result</th></tr></thead>
@@ -180,12 +181,12 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Use syntax-aware movement</h2>
+        <h2 id="use-syntax-aware-movement">Use syntax-aware movement</h2>
         <p>When the current language supplies structural queries, <kbd>]f</kbd> and <kbd>[f</kbd> move between functions, <kbd>]c</kbd> and <kbd>[c</kbd> move between classes, and <kbd>]m</kbd> and <kbd>[m</kbd> move between calls. Use <kbd>af</kbd>, <kbd>if</kbd>, <kbd>ac</kbd>, <kbd>ic</kbd>, <kbd>am</kbd>, or <kbd>im</kbd> as Visual selections or operator targets.</p>
       </section>
 
       <section>
-        <h2>Edit repeated text with multiple cursors</h2>
+        <h2 id="edit-repeated-text-with-multiple-cursors">Edit repeated text with multiple cursors</h2>
         <p>Press <kbd>Ctrl-n</kbd> on a word to select it, then press it again to add the next occurrence. Use <kbd>q</kbd> to skip one match, <kbd>Q</kbd> to remove the active selection, and <kbd>n</kbd> or <kbd>N</kbd> to move through matches. Press <kbd>c</kbd>, type the replacement, and press <kbd>Esc</kbd>; one <kbd>u</kbd> undoes the complete multi-cursor edit.</p>
         <p><kbd>Ctrl-Up</kbd> and <kbd>Ctrl-Down</kbd> add vertical cursors while preserving display columns across tabs and spaces.</p>
       </section>
@@ -195,7 +196,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("search"),
     render: () => <>
       <section>
-        <h2>Search the current buffer</h2>
+        <h2 id="search-the-current-buffer">Search the current buffer</h2>
         <div className="docs-key-grid">
           <div><kbd>/</kbd><span>Search forward with a live preview</span></div>
           <div><kbd>?</kbd><span>Search backward</span></div>
@@ -207,20 +208,20 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Search the project</h2>
+        <h2 id="search-the-project">Search the project</h2>
         <p>Press <kbd>Space g</kbd> to open project search. Type a query, move through matches with the arrow keys or <kbd>Ctrl-n</kbd>/<kbd>Ctrl-p</kbd>, and press <kbd>Enter</kbd> to open a result. Project search runs <InlineCode language="shell">rg</InlineCode>, so install ripgrep if Red reports that the process is unavailable.</p>
       </section>
 
       <section>
-        <h2>Search the file tree</h2>
+        <h2 id="search-the-file-tree">Search the file tree</h2>
         <p>Press <kbd>Ctrl-e</kbd> to open the file tree, then <kbd>/</kbd> to search paths recursively. <kbd>Enter</kbd> opens a file or reveals a directory, <kbd>Ctrl-Enter</kbd> reveals without opening, and <kbd>Esc</kbd> restores the tree. Press <kbd>D</kbd> to search only directories, <kbd>f</kbd> to keep a filter, and <kbd>Ctrl-x</kbd> to clear it.</p>
       </section>
 
       <section>
-        <h2>Replace text</h2>
+        <h2 id="replace-text">Replace text</h2>
         <CodeBlock language="red-command">{`:%s/old/new/g\n:%s/(old)-([0-9]+)/$1-$2/g\n:'<,'>s/old/new/gc`}</CodeBlock>
         <p>Red supports the current line, the whole buffer with <code>%</code>, numeric line ranges, and the last Visual selection. Add <code>g</code> for every match on a line, <code>i</code> for case-insensitive matching, or <code>c</code> to confirm each replacement.</p>
-        <aside className="docs-callout"><strong>Replacement syntax</strong><span>Captures use Rust forms such as <code>$1</code> and <code>$name</code>. Use <code>\r</code> to split a line. Vim magic modes and expression replacements aren't supported.</span></aside>
+        <Callout title="Replacement syntax">Captures use Rust forms such as <code>$1</code> and <code>$name</code>. Use <code>\r</code> to split a line. Vim magic modes and expression replacements aren't supported.</Callout>
       </section>
     </>,
   },
@@ -228,7 +229,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("windows"),
     render: () => <>
       <section>
-        <h2>Move between buffers</h2>
+        <h2 id="move-between-buffers">Move between buffers</h2>
         <div className="docs-key-grid">
           <div><kbd>Ctrl-j</kbd><span>Open the buffer picker</span></div>
           <div><kbd>Space Space</kbd><span>Switch to the previous buffer</span></div>
@@ -240,12 +241,12 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Browse directories in a buffer</h2>
+        <h2 id="browse-directories-in-a-buffer">Browse directories in a buffer</h2>
         <p>Run <InlineCode language="shell">red .</InlineCode> or open a directory with <InlineCode language="red-command">:e path/to/dir</InlineCode>. Move and search with normal editor keys, press <kbd>Enter</kbd> to open an entry, and press <kbd>-</kbd> to go to the parent directory. Use <kbd>R</kbd> to refresh the listing. Directory buffers are read-only and stay in the buffer list so you can return to them.</p>
       </section>
 
       <section>
-        <h2>Arrange windows and panes</h2>
+        <h2 id="arrange-windows-and-panes">Arrange windows and panes</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Keys</th><th>Action</th></tr></thead>
           <tbody>
@@ -264,7 +265,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Handle a file changed on disk</h2>
+        <h2 id="handle-a-file-changed-on-disk">Handle a file changed on disk</h2>
         <p>Red reloads a clean buffer when another program changes its file. If the buffer has unsaved edits, Red keeps your text and marks the conflict instead of overwriting either version.</p>
         <div className="docs-key-grid">
           <div><kbd>:diffdisk</kbd><span>Compare the buffer with the current disk version</span></div>
@@ -280,7 +281,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("languages"),
     render: () => <>
       <section>
-        <h2>Use a language server</h2>
+        <h2 id="use-a-language-server">Use a language server</h2>
         <p>Red starts a configured server after you open a matching file. The built-in defaults cover Rust, Fish, Markdown, JavaScript and TypeScript, JSON, TOML, YAML, and Lua; those server executables must be installed separately and available on <code>PATH</code>. Red includes its own server for <code>.hk</code> and <code>.husk</code> files.</p>
         <div className="docs-key-grid">
           <div><kbd>K</kbd><span>Show hover documentation</span></div>
@@ -297,7 +298,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Completion and formatting</h2>
+        <h2 id="completion-and-formatting">Completion and formatting</h2>
         <p>Completion combines words from open buffers with candidates from the active language server. Use the arrow keys or <kbd>Ctrl-n</kbd>/<kbd>Ctrl-p</kbd> to choose an item, <kbd>Tab</kbd> or <kbd>Enter</kbd> to accept it, and <kbd>Ctrl-e</kbd> to close the menu.</p>
         <p>Red formats supported documents when saving and reindents pasted code by default. Disable either behavior without disabling explicit formatting:</p>
         <CodeBlock language="toml">{`[formatting]\non_save = false\non_paste = false`}</CodeBlock>
@@ -305,14 +306,14 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Add or override a server</h2>
+        <h2 id="add-or-override-a-server">Add or override a server</h2>
         <CodeBlock language="toml">{`[lsp.servers.go]\ncommand = "gopls"\nlanguage_id = "go"\nfile_extensions = ["go"]\nroot_markers = ["go.mod", ".git"]`}</CodeBlock>
         <p>Restart Red after changing a server definition, or run <kbd>:languages reload</kbd> after changing a unified language definition.</p>
         <p>Starting with <strong>v0.9.0</strong>, multiple configured servers with overlapping file extensions or filenames attach to the same buffer automatically, combining diagnostics and code actions while routing completion, hover, and navigation by server capability. <Link className="text-link" href="/docs/languages/typescript-eslint">Configure TypeScript and ESLint together</Link></p>
       </section>
 
       <section>
-        <h2>Install a language pack</h2>
+        <h2 id="install-a-language-pack">Install a language pack</h2>
         <p>Open <strong>Language packs</strong> from the command palette, or use the CLI:</p>
         <CodeBlock language="shell">{`red plugin catalog\nred plugin install --catalog go-language\nred plugin install --catalog python-language --trust-native-grammars`}</CodeBlock>
         <p>Native Tree-sitter grammars execute inside the editor. Installing a pack doesn't approve them automatically; trust only the exact verified grammar bytes you intend to load.</p>
@@ -324,8 +325,8 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("typescript-eslint"),
     render: () => <>
       <section>
-        <h2>Goal and required Red version</h2>
-        <aside className="docs-callout"><strong>Available in Red v0.9.0 and later</strong><span>Use <strong>Red v0.9.0 or later</strong> to attach multiple language servers to a single document. In Red v0.8.2 and earlier, only one matching server attaches to each file.</span></aside>
+        <h2 id="goal-and-required-red-version">Goal and required Red version</h2>
+        <Callout title="Available in Red v0.9.0 and later">Use <strong>Red v0.9.0 or later</strong> to attach multiple language servers to a single document. In Red v0.8.2 and earlier, only one matching server attaches to each file.</Callout>
         <p>This guide configures <code>typescript-language-server</code> and <code>vscode-eslint-language-server</code> to work together in the same <code>.ts</code>, <code>.tsx</code>, <code>.js</code>, or <code>.jsx</code> buffer while keeping Prettier as the external formatter. TypeScript serves completion, hover, signature help, symbols, and go-to-definition; ESLint publishes lint diagnostics and rule code actions alongside TypeScript's own diagnostics and quick fixes.</p>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Layer</th><th>Where it lives</th><th>Responsibility</th></tr></thead>
@@ -340,7 +341,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Install the required tools</h2>
+        <h2 id="install-the-required-tools">Install the required tools</h2>
         <p>Keep language-server binaries on <code>PATH</code> separate from the packages installed inside your project's <code>node_modules</code>.</p>
         <h3>1. Install the language-server executables on PATH</h3>
         <p>Install <code>typescript-language-server</code>, <code>typescript</code>, and <code>vscode-langservers-extracted</code> (which provides <code>vscode-eslint-language-server</code>):</p>
@@ -349,11 +350,11 @@ export const docPages: DocPageDefinition[] = [
         <h3>2. Install project dependencies</h3>
         <p><code>vscode-eslint-language-server</code> loads ESLint from the project's local <code>node_modules</code>, and <code>typescript-language-server</code> uses the workspace TypeScript compiler when present. Inside your project directory, install the compiler, linter, and formatter:</p>
         <CodeBlock language="shell">npm install --save-dev eslint@10.4.1 @eslint/js@10.0.1 typescript-eslint@8.60.1 typescript@6.0.3 prettier@3.8.3</CodeBlock>
-        <aside className="docs-callout"><strong>Tested compatibility baseline</strong><span>The steps in this guide were verified against the v0.9.0 implementation (<code>bf2c2039d</code>) on Node.js <code>v24.22.0</code> with <code>vscode-langservers-extracted</code> <code>4.8.0</code>, <code>typescript-language-server</code> <code>6.0.1</code>, TypeScript <code>6.0.3</code>, ESLint <code>10.4.1</code>, <code>@eslint/js</code> <code>10.0.1</code>, <code>typescript-eslint</code> <code>8.60.1</code>, and Prettier <code>3.8.3</code>. Other recent versions that use stdio LSP and ESLint flat configs follow the same setup, though diagnostic text and rule actions can vary across ESLint and plugin releases.</span></aside>
+        <Callout title="Tested compatibility baseline">The steps in this guide were verified against the v0.9.0 implementation (<code>bf2c2039d</code>) on Node.js <code>v24.22.0</code> with <code>vscode-langservers-extracted</code> <code>4.8.0</code>, <code>typescript-language-server</code> <code>6.0.1</code>, TypeScript <code>6.0.3</code>, ESLint <code>10.4.1</code>, <code>@eslint/js</code> <code>10.0.1</code>, <code>typescript-eslint</code> <code>8.60.1</code>, and Prettier <code>3.8.3</code>. Other recent versions that use stdio LSP and ESLint flat configs follow the same setup, though diagnostic text and rule actions can vary across ESLint and plugin releases.</Callout>
       </section>
 
       <section>
-        <h2>Create a small TypeScript + ESLint project</h2>
+        <h2 id="create-a-small-typescript-eslint-project">Create a small TypeScript + ESLint project</h2>
         <p>If you want a self-contained project to verify the setup before opening a larger repository, create a directory with the following files and install the devDependencies above.</p>
         <CodeBlock language="json" title="package.json">{`{\n  "name": "red-ts-eslint-demo",\n  "private": true,\n  "type": "module",\n  "devDependencies": {\n    "@eslint/js": "10.0.1",\n    "eslint": "10.4.1",\n    "prettier": "3.8.3",\n    "typescript": "6.0.3",\n    "typescript-eslint": "8.60.1"\n  }\n}`}</CodeBlock>
         <CodeBlock language="json" title="tsconfig.json">{`{\n  "compilerOptions": {\n    "target": "ES2022",\n    "module": "NodeNext",\n    "moduleResolution": "NodeNext",\n    "strict": true,\n    "noUnusedLocals": true\n  },\n  "include": ["src"]\n}`}</CodeBlock>
@@ -365,7 +366,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Configure Red</h2>
+        <h2 id="configure-red">Configure Red</h2>
         <p>Red reads its user configuration from <code>$XDG_CONFIG_HOME/red/config.toml</code> when <code>XDG_CONFIG_HOME</code> is set and non-empty, or <code>~/.config/red/config.toml</code> otherwise. Because Red already embeds a default <code>typescript</code> server definition for <code>.ts</code>, <code>.tsx</code>, <code>.js</code>, <code>.mjs</code>, <code>.cjs</code>, and <code>.jsx</code>, the primary setup keeps that built-in TypeScript server and adds ESLint plus Prettier:</p>
         <CodeBlock language="toml">{`[formatting]\nprovider = "auto"\n\n[languages.typescript.formatter]\nname = "Prettier"\ncommand = "prettier"\nargs = ["--stdin-filepath", "{file}"]\nroot_markers = ["prettier.config.js", "package.json", ".git"]\n\n[lsp.servers.eslint]\ncommand = "vscode-eslint-language-server"\nargs = ["--stdio"]\ndocuments = [\n  { language_id = "javascript", file_extensions = ["js", "mjs", "cjs"] },\n  { language_id = "javascriptreact", file_extensions = ["jsx"] },\n  { language_id = "typescript", file_extensions = ["ts"] },\n  { language_id = "typescriptreact", file_extensions = ["tsx"] },\n]\nroot_markers = ["eslint.config.js", "package.json", ".git"]\n\n[lsp.servers.eslint.settings.""]\nvalidate = "on"\nrun = "onType"\npackageManager = "npm"\nworkingDirectory = { mode = "auto" }\nnodePath = ""\nuseESLintClass = false\nquiet = false\noptions = {}\nexperimental = {}\nformat = false\nonIgnoredFiles = "off"\nrulesCustomizations = []\ncodeActionOnSave = { mode = "all" }\nproblems = { shortenToSingleLine = false }\n\n[lsp.servers.eslint.settings."".codeAction]\ndisableRuleComment = { enable = true, location = "separateLine", commentStyle = "line" }\nshowDocumentation = { enable = true }`}</CodeBlock>
         <p>The <InlineCode language="toml">[lsp.servers.eslint.settings.&quot;&quot;]</InlineCode> and <InlineCode language="toml">[lsp.servers.eslint.settings.&quot;&quot;.codeAction]</InlineCode> tables are required by <code>vscode-eslint-language-server</code>. After initialization, the server sends a <code>workspace/configuration</code> request with <InlineCode language="toml">section = &quot;&quot;</InlineCode>; Red returns the contents of <InlineCode language="toml">settings.&quot;&quot;</InlineCode>. Without that table, Red replies with <InlineCode language="json">null</InlineCode> and the ESLint server does not validate buffers or offer rule-disable code actions.</p>
@@ -384,7 +385,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Use the right language IDs and selectors</h2>
+        <h2 id="use-the-right-language-ids-and-selectors">Use the right language IDs and selectors</h2>
         <p>Red uses two distinct sets of identifiers for JavaScript and TypeScript files: LSP <code>language_id</code> values sent to language servers in <code>textDocument/didOpen</code>, and Red&apos;s own <InlineCode language="toml">[languages.ID]</InlineCode> table names used for syntax and external formatters.</p>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Extension</th><th>LSP <code>documents</code> <code>language_id</code></th><th>Red <InlineCode language="toml">[languages.ID]</InlineCode> key</th></tr></thead>
@@ -400,7 +401,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>How Red routes requests across attached servers</h2>
+        <h2 id="how-red-routes-requests-across-attached-servers">How Red routes requests across attached servers</h2>
         <ul>
           <li><strong>Attachment and lifecycle:</strong> Every configured server whose <code>documents</code> selector matches the file attaches to the buffer. Each attached server receives open, change, save, and close notifications with its own <code>language_id</code>, workspace root, and document version counter.</li>
           <li><strong>Diagnostics:</strong> Push and pull diagnostics remain scoped to the server that produced them and are combined for display. An empty diagnostic report, server reload, or crash clears only that server&apos;s diagnostics.</li>
@@ -410,7 +411,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Verify TypeScript and ESLint in the same buffer</h2>
+        <h2 id="verify-typescript-and-eslint-in-the-same-buffer">Verify TypeScript and ESLint in the same buffer</h2>
         <ol className="docs-steps">
           <li><span>1</span><div><strong>Open the file.</strong><p>From the project directory, run <InlineCode language="shell">red -r . src/index.ts</InlineCode>.</p></div></li>
           <li><span>2</span><div><strong>Check TypeScript hover.</strong><p>Move to <code>test</code> on line 1 (<kbd>w</kbd> <kbd>w</kbd>) and press <kbd>K</kbd>. Red displays the hover popup from <code>typescript-language-server</code> (<InlineCode language="typescript">const test: &quot;variable test&quot;</InlineCode>). Press <kbd>Esc</kbd> to close the popup.</p></div></li>
@@ -420,7 +421,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Apply an ESLint code action</h2>
+        <h2 id="apply-an-eslint-code-action">Apply an ESLint code action</h2>
         <p>With the cursor on <code>unusedTest</code> on line 2, press <kbd>Space .</kbd> or <kbd>Space c a</kbd>. The code-action picker lists actions from both attached servers, including ESLint&apos;s rule actions and TypeScript&apos;s quick fixes.</p>
         <p>Choose <strong>Disable @typescript-eslint/no-unused-vars for this line</strong> and press <kbd>Enter</kbd>. Red applies the workspace edit from <code>vscode-eslint-language-server</code>:</p>
         <CodeBlock language="typescript">{`export const test = 'variable test';\n// eslint-disable-next-line @typescript-eslint/no-unused-vars\nconst unusedTest = 'unused variable test';`}</CodeBlock>
@@ -428,14 +429,14 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Keep Prettier formatting</h2>
+        <h2 id="keep-prettier-formatting">Keep Prettier formatting</h2>
         <p>External formatters remain independent of language-server attachments. With <InlineCode language="toml">formatting.provider = &quot;auto&quot;</InlineCode> (the default) and <InlineCode language="toml">[languages.typescript.formatter]</InlineCode> configured for Prettier, pressing <kbd>Space f</kbd> runs Prettier instead of formatting through either language server. Saving with <kbd>:w</kbd> also formats when <InlineCode language="toml">formatting.on_save = true</InlineCode>; preserve the user&apos;s existing preference.</p>
         <p>Red looks for <code>prettier</code> in the project&apos;s <code>node_modules/.bin</code> before searching <code>PATH</code>, and passes the current buffer over stdin with <InlineCode language="shell">--stdin-filepath &#123;file&#125;</InlineCode>. Setting <InlineCode language="toml">format = false</InlineCode> under <InlineCode language="toml">[lsp.servers.eslint.settings.&quot;&quot;]</InlineCode> also prevents ESLint from advertising LSP formatting if Red ever falls back to LSP formatting.</p>
         <p>To verify, change single quotes to double quotes on line 1 (<InlineCode language="typescript">export const test = &quot;variable test&quot;;</InlineCode>) and press <kbd>Space f</kbd>. Red rewrites the line to single quotes and reports <code>formatted with Prettier</code>.</p>
       </section>
 
       <section>
-        <h2>Troubleshoot common setup failures</h2>
+        <h2 id="troubleshoot-common-setup-failures">Troubleshoot common setup failures</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Symptom</th><th>Cause and fix</th></tr></thead>
           <tbody>
@@ -449,7 +450,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Use the same pattern for other language servers</h2>
+        <h2 id="use-the-same-pattern-for-other-language-servers">Use the same pattern for other language servers</h2>
         <p>You can attach any combination of language servers to the same file type by giving each server its own <InlineCode language="toml">[lsp.servers.NAME]</InlineCode> table with overlapping <code>file_extensions</code> or <code>filenames</code> selectors:</p>
         <ul>
           <li>Diagnostics from all attached servers merge automatically while keeping per-server ownership.</li>
@@ -464,13 +465,13 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("git"),
     render: () => <>
       <section>
-        <h2>Open the Git workspace</h2>
+        <h2 id="open-the-git-workspace">Open the Git workspace</h2>
         <p>Press <kbd>Space G</kbd>. The file list groups staged, unstaged, untracked, and conflicted paths. The detail pane follows the selected file and shows its diff.</p>
         <p>Use <kbd>Tab</kbd> or <kbd>Ctrl-w w</kbd> to switch panes. Press <kbd>?</kbd> or <kbd>F1</kbd> for the actions available in the focused pane.</p>
       </section>
 
       <section>
-        <h2>Review and stage changes</h2>
+        <h2 id="review-and-stage-changes">Review and stage changes</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Keys</th><th>Action</th></tr></thead>
           <tbody>
@@ -486,13 +487,13 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Create a commit</h2>
+        <h2 id="create-a-commit">Create a commit</h2>
         <p>Press <kbd>Space c c</kbd> to open the commit editor. Its first lines show the current branch and staged files. Write the message, then use <kbd>:w</kbd> or <kbd>:wq</kbd> to submit it. <kbd>:q</kbd> cancels.</p>
         <p>The commit menu can draft a message from the staged diff when Codex is installed and authenticated. Red places the draft in the editor so you can change it before committing.</p>
       </section>
 
       <section>
-        <h2>Use repository operations</h2>
+        <h2 id="use-repository-operations">Use repository operations</h2>
         <p>The workspace also exposes fetch, pull, push, branches, remotes, tags, stashes, worktrees, logs, reset, and interactive rebase. Open the action list with <kbd>?</kbd> instead of memorizing every binding.</p>
       </section>
     </>,
@@ -501,14 +502,14 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("agent"),
     render: () => <>
       <section>
-        <h2>Set up Codex</h2>
+        <h2 id="set-up-codex">Set up Codex</h2>
         <p>Agent features require Codex CLI 0.144.1 or newer. Install Codex, authenticate it, and run Red's offline prerequisite check:</p>
         <CodeBlock language="shell">{`codex login\nred --agent-check --strict`}</CodeBlock>
         <p>Red starts <InlineCode language="shell">codex app-server --stdio</InlineCode> when the first Agent session needs it. If startup fails, Red keeps your prompt so you can fix the setup and retry.</p>
       </section>
 
       <section>
-        <h2>Use the Agent workspace</h2>
+        <h2 id="use-the-agent-workspace">Use the Agent workspace</h2>
         <ol className="docs-steps">
           <li><span>1</span><div><strong>Open Agent.</strong><p>Press <kbd>Space A</kbd> or run <kbd>:Agent</kbd>.</p></div></li>
           <li><span>2</span><div><strong>Write the request.</strong><p>Press <kbd>Enter</kbd> to send. Use <kbd>Alt+Enter</kbd>, <kbd>Shift+Enter</kbd>, or <kbd>Ctrl+J</kbd> for a newline.</p></div></li>
@@ -519,21 +520,21 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Ask about the current code</h2>
+        <h2 id="ask-about-the-current-code">Ask about the current code</h2>
         <p>Press <kbd>Space i</kbd> for inline assist. In Normal mode, Red targets the enclosing function when syntax information is available and otherwise uses the current line. Visual and Visual Line modes use the exact selection. Visual Block isn't supported.</p>
         <p>An exact edit can apply immediately while its original popup remains in the foreground. The result is one <strong>unsaved, undoable</strong> editor transaction. Background results and wider same-file proposals wait for review. In the diff, press <kbd>a</kbd> to apply or <kbd>d</kbd> to decline; <kbd>Enter</kbd> opens the review but doesn't approve it.</p>
-        <aside className="docs-callout"><strong>Full Agent and inline assist write differently</strong><span>Full Agent file tools save their editor changes to disk. Inline code edits remain unsaved until you save the buffer. Comments and explanations don't change source text.</span></aside>
+        <Callout title="Full Agent and inline assist write differently" tone="warning">Full Agent file tools save their editor changes to disk. Inline code edits remain unsaved until you save the buffer. Comments and explanations don't change source text.</Callout>
       </section>
 
       <section>
-        <h2>Understand the boundary</h2>
+        <h2 id="understand-the-boundary">Understand the boundary</h2>
         <p>Agent threads run with a read-only Codex sandbox and no native shell or direct file-edit path. Red supplies bounded tools for workspace files, open-buffer state, diagnostics, navigation, annotations, and revision-checked edits. Reads use the latest Red buffer contents, including unsaved changes.</p>
         <p>Paths must remain inside the physical workspace. Red rejects traversal, symlinks, special files, protected paths, stale revisions, and unsafe writes. Secret-like paths are excluded unless you set <InlineCode language="toml">allow_sensitive_paths = true</InlineCode> under <InlineCode language="toml">[agent]</InlineCode>.</p>
         <p>Configured MCP servers and Codex features are disabled unless you name them in <code>enabled_mcp_servers</code> or <code>enabled_codex_features</code>.</p>
       </section>
 
       <section>
-        <h2>Return to earlier work</h2>
+        <h2 id="return-to-earlier-work">Return to earlier work</h2>
         <p>Press <kbd>Space H</kbd> or run <kbd>:InlineHistory</kbd> to browse inline prompts, answers, ready edits, and applied changes. Press <kbd>Space N</kbd> to reopen the latest completed inline result.</p>
         <p>Agent conversation state and inline history participate in Red's recovery snapshots. After a restart, Red resumes a persisted Codex thread when possible. If it can't, the old transcript remains visible as archived context and the next prompt begins a new session.</p>
       </section>
@@ -543,20 +544,20 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("configuration"),
     render: () => <>
       <section>
-        <h2>Start with a small file</h2>
+        <h2 id="start-with-a-small-file">Start with a small file</h2>
         <p>Red works without a configuration file. On macOS and Linux, create <code>~/.config/red/config.toml</code> when you want to override a default. The welcome screen can create a starter file without replacing existing settings.</p>
         <CodeBlock language="toml">{`theme = "red.json"\nscrolloff = 8\n\n[search]\nignorecase = true\nsmartcase = true\n\n[keys.normal]\n"Ctrl-s" = "Save"`}</CodeBlock>
         <p>Your file is layered over Red's embedded configuration, so it doesn't need to repeat unchanged settings.</p>
       </section>
 
       <section>
-        <h2>Check a change</h2>
+        <h2 id="check-a-change">Check a change</h2>
         <CodeBlock language="shell">{`red --check-config\nred -c 'wrap = false' path/to/file`}</CodeBlock>
         <p><InlineCode language="shell">--check-config</InlineCode> validates the effective user configuration and exits. The repeatable <InlineCode language="shell">-c</InlineCode> option applies a TOML override for one invocation.</p>
       </section>
 
       <section>
-        <h2>Common sections</h2>
+        <h2 id="common-sections">Common sections</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Section</th><th>Controls</th></tr></thead>
           <tbody>
@@ -577,30 +578,30 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("keybindings"),
     render: () => <>
       <section>
-        <h2>Find the current binding first</h2>
+        <h2 id="find-the-current-binding-first">Find the current binding first</h2>
         <p>Press <kbd>F1</kbd> for keyboard help in the current context, or <kbd>Space ?</kbd> for the command palette. Both surfaces show effective bindings after your overrides are applied.</p>
       </section>
 
       <section>
-        <h2>Map an action</h2>
+        <h2 id="map-an-action">Map an action</h2>
         <CodeBlock language="toml">{`[keys.normal]\n"Ctrl-s" = "Save"\n"u" = "Undo"\n\n[keys.insert]\n"Ctrl-s" = "Save"`}</CodeBlock>
         <p>Each mode has its own table. A Normal-mode mapping doesn't change what the same key types in Insert mode.</p>
       </section>
 
       <section>
-        <h2>Use sequences, chords, and plugin commands</h2>
+        <h2 id="use-sequences-chords-and-plugin-commands">Use sequences, chords, and plugin commands</h2>
         <CodeBlock language="toml">{`[keys.normal]\n"a" = [{ EnterMode = "Insert" }, "MoveRight"]\n"g" = { "d" = "GoToDefinition" }\n"Ctrl-j" = { PluginCommand = "BufferPicker" }`}</CodeBlock>
         <p>Normal-mode bindings are inherited by Visual modes unless you add an explicit binding under <InlineCode language="toml">[keys.visual]</InlineCode>. Red rejects ambiguous plugin leader mappings instead of silently discarding one.</p>
       </section>
 
       <section>
-        <h2>Control prefix hints</h2>
+        <h2 id="control-prefix-hints">Control prefix hints</h2>
         <CodeBlock language="toml">{`[key_hints]\nenabled = true\ndelay_ms = 250`}</CodeBlock>
         <p>Pause after a configured prefix such as <kbd>Space</kbd>, <kbd>Ctrl-w</kbd>, or <kbd>g</kbd> to see the available continuations.</p>
       </section>
 
       <section>
-        <h2>Diagnose terminal shortcuts</h2>
+        <h2 id="diagnose-terminal-shortcuts">Diagnose terminal shortcuts</h2>
         <CodeBlock language="shell">red keys</CodeBlock>
         <p>The diagnostic shows how the current terminal reports key combinations without opening a document or starting Codex. Use <kbd>Ctrl+J</kbd> as the portable newline in Agent composers when a terminal doesn't distinguish modified Enter keys.</p>
       </section>
@@ -610,18 +611,18 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("themes"),
     render: () => <>
       <section>
-        <h2>Browse themes</h2>
+        <h2 id="browse-themes">Browse themes</h2>
         <p>Press <kbd>Space t</kbd> or choose <strong>Browse themes</strong> from the command palette. Moving through the picker previews each theme. <kbd>Esc</kbd> restores the original; <kbd>Enter</kbd> selects and persists the highlighted theme.</p>
       </section>
 
       <section>
-        <h2>Set a theme directly</h2>
+        <h2 id="set-a-theme-directly">Set a theme directly</h2>
         <CodeBlock language="toml">theme = "red.json"</CodeBlock>
         <p>Add the filename to <code>config.toml</code>. Run <InlineCode language="shell">red --runtime-files</InlineCode> to list every visible theme and its source.</p>
       </section>
 
       <section>
-        <h2>Customize a bundled theme</h2>
+        <h2 id="customize-a-bundled-theme">Customize a bundled theme</h2>
         <CodeBlock language="shell">{`red --eject themes/red.json\nred --runtime-files`}</CodeBlock>
         <p>The ejected file is placed in the <code>themes</code> directory under Red's configuration directory. A user file shadows the bundled theme with the same name until you remove it. Use <InlineCode language="shell">--eject-force</InlineCode> only when you intend to replace an existing custom copy.</p>
       </section>
@@ -631,25 +632,25 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("plugins"),
     render: () => <>
       <section>
-        <h2>Inspect what Red loaded</h2>
+        <h2 id="inspect-what-red-loaded">Inspect what Red loaded</h2>
         <CodeBlock language="shell">{`red --runtime-files\nred --self-check\nred plugin list`}</CodeBlock>
         <p><InlineCode language="shell">--runtime-files</InlineCode> shows visible plugins and themes with their source. <InlineCode language="shell">--self-check</InlineCode> reports the activation status of bundled plugins. <InlineCode language="shell">red plugin list</InlineCode> lists installed external packages.</p>
       </section>
 
       <section>
-        <h2>Install a package</h2>
+        <h2 id="install-a-package">Install a package</h2>
         <CodeBlock language="shell">{`red plugin catalog\nred plugin install --catalog go-language\nred plugin install owner/repository\nred plugin install --path ~/code/my-red-plugin`}</CodeBlock>
         <p>Catalog packages use immutable release archives with recorded checksums. GitHub and local-path sources remain explicitly unreviewed. Installing a package never grants implicit approval to execute a native Tree-sitter grammar.</p>
       </section>
 
       <section>
-        <h2>Run plugins written in other languages</h2>
+        <h2 id="run-plugins-written-in-other-languages">Run plugins written in other languages</h2>
         <p>Starting with Red v0.9.0, external plugins can run as JSON-RPC processes over stdio. They can provide commands, panels, pickers, statusline content, and checked document edits. Install and manage these packages with the same <InlineCode language="shell">red plugin</InlineCode> commands as Husk packages; install any interpreter or executable required by the package separately.</p>
         <p><a className="text-link" href="https://github.com/codersauce/red/blob/v0.9.0/docs/RPC_PLUGIN_PROTOCOL.md" target="_blank" rel="noreferrer">Read the JSON-RPC plugin protocol</a></p>
       </section>
 
       <section>
-        <h2>Try JSON Workbench</h2>
+        <h2 id="try-json-workbench">Try JSON Workbench</h2>
         <p>JSON Workbench is an example JSON-RPC plugin for live jq previews, result exploration, and undoable transformations. It requires Python 3.9 or newer and <code>jq</code> on <code>PATH</code>. Install it separately from the versioned Red examples:</p>
         <CodeBlock language="shell">{`git clone --branch v0.9.0 --depth 1 https://github.com/codersauce/red.git red-plugin-examples\nred plugin install --path ./red-plugin-examples/examples/rpc-json-workbench`}</CodeBlock>
         <p>Restart Red, open a JSON file, and run <InlineCode language="red-command">:JsonWorkbench</InlineCode>. Edit the query document, run <InlineCode language="red-command">:JsonRun</InlineCode>, or enable <InlineCode language="red-command">:JsonLive</InlineCode> for previews as you edit. Use <InlineCode language="red-command">:JsonApply</InlineCode> to apply a successful result, <InlineCode language="red-command">:JsonUndo</InlineCode> to restore the source, and <InlineCode language="red-command">:JsonCancel</InlineCode> to stop a live or panel preview. Foreground <InlineCode language="red-command">:JsonRun</InlineCode> and <InlineCode language="red-command">:JsonQuery</InlineCode> commands finish or reach their query timeout before another command can run in that plugin.</p>
@@ -657,13 +658,13 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Enable, update, or remove a package</h2>
+        <h2 id="enable-update-or-remove-a-package">Enable, update, or remove a package</h2>
         <CodeBlock language="shell">{`red plugin disable replay\nred plugin enable replay\nred plugin update replay\nred plugin update --all\nred plugin remove replay\nred plugin remove replay --purge`}</CodeBlock>
         <p>Ordinary removal preserves the plugin's namespaced data for a later reinstall. <InlineCode language="shell">--purge</InlineCode> deletes that data as well. Failed updates leave the previous installation active.</p>
       </section>
 
       <section>
-        <h2>Customize a bundled plugin</h2>
+        <h2 id="customize-a-bundled-plugin">Customize a bundled plugin</h2>
         <CodeBlock language="shell">red --eject plugins/fidget.hk</CodeBlock>
         <p>The copy in your configuration directory shadows the bundled file. Remove the copy to return to the version shipped with Red.</p>
         <p>Husk plugins that spawn processes through the host API need an explicit allowlist:</p>
@@ -676,8 +677,8 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("json-rpc-plugins"),
     render: () => <>
       <section>
-        <h2>Overview and required Red version</h2>
-        <aside className="docs-callout"><strong>Available in Red v0.9.0 and later</strong><span>Use <strong>Red v0.9.0 or later</strong> for standalone JSON-RPC plugins and the <code>0.19.0</code> host API surface. They are not included in Red v0.8.2.</span></aside>
+        <h2 id="overview-and-required-red-version">Overview and required Red version</h2>
+        <Callout title="Available in Red v0.9.0 and later">Use <strong>Red v0.9.0 or later</strong> for standalone JSON-RPC plugins and the <code>0.19.0</code> host API surface. They are not included in Red v0.8.2.</Callout>
         <p>A JSON-RPC plugin is an external package with a <code>red-plugin.toml</code> manifest and a child process that speaks JSON-RPC 2.0 over UTF-8 standard input and output. Red remains the owner of buffers, undo history, focus, panels, and sessions; your process requests attributed operations through Red&apos;s versioned <code>red/*</code> host methods.</p>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Rule</th><th>Protocol version 1 behavior</th></tr></thead>
@@ -694,7 +695,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>1. Create and install a minimal plugin</h2>
+        <h2 id="1-create-and-install-a-minimal-plugin">1. Create and install a minimal plugin</h2>
         <p>Start with a package directory containing <code>red-plugin.toml</code> and one script file. Red launches <InlineCode language="toml">[rpc].command</InlineCode> with the package directory as its working directory and passes <code>args</code> directly without a shell.</p>
         <LanguageTabs
           label="Minimal plugin files"
@@ -721,7 +722,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>2. Read the current document</h2>
+        <h2 id="2-read-the-current-document">2. Read the current document</h2>
         <p>When a command handler calls a <code>red/*</code> host method, it sends a JSON-RPC request on <code>stdout</code> and waits for the matching response on <code>stdin</code>. While waiting, your receive loop must continue servicing one-way notifications (such as <code>event/notify</code> or <code>picker/event</code>), reject unexpected re-entrant requests as busy, and respond to <code>shutdown</code>/<code>exit</code> so the process never deadlocks.</p>
         <p>Add <code>&quot;RpcDocument&quot;</code> to <InlineCode language="toml">[activation].commands</InlineCode> and your <code>initialize</code> command list, then call <code>red/DocumentSnapshot</code>:</p>
         <LanguageTabs
@@ -733,7 +734,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>3. Display and close a text panel</h2>
+        <h2 id="3-display-and-close-a-text-panel">3. Display and close a text panel</h2>
         <p>Plugins can open a host-rendered text panel with a connection-local ID using <code>red/TextPanelCreate</code>, replace its Markdown or syntax-highlighted code blocks with <code>red/TextPanelSetContent</code>, focus it with <code>red/TextPanelFocus</code>, and close it with <code>red/TextPanelDispose</code>.</p>
         <LanguageTabs
           label="Text panel commands"
@@ -744,7 +745,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>4. Apply and undo an edit safely</h2>
+        <h2 id="4-apply-and-undo-an-edit-safely">4. Apply and undo an edit safely</h2>
         <p>Red never lets plugins mutate buffer memory directly. Instead, request a snapshot with <InlineCode language="javascript">include_document_id: true</InlineCode>, compute your edit ranges in zero-based Unicode-scalar coordinates, and send <code>red/DocumentApply</code> with the snapshot&apos;s decimal-string <code>document_id</code>, <code>expected_revision</code>, and optional <code>expected_text</code> preimage. Red validates every range and preimage before recording one undoable transaction attributed to your plugin.</p>
         <LanguageTabs
           label="Apply and undo handlers"
@@ -760,7 +761,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>5. Handle events, lifecycle, and complete package files</h2>
+        <h2 id="5-handle-events-lifecycle-and-complete-package-files">5. Handle events, lifecycle, and complete package files</h2>
         <p>Protocol version 1 delivers three low-frequency global editor events when declared in both <InlineCode language="toml">[activation].events</InlineCode> and <code>initialize</code>: <code>editor:ready</code>, <code>file:opened</code>, and <code>file:saved</code>. Each arrives as a one-way <code>event/notify</code> notification with <InlineCode language="json">&#123;&quot;name&quot;: &quot;file:saved&quot;, &quot;payload&quot;: &#123;&quot;file&quot;: &quot;...&quot;, &quot;buffer_index&quot;: 0, &quot;document_id&quot;: 42&#125;&#125;</InlineCode>.</p>
         <p>The complete packages below use the v0.9.0 protocol. The Python package matches <a href="https://github.com/codersauce/red/tree/eb5e2b6be15325abd12adbfac816f7844afff42c/examples/rpc-hello-plugin" target="_blank" rel="noreferrer"><code>examples/rpc-hello-plugin</code></a>; the Node.js version implements the same operations, including configuration, persistent storage, statusline, picker, panel, document apply/undo, and <code>file:saved</code> event tracking:</p>
         <LanguageTabs
@@ -778,7 +779,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>6. Configure and distribute the plugin</h2>
+        <h2 id="6-configure-and-distribute-the-plugin">6. Configure and distribute the plugin</h2>
         <h3>User configuration and persistent storage</h3>
         <p>Users configure settings in <code>~/.config/red/config.toml</code> under <InlineCode language="toml">[plugin_config.OWNER]</InlineCode>, where <code>OWNER</code> is the plugin&apos;s registration name (by default, <InlineCode language="toml">[plugin].id</InlineCode>):</p>
         <CodeBlock language="toml">{`[plugin_config.rpc-hello]\ngreeting = "hello"`}</CodeBlock>
@@ -795,7 +796,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>7. Troubleshoot common failures</h2>
+        <h2 id="7-troubleshoot-common-failures">7. Troubleshoot common failures</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Symptom</th><th>Cause and fix</th></tr></thead>
           <tbody>
@@ -815,7 +816,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("husk"),
     render: () => <>
       <section>
-        <h2>Create the smallest plugin</h2>
+        <h2 id="create-the-smallest-plugin">Create the smallest plugin</h2>
         <p>Husk is Red's embedded scripting language. Place <code>hello.hk</code> in the <code>plugins</code> directory under Red's configuration directory, then register the filename in <code>config.toml</code>:</p>
         <CodeBlock language="toml">{`[plugins]\nhello = "hello.hk"`}</CodeBlock>
         <CodeBlock language="husk">{`#[red::command(\n    name = "HelloWorld",\n    title = "Say hello",\n    category = "Example",\n)]\nfn hello_world() {\n    red::execute("Print", "Hello from Husk");\n}`}</CodeBlock>
@@ -823,13 +824,13 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Keep plugin state</h2>
+        <h2 id="keep-plugin-state">Keep plugin state</h2>
         <CodeBlock language="husk">{`struct PluginState {\n    count: i64,\n}\n\n#[red::state]\nfn initial_state() -> PluginState {\n    return PluginState { count: 0 };\n}`}</CodeBlock>
         <p>Read private state with <InlineCode language="husk">red::state()</InlineCode> and update named fields with <InlineCode language="husk">red::state_patch(...)</InlineCode>. Use declaration attributes for commands, fixed events, configuration, and lifecycle hooks; keep <InlineCode language="husk">red::on</InlineCode> for event names known only at runtime.</p>
       </section>
 
       <section>
-        <h2>Use the host boundary</h2>
+        <h2 id="use-the-host-boundary">Use the host boundary</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Function</th><th>Purpose</th></tr></thead>
           <tbody>
@@ -846,7 +847,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Use the standalone Husk CLI</h2>
+        <h2 id="use-the-standalone-husk-cli">Use the standalone Husk CLI</h2>
         <p>The Husk CLI is built separately from the Red editor binary:</p>
         <CodeBlock language="shell">{`cargo install --path crates/husk-cli\nhusk check script.hk\nhusk run script.hk\nhusk test path/to/package\nhusk repl`}</CodeBlock>
         <p>Standalone Husk grants no ambient filesystem, network, environment, process, clock, or random access. Embedders add capabilities explicitly.</p>
@@ -857,7 +858,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("sessions"),
     render: () => <>
       <section>
-        <h2>Keep a live session running</h2>
+        <h2 id="keep-a-live-session-running">Keep a live session running</h2>
         <p>Detach and attach are available on macOS and Linux. Start a named session:</p>
         <CodeBlock language="shell">red --detach=refactor src/main.rs</CodeBlock>
         <p>The terminal attaches immediately. Press <kbd>Ctrl-\</kbd> to leave the TUI while the editor, unsaved buffers, plugins, language servers, running shell jobs, and Codex app-server process stay alive.</p>
@@ -866,20 +867,20 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Use the default session name</h2>
+        <h2 id="use-the-default-session-name">Use the default session name</h2>
         <CodeBlock language="shell">red --detach src/main.rs</CodeBlock>
         <p>Without an explicit name, Red uses <code>default</code>. Named sessions require the <InlineCode language="shell">--detach=NAME</InlineCode> form so a filename can't be mistaken for a session name.</p>
       </section>
 
       <section>
-        <h2>Restore after a crash</h2>
+        <h2 id="restore-after-a-crash">Restore after a crash</h2>
         <CodeBlock language="shell">red --resume</CodeBlock>
         <p>Recovery is available on every supported platform. Red restores the newest valid snapshot, including dirty buffers, window layout, cursors, registers, marks, undo history, and Agent conversation state. Restored dirty text stays in memory; Red doesn't write it to disk until you save.</p>
-        <aside className="docs-callout"><strong>Don't resume a running editor</strong><span>Interactive owners don't currently hold an exclusive recovery lock. Use <InlineCode language="shell">--attach</InlineCode> for a live detached owner and <InlineCode language="shell">--resume</InlineCode> only after the owner has stopped.</span></aside>
+        <Callout title="Don't resume a running editor" tone="warning">Interactive owners don't currently hold an exclusive recovery lock. Use <InlineCode language="shell">--attach</InlineCode> for a live detached owner and <InlineCode language="shell">--resume</InlineCode> only after the owner has stopped.</Callout>
       </section>
 
       <section>
-        <h2>Know which recovery path applies</h2>
+        <h2 id="know-which-recovery-path-applies">Know which recovery path applies</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Situation</th><th>Use</th><th>What happens</th></tr></thead>
           <tbody>
@@ -895,7 +896,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("cli"),
     render: () => <>
       <section>
-        <h2>Open the editor</h2>
+        <h2 id="open-the-editor">Open the editor</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
           <tbody>
@@ -910,7 +911,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Check the installation and configuration</h2>
+        <h2 id="check-the-installation-and-configuration">Check the installation and configuration</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
           <tbody>
@@ -926,7 +927,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Inspect and eject runtime assets</h2>
+        <h2 id="inspect-and-eject-runtime-assets">Inspect and eject runtime assets</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
           <tbody>
@@ -938,7 +939,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Manage sessions</h2>
+        <h2 id="manage-sessions">Manage sessions</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
           <tbody>
@@ -951,7 +952,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Manage packages and languages</h2>
+        <h2 id="manage-packages-and-languages">Manage packages and languages</h2>
         <CodeBlock language="shell">{`red plugin catalog\nred plugin install [OWNER/REPOSITORY]\nred plugin install --path DIRECTORY\nred plugin install --catalog ID\nred plugin list\nred plugin update ID\nred plugin update --all\nred plugin disable ID\nred plugin enable ID\nred plugin remove ID [--purge]\n\nred language trust LANGUAGE_OR_PATH\nred language untrust LANGUAGE_OR_PATH\nred language check-indent FIXTURES.json`}</CodeBlock>
       </section>
     </>,
@@ -960,7 +961,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("vim"),
     render: () => <>
       <section>
-        <h2>Supported editing model</h2>
+        <h2 id="supported-editing-model">Supported editing model</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Area</th><th>Red behavior</th></tr></thead>
           <tbody>
@@ -977,7 +978,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Important differences</h2>
+        <h2 id="important-differences">Important differences</h2>
         <ul>
           <li>Search and substitution use Rust regular-expression syntax rather than Vim's regex dialect.</li>
           <li>Red implements a documented Ex subset and doesn't run Vimscript.</li>
@@ -989,7 +990,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Look up exact behavior</h2>
+        <h2 id="look-up-exact-behavior">Look up exact behavior</h2>
         <p>The versioned compatibility matrix records supported behavior, intentional differences, and items not yet supported.</p>
         <p><a className="text-link" href="https://github.com/codersauce/red/blob/main/docs/VIM_COMPATIBILITY.md" target="_blank" rel="noreferrer">Open the complete compatibility matrix</a></p>
       </section>
@@ -999,7 +1000,7 @@ export const docPages: DocPageDefinition[] = [
     ...docMetadata("troubleshooting"),
     render: () => <>
       <section>
-        <h2>Start with the narrow check</h2>
+        <h2 id="start-with-the-narrow-check">Start with the narrow check</h2>
         <div className="docs-table-wrap"><table>
           <thead><tr><th>Problem</th><th>First check</th></tr></thead>
           <tbody>
@@ -1015,12 +1016,12 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Read messages and logs</h2>
+        <h2 id="read-messages-and-logs">Read messages and logs</h2>
         <p>Press <kbd>Space m</kbd> or run <kbd>:messages</kbd> to browse editor notifications, command output, and recent errors. Red writes <code>red.log</code> in its configuration directory by default. Relative <code>log_file</code> paths are resolved from that directory.</p>
       </section>
 
       <section>
-        <h2>Fix common problems</h2>
+        <h2 id="fix-common-problems">Fix common problems</h2>
         <ul>
           <li><strong>Command not found after installation:</strong> open a new terminal or add the install directory printed by the installer to <code>PATH</code>.</li>
           <li><strong>Language tools are empty:</strong> install the configured server executable. Buffer-word completion still works without a server.</li>
@@ -1033,7 +1034,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
-        <h2>Report a reproducible problem</h2>
+        <h2 id="report-a-reproducible-problem">Report a reproducible problem</h2>
         <p>Include your Red version, operating system, terminal, the smallest reproduction, and the relevant focused-check output. Remove private paths, source, prompts, and credentials before sharing logs.</p>
         <p><a className="text-link" href="https://github.com/codersauce/red/issues" target="_blank" rel="noreferrer">Open a GitHub issue</a></p>
       </section>

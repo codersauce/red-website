@@ -149,12 +149,14 @@ test("serves direction A at the root and keeps docs and releases", async () => {
 });
 
 test("syntax-highlights every documentation example without changing its text", async () => {
-  const docsSource = (await Promise.all(["../app/docs/content.tsx", "../app/docs/_components/ForAgents.tsx", "../app/docs/_components/AgentDocs.tsx"].map((path) => readFile(new URL(path, import.meta.url), "utf8")))).join("\n");
+  const docsSource = (await Promise.all(["../app/docs/content.tsx", "../app/docs/_components/ForAgents.tsx", "../app/docs/_components/AgentDocs.tsx", "../app/docs/page.tsx"].map((path) => readFile(new URL(path, import.meta.url), "utf8")))).join("\n");
   const guidePaths = docManifest.map((page) => page.href);
   const expectedBlocks = [...docsSource.matchAll(/<CodeBlock language="([^"]+)"/g)];
   const expectedInline = [...docsSource.matchAll(/<InlineCode language="([^"]+)"/g)];
   let renderedBlocks = 0;
   let renderedInline = 0;
+  let darkBlocks = 0;
+  let commandFrames = 0;
 
   for (const path of guidePaths) {
     const response = await render(path);
@@ -169,12 +171,15 @@ test("syntax-highlights every documentation example without changing its text", 
         assert.equal(grammar, "plaintext");
         assert.doesNotMatch(code, /syntax-token/);
       } else {
-        assert.match(code, /class="syntax-token syntax-token-theme"/);
+        // Command bars are black in both themes, so only they use the dark palette.
+        assert.match(code, /class="syntax-token syntax-token-(?:theme|dark)"/);
+        if (code.includes("syntax-token-dark")) darkBlocks += 1;
         assert.match(code, /--syntax-dark:/);
         assert.match(code, /--syntax-light:/);
       }
       renderedBlocks += 1;
     }
+    commandFrames += html.split('class="code-frame code-frame-command"').length - 1;
 
     for (const match of html.matchAll(/<code class="syntax-inline" data-language="([^"]+)" data-grammar="([^"]+)">([\s\S]*?)<\/code>/g)) {
       const [, language, , code] = match;
@@ -187,6 +192,8 @@ test("syntax-highlights every documentation example without changing its text", 
   }
 
   assert.equal(renderedBlocks, expectedBlocks.length);
+  assert.equal(darkBlocks, commandFrames);
+  assert.ok(commandFrames > 0);
 
   const pluginGuide = await (await render("/docs/plugins/json-rpc")).text();
   assert.match(pluginGuide, /<div class="code-frame" data-title="rpc-hello-plugin\/plugin\.py"><div class="code-frame-header" data-doc-ignore="true">/);
@@ -204,6 +211,20 @@ test("syntax-highlights every documentation example without changing its text", 
 
   const firstSession = await (await render("/docs/getting-started/first-session")).text();
   assert.match(firstSession, /data-language="red-command" data-grammar="vimscript"/);
+});
+
+test("gives every guide section a unique id and shows version badges from the manifest", async () => {
+  for (const page of docManifest.filter((entry) => entry.href !== "/docs")) {
+    const html = await (await render(page.href)).text();
+    const article = html.slice(html.indexOf('<div class="docs-body">'), html.indexOf('<nav class="docs-pagination"'));
+    const headings = [...article.matchAll(/<h2([^>]*)>/g)].map(([, attributes]) => /id="([^"]+)"/.exec(attributes)?.[1]);
+    assert.ok(headings.length > 0, page.href);
+    assert.ok(headings.every(Boolean), `${page.href}: section without an id`);
+    assert.equal(new Set(headings).size, headings.length, `${page.href}: duplicate section id`);
+    assert.match(html, /<aside class="docs-toc-column">/, page.href);
+    const badge = /<span class="docs-version" data-doc-ignore="true">Requires Red (v[\d.]+)\+<\/span>/.exec(html)?.[1];
+    assert.equal(badge, page.minVersion, page.href);
+  }
 });
 
 test("keeps the syntax highlighter out of browser chunks", async () => {

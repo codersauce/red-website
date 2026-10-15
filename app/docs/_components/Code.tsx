@@ -135,17 +135,21 @@ export function CodeBlock({
   children,
   language,
   title,
+  variant,
 }: {
   children: string;
   language: SyntaxLanguage;
   /** A file name. The Markdown export renders it as a label paragraph before the fence. */
   title?: string;
+  /** "command": a one-line black command bar, like the install picker's. */
+  variant?: "command";
 }) {
   const grammar = language === "text" ? "plaintext" : grammarByLanguage[language];
   const tree = language === "text" && treeGuide.test(children);
   const languageLabel = tree ? "Files" : languageLabels[language];
+  const frameClass = ["code-frame", tree && "code-frame-tree", variant && `code-frame-${variant}`].filter(Boolean).join(" ");
   return (
-    <div className={tree ? "code-frame code-frame-tree" : "code-frame"} data-title={title}>
+    <div className={frameClass} data-title={title}>
       <div className="code-frame-header" data-doc-ignore>
         <span className="code-frame-label">
           {title ? <span className="code-frame-title">{title}</span> : null}
@@ -154,7 +158,9 @@ export function CodeBlock({
         <CopyCodeButton code={children} label={title ?? `${languageLabel} code`} />
       </div>
       <pre className="syntax-block" data-language={language} data-grammar={grammar}>
-        <code>{tree ? <TreeLines code={children} /> : <SyntaxTokens code={children} language={language} />}</code>
+        <code>{tree
+          ? <TreeLines code={children} />
+          : <SyntaxTokens code={children} language={language} palette={variant === "command" ? "dark" : "theme"} />}</code>
       </pre>
     </div>
   );

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import { Archivo, DM_Mono } from "next/font/google";
 import { headers } from "next/headers";
 import { releaseVersion } from "./installers.generated";
 import { canonicalOrigin, resolvePublicOrigin } from "./public-origin";
 import "./globals.css";
 
-const sans = Instrument_Sans({ variable: "--font-sans", subsets: ["latin"] });
-const mono = JetBrains_Mono({ variable: "--font-mono", subsets: ["latin"], fallback: ["ui-monospace", "Menlo", "Consolas", "monospace"] });
+// The homepage's faces. Archivo's width axis condenses headings like the homepage, at a calmer size.
+const sans = Archivo({ variable: "--font-sans", subsets: ["latin"], axes: ["wdth"], fallback: ["Helvetica Neue", "Arial", "sans-serif"] });
+const mono = DM_Mono({ variable: "--font-mono", subsets: ["latin"], weight: ["400", "500"], fallback: ["ui-monospace", "Menlo", "Consolas", "monospace"] });
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();

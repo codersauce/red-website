@@ -1,5 +1,33 @@
 export const releases = [
 {
+  "version": "v0.9.1",
+  "id": "release-v0-9-1",
+  "headline": "More reliable completion, symbol search, and plugins",
+  "summary": "Red v0.9.1 fixes completion after punctuation and keeps large language-server results from stopping plugins. It also makes plugin failures easier to diagnose and improves terminal command output.",
+  "highlights": [
+    {
+      "id": "punctuation-completion",
+      "title": "Keep member completion working as you type",
+      "description": "Typing through a completion and continuing with punctuation preserves the period and requests members after the updated text reaches the language server. Late completion responses no longer discard punctuation or dismiss the new member menu."
+    },
+    {
+      "id": "large-symbol-results",
+      "title": "Search large symbol lists without stopping the plugin",
+      "description": "Large symbol and reference results are trimmed to fit the receiving plugin's memory budget, with the original count retained for truncated-result messages. Other oversized request results produce a warning rather than stopping the plugin. Shared arrays and maps are counted once against the Husk heap while new copies still respect the limit."
+    },
+    {
+      "id": "plugin-diagnostics",
+      "title": "Inspect plugin state and understand startup failures",
+      "description": "Run :plugin-status to inspect plugins in the current editor session, including starting, active, disabled, and quarantined states. Startup notices explain pending commands, executable failures retain their cause, and commands from stopped plugins explain why they are unavailable."
+    },
+    {
+      "id": "terminal-output",
+      "title": "Read terminal command output more easily",
+      "description": "Plugin lists and catalog results use aligned columns measured in terminal display width, including Unicode text. Utility commands share consistent styling, and closed output pipes exit quietly."
+    }
+  ]
+},
+{
   "version": "v0.9.0",
   "id": "release-v0-9-0",
   "headline": "TypeScript and ESLint together, plugins in your language",

@@ -1358,46 +1358,129 @@ img {
   margin-inline: 0;
 }
 
-.docs-card-grid {
+/* A real sequence, so it gets numbers; the line matches the sidebar rail. */
+.docs-quickstart {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 30px;
 }
 
-.docs-card {
+.docs-quickstart-step {
+  position: relative;
   display: grid;
-  min-height: 0;
-  grid-template-rows: auto 1fr auto;
-  padding: 24px;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 18px;
+}
+
+.docs-quickstart-step:not(:last-child)::before {
+  position: absolute;
+  top: 38px;
+  bottom: -26px;
+  left: 14.5px;
+  width: 1px;
+  background: var(--border);
+  content: "";
+}
+
+.docs-quickstart-number {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface);
-  transition: border-color .18s ease, transform .18s ease;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text);
+  font: 500 13px var(--font-mono), monospace;
 }
 
-.docs-card:hover {
-  border-color: color-mix(in srgb, var(--red) 55%, var(--border));
-  transform: translateY(-2px);
+.docs-content .docs-quickstart h3 {
+  margin: 4px 0 14px;
+  font-size: 20px;
 }
 
-.docs-card-number {
+.docs-content .docs-quickstart .install-selector {
+  margin-top: 0;
+}
+
+.docs-quickstart .code-frame {
+  margin: 0;
+}
+
+/* Matches .install-command: black in both themes, red prompt, copy at the end. */
+.code-frame-command {
+  position: relative;
+  border-color: var(--border);
+  background: var(--code-bg);
+}
+
+.code-frame-command .code-frame-header {
+  position: absolute;
+  inset: 0 0 0 auto;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid color-mix(in srgb, var(--code-text) 16%, transparent);
+  background: transparent;
+}
+
+.code-frame-command .code-frame-label {
+  display: none;
+}
+
+.code-frame-command .code-frame-copy {
+  height: 100%;
+  padding: 0 17px;
+  border: 0;
+  border-radius: 0 8px 8px 0;
+  color: color-mix(in srgb, var(--code-text) 58%, transparent);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.code-frame-command .code-frame-copy:hover {
+  border: 0;
+  background: transparent;
+  color: var(--code-text);
+}
+
+.docs-content .code-frame-command pre {
+  padding: 20px 110px 20px 19px;
+  background: var(--code-bg);
+  color: var(--code-text);
+}
+
+.docs-content .code-frame-command pre code {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.docs-content .code-frame-command pre[data-language="shell"] .syntax-line::before {
+  margin-right: 12px;
   color: var(--red);
-  font: 500 12px var(--font-mono), monospace;
+  content: "$";
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.docs-card h3 {
-  margin-top: 18px;
+.docs-content .docs-quickstart p {
+  margin: 12px 0 0;
+  font-size: 14.5px;
+  line-height: 1.6;
 }
 
-.docs-card p {
-  margin: 8px 0 24px;
-  font-size: 15px;
-  line-height: 1.65;
+.docs-quickstart p a {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--red) 55%, transparent);
+  text-underline-offset: 3px;
+  white-space: nowrap;
 }
 
-.docs-card > svg {
+.docs-quickstart p a:hover {
   color: var(--red);
-  font-size: 19px;
+  text-decoration-color: var(--red);
 }
 
 .docs-agent-strip {
@@ -1955,7 +2038,6 @@ img {
   }
 
   .docs-agent-strip,
-  .docs-card-grid,
   .docs-topic-grid,
   .docs-section-heading {
     grid-template-columns: 1fr;
@@ -1963,10 +2045,6 @@ img {
 
   .docs-topic-grid {
     columns: 1;
-  }
-
-  .docs-card {
-    min-height: 190px;
   }
 
   .docs-key-grid > div {

@@ -149,12 +149,14 @@ test("serves direction A at the root and keeps docs and releases", async () => {
 });
 
 test("syntax-highlights every documentation example without changing its text", async () => {
-  const docsSource = (await Promise.all(["../app/docs/content.tsx", "../app/docs/_components/ForAgents.tsx", "../app/docs/_components/AgentDocs.tsx"].map((path) => readFile(new URL(path, import.meta.url), "utf8")))).join("\n");
+  const docsSource = (await Promise.all(["../app/docs/content.tsx", "../app/docs/_components/ForAgents.tsx", "../app/docs/_components/AgentDocs.tsx", "../app/docs/page.tsx"].map((path) => readFile(new URL(path, import.meta.url), "utf8")))).join("\n");
   const guidePaths = docManifest.map((page) => page.href);
   const expectedBlocks = [...docsSource.matchAll(/<CodeBlock language="([^"]+)"/g)];
   const expectedInline = [...docsSource.matchAll(/<InlineCode language="([^"]+)"/g)];
   let renderedBlocks = 0;
   let renderedInline = 0;
+  let darkBlocks = 0;
+  let commandFrames = 0;
 
   for (const path of guidePaths) {
     const response = await render(path);
@@ -169,12 +171,15 @@ test("syntax-highlights every documentation example without changing its text", 
         assert.equal(grammar, "plaintext");
         assert.doesNotMatch(code, /syntax-token/);
       } else {
-        assert.match(code, /class="syntax-token syntax-token-theme"/);
+        // Command bars are black in both themes, so only they use the dark palette.
+        assert.match(code, /class="syntax-token syntax-token-(?:theme|dark)"/);
+        if (code.includes("syntax-token-dark")) darkBlocks += 1;
         assert.match(code, /--syntax-dark:/);
         assert.match(code, /--syntax-light:/);
       }
       renderedBlocks += 1;
     }
+    commandFrames += html.split('class="code-frame code-frame-command"').length - 1;
 
     for (const match of html.matchAll(/<code class="syntax-inline" data-language="([^"]+)" data-grammar="([^"]+)">([\s\S]*?)<\/code>/g)) {
       const [, language, , code] = match;
@@ -187,6 +192,8 @@ test("syntax-highlights every documentation example without changing its text", 
   }
 
   assert.equal(renderedBlocks, expectedBlocks.length);
+  assert.equal(darkBlocks, commandFrames);
+  assert.ok(commandFrames > 0);
 
   const pluginGuide = await (await render("/docs/plugins/json-rpc")).text();
   assert.match(pluginGuide, /<div class="code-frame" data-title="rpc-hello-plugin\/plugin\.py"><div class="code-frame-header" data-doc-ignore="true">/);

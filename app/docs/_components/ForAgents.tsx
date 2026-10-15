@@ -41,9 +41,9 @@ export default function ForAgents() {
 
     <section>
       <h2 id="create-and-validate-a-plugin">Create and validate a plugin</h2>
-      <p>Start with one complete Python or Node.js example in the <Link className="text-link" href="/docs/plugins/json-rpc">JSON-RPC tutorial</Link>. Red v0.9.0 uses host API <code>0.19.0</code> and protocol version <code>1</code>; these are distinct from Red&apos;s application version. Use the tutorial&apos;s manifest and initialization response together.</p>
-      <CodeBlock language="shell">{`red plugin install --path ./rpc-hello-plugin\nred plugin list`}</CodeBlock>
-      <p>The command above uses the Python example&apos;s directory; use the Node example&apos;s directory if chosen. Open Red, run <InlineCode language="red-command">:RpcHello world</InlineCode>, and confirm the expected greeting. Listing a package proves installation; invoking its command also exercises process startup and the handshake.</p>
+      <p>Start from the complete TypeScript or Python package in the <Link className="text-link" href="/docs/plugins/json-rpc">JSON-RPC tutorial</Link>, a Markdown outline and table of contents plugin. Red v0.9.0 uses host API <code>0.19.0</code> and protocol version <code>1</code>; these are distinct from Red&apos;s application version. Use the tutorial&apos;s manifest and initialization response together. The TypeScript version needs Node.js 22.18 or later.</p>
+      <CodeBlock language="shell">{`red plugin install --path ./markdown-outline\nred plugin list`}</CodeBlock>
+      <p>Open a Markdown file in Red, run <InlineCode language="red-command">:Outline</InlineCode>, and confirm that the outline panel opens. Listing a package proves installation; invoking its command also exercises process startup and the handshake. If the command reports <code>unknown command</code> after a first silent attempt, Red quarantined the plugin; read the reason in <code>red.log</code> in Red&apos;s configuration directory.</p>
       <p>For more operations, read the <a className="text-link" href={`${releaseSource}/docs/RPC_PLUGIN_PROTOCOL.md`}>v0.9.0 protocol reference</a> and <a className="text-link" href={`${releaseSource}/examples/rpc-json-workbench/README.md`}>complete JSON Workbench example</a>. Match those references to the user&apos;s release before adopting newer APIs.</p>
     </section>
 

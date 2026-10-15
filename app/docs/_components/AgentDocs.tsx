@@ -38,7 +38,7 @@ export default function AgentDocs() {
       <h2>Request Markdown from any docs URL</h2>
       <p>Documentation URLs also return Markdown when the client asks for it. Tools that send <code>Accept: text/markdown</code> get the export from the regular address:</p>
       <CodeBlock language="shell">{`curl -H 'Accept: text/markdown' ${canonicalOrigin}/docs/plugins/json-rpc`}</CodeBlock>
-      <p>On each page, <strong>Copy page</strong> copies its Markdown for pasting into a chat. The menu next to it opens the page in Claude or ChatGPT.</p>
+      <p>On each page, <strong>Copy page</strong> copies its Markdown for pasting into a chat. The menu next to it opens the page in ChatGPT or Claude.</p>
     </section>
 
     <section>

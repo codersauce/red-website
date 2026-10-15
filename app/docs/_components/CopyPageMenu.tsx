@@ -7,8 +7,8 @@ import { canonicalOrigin } from "../../public-origin";
 // Chat links are a convenience over undocumented query parameters. Drop an
 // entry here if its provider stops honoring the prompt.
 const chatLinks = [
-  { label: "Open in Claude", url: (prompt: string) => `https://claude.ai/new?q=${encodeURIComponent(prompt)}` },
   { label: "Open in ChatGPT", url: (prompt: string) => `https://chatgpt.com/?q=${encodeURIComponent(prompt)}` },
+  { label: "Open in Claude", url: (prompt: string) => `https://claude.ai/new?q=${encodeURIComponent(prompt)}` },
 ];
 
 type Status = "idle" | "loading" | "copied" | "url-copied" | "error";

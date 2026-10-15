@@ -638,6 +638,12 @@ export const docPages: DocPageDefinition[] = [
       </section>
 
       <section>
+        <h2 id="inspect-plugins-in-the-current-session">Inspect plugins in the current session</h2>
+        <p>In Red v0.9.1 and later, run <InlineCode language="red-command">:plugin-status</InlineCode> or choose <strong>Plugin status</strong> from the command palette. The picker shows configured plugins as active, starting, loads on first use, disabled, or quarantined, and identifies rejected reloads. Problems appear first; the preview includes the full reason and recovery guidance.</p>
+        <p>Use this view when a plugin command is unavailable or an RPC plugin takes time to initialize. Startup notices explain which command is waiting, and executable failures include the underlying cause. <InlineCode language="shell">red plugin list</InlineCode> runs in a separate process and does not report the running editor&apos;s session state.</p>
+      </section>
+
+      <section>
         <h2 id="install-a-package">Install a package</h2>
         <CodeBlock language="shell">{`red plugin catalog\nred plugin install --catalog go-language\nred plugin install owner/repository\nred plugin install --path ~/code/my-red-plugin`}</CodeBlock>
         <p>Catalog packages use immutable release archives with recorded checksums. GitHub and local-path sources remain explicitly unreviewed. Installing a package never grants implicit approval to execute a native Tree-sitter grammar.</p>

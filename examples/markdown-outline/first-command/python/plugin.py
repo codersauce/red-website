@@ -26,21 +26,27 @@ def call_host(method, params=None):
 def outline():
     document = call_host("red/DocumentSnapshot")
     headings = re.findall(r"^#{1,6} .+$", document["text"], re.MULTILINE)
-    name = os.path.basename(document["path"]) if document["path"] else "This buffer"
+    path = document["path"]
+    name = os.path.basename(path) if path else "This buffer"
     return f"{name} has {len(headings)} headings"
 
+
+COMMANDS = [
+    {"name": "Outline", "metadata": {"title": "Show the Markdown outline"}},
+]
 
 while line := sys.stdin.readline():
     message = json.loads(line)
     request_id, method = message.get("id"), message.get("method")
     if method == "initialize":
-        commands = [{"name": "Outline", "metadata": {"title": "Show the Markdown outline"}}]
-        send({"id": request_id, "result": {"protocol_version": 1, "commands": commands, "events": []}})
-    elif method == "command/execute" and message["params"]["name"] == "Outline":
+        result = {"protocol_version": 1, "commands": COMMANDS, "events": []}
+        send({"id": request_id, "result": result})
+    elif method == "command/execute":
         try:
             send({"id": request_id, "result": {"message": outline()}})
         except RuntimeError as error:
-            send({"id": request_id, "error": {"code": -32000, "message": str(error)}})
+            failure = {"code": -32000, "message": str(error)}
+            send({"id": request_id, "error": failure})
     elif method == "shutdown":
         send({"id": request_id, "result": None})
     elif method == "exit":

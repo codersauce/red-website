@@ -1,17 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { createHighlighterCoreSync } from "shiki/core";
-import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
-import javascript from "@shikijs/langs/javascript";
-import json from "@shikijs/langs/json";
-import powershell from "@shikijs/langs/powershell";
-import python from "@shikijs/langs/python";
-import rust from "@shikijs/langs/rust";
-import shellscript from "@shikijs/langs/shellscript";
-import toml from "@shikijs/langs/toml";
-import typescript from "@shikijs/langs/typescript";
-import vimscript from "@shikijs/langs/vimscript";
-import githubDark from "@shikijs/themes/github-dark-default";
-import githubLight from "@shikijs/themes/github-light-default";
+import { linesText, tokenize, type TokenLine } from "./highlight";
 import CopyCodeButton from "./CopyCodeButton";
 
 export type SyntaxLanguage =
@@ -58,12 +46,6 @@ const languageLabels: Record<SyntaxLanguage, string> = {
   typescript: "TypeScript",
 };
 
-const highlighter = createHighlighterCoreSync({
-  engine: createJavaScriptRegexEngine(),
-  langs: [javascript, json, powershell, python, rust, shellscript, toml, typescript, vimscript],
-  themes: [githubDark, githubLight],
-});
-
 function tokenStyle(lightColor?: string, darkColor?: string, fontStyle = 0): SyntaxTokenStyle {
   const style: SyntaxTokenStyle = {
     "--syntax-dark": darkColor,
@@ -80,37 +62,28 @@ export function SyntaxTokens({
   code,
   language,
   palette = "theme",
+  tokens,
 }: {
   code: string;
   language: SyntaxLanguage;
   palette?: "dark" | "theme";
+  /** Lines highlighted at build time; otherwise the code is highlighted here. */
+  tokens?: TokenLine[];
 }) {
   if (language === "text") return code;
 
-  const grammar = grammarByLanguage[language];
-  const lines = highlighter.codeToTokensWithThemes(code, {
-    lang: grammar,
-    themes: {
-      dark: "github-dark-default",
-      light: "github-light-default",
-    },
-  });
-
+  const lines = tokens ?? tokenize(code, grammarByLanguage[language]);
   return <>{lines.map((line, lineIndex) => (
     <span className="syntax-line" key={lineIndex}>
-      {line.map((token) => {
-        const dark = token.variants.dark;
-        const light = token.variants.light;
-        return (
-          <span
-            className={`syntax-token syntax-token-${palette}`}
-            key={token.offset}
-            style={tokenStyle(light.color, dark.color, dark.fontStyle)}
-          >
-            {token.content}
-          </span>
-        );
-      })}
+      {line.map(([content, light, dark, fontStyle], tokenIndex) => (
+        <span
+          className={`syntax-token syntax-token-${palette}`}
+          key={tokenIndex}
+          style={tokenStyle(light || undefined, dark || undefined, fontStyle)}
+        >
+          {content}
+        </span>
+      ))}
       {lineIndex < lines.length - 1 ? "\n" : null}
     </span>
   ))}</>;
@@ -137,6 +110,7 @@ export function CodeBlock({
   language,
   title,
   variant,
+  tokens,
 }: {
   children: string;
   language: SyntaxLanguage;
@@ -144,7 +118,10 @@ export function CodeBlock({
   title?: string;
   /** "command": a one-line black command bar, like the install picker's. */
   variant?: "command";
+  /** Lines highlighted at build time for `children` (see examples.ts). */
+  tokens?: TokenLine[];
 }) {
+  if (tokens && linesText(tokens) !== children) throw new Error("CodeBlock tokens do not match its code");
   const grammar = language === "text" ? "plaintext" : grammarByLanguage[language];
   const tree = language === "text" && treeGuide.test(children);
   const languageLabel = tree ? "Files" : languageLabels[language];
@@ -161,7 +138,7 @@ export function CodeBlock({
       <pre className="syntax-block" data-language={language} data-grammar={grammar}>
         <code>{tree
           ? <TreeLines code={children} />
-          : <SyntaxTokens code={children} language={language} palette={variant === "command" ? "dark" : "theme"} />}</code>
+          : <SyntaxTokens code={children} language={language} palette={variant === "command" ? "dark" : "theme"} tokens={tokens} />}</code>
       </pre>
     </div>
   );

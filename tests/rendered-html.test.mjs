@@ -145,11 +145,13 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(jsonRpcText, /red\/DocumentApply/);
   assert.match(jsonRpcText, /red\/DocumentUndo/);
   assert.match(jsonRpcText, /Array\.from\(text\)\.length/);
-  assert.match(jsonRpcText, /rpc-hello-node-plugin/);
+  assert.match(jsonRpcText, /red\/DocumentWatch/);
+  assert.match(jsonRpcText, /markdown-outline\/plugin\.ts/);
+  assert.match(jsonRpcText, /markdown-outline\/plugin\.py/);
 });
 
 test("syntax-highlights every documentation example without changing its text", async () => {
-  const docsSource = (await Promise.all(["../app/docs/content.tsx", "../app/docs/_components/ForAgents.tsx", "../app/docs/_components/AgentDocs.tsx", "../app/docs/page.tsx"].map((path) => readFile(new URL(path, import.meta.url), "utf8")))).join("\n");
+  const docsSource = (await Promise.all(["../app/docs/content.tsx", "../app/docs/_components/ForAgents.tsx", "../app/docs/_components/AgentDocs.tsx", "../app/docs/_components/JsonRpcGuide.tsx", "../app/docs/page.tsx"].map((path) => readFile(new URL(path, import.meta.url), "utf8")))).join("\n");
   const guidePaths = docManifest.map((page) => page.href);
   const expectedBlocks = [...docsSource.matchAll(/<CodeBlock language="([^"]+)"/g)];
   const expectedInline = [...docsSource.matchAll(/<InlineCode language="([^"]+)"/g)];
@@ -196,9 +198,9 @@ test("syntax-highlights every documentation example without changing its text", 
   assert.ok(commandFrames > 0);
 
   const pluginGuide = await (await render("/docs/plugins/json-rpc")).text();
-  assert.match(pluginGuide, /<div class="code-frame" data-title="rpc-hello-plugin\/plugin\.py"><div class="code-frame-header" data-doc-ignore="true">/);
+  assert.match(pluginGuide, /<div class="code-frame" data-title="markdown-outline\/plugin\.py"><div class="code-frame-header" data-doc-ignore="true">/);
   assert.match(pluginGuide, /<span class="code-frame-language">Python<\/span>/);
-  assert.match(pluginGuide, /class="code-frame-copy"[^>]*aria-label="Copy rpc-hello-plugin\/plugin\.py"/);
+  assert.match(pluginGuide, /class="code-frame-copy"[^>]*aria-label="Copy markdown-outline\/plugin\.py"/);
   assert.equal(renderedInline, expectedInline.length);
 
   const installGuide = await (await render("/docs/getting-started/install")).text();

@@ -143,7 +143,7 @@ export const docManifest = [
     "href": "/docs/plugins/json-rpc",
     "section": "Customize",
     "title": "Write a JSON-RPC plugin",
-    "description": "Build, install, and test a standalone JSON-RPC 2.0 plugin in Python or Node.js using Red's versioned host API.",
+    "description": "Build a live Markdown outline and table of contents plugin in TypeScript or Python with Red's JSON-RPC host API.",
     "minVersion": "v0.9.0"
   },
   {

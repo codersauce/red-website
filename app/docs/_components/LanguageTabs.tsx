@@ -2,15 +2,15 @@
 
 import { type ReactNode, useId, useRef, useSyncExternalStore } from "react";
 
-export type PluginExampleLanguage = "python" | "node";
+export type PluginExampleLanguage = "typescript" | "python";
 
-const languageOrder: PluginExampleLanguage[] = ["python", "node"];
+const languageOrder: PluginExampleLanguage[] = ["typescript", "python"];
 const languageLabels: Record<PluginExampleLanguage, string> = {
+  typescript: "TypeScript",
   python: "Python",
-  node: "Node.js",
 };
 
-let currentLanguage: PluginExampleLanguage = "python";
+let currentLanguage: PluginExampleLanguage = "typescript";
 const listeners = new Set<() => void>();
 
 function subscribe(listener: () => void) {
@@ -25,7 +25,7 @@ function getSnapshot(): PluginExampleLanguage {
 }
 
 function getServerSnapshot(): PluginExampleLanguage {
-  return "python";
+  return "typescript";
 }
 
 function setLanguage(next: PluginExampleLanguage) {
@@ -37,18 +37,18 @@ function setLanguage(next: PluginExampleLanguage) {
 }
 
 export default function LanguageTabs({
+  typescript,
   python,
-  node,
   label = "Plugin implementation language",
 }: {
+  typescript: ReactNode;
   python: ReactNode;
-  node: ReactNode;
   label?: string;
 }) {
   const selected = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const tabList = useRef<HTMLDivElement>(null);
   const id = useId().replaceAll(":", "");
-  const panels: Record<PluginExampleLanguage, ReactNode> = { python, node };
+  const panels: Record<PluginExampleLanguage, ReactNode> = { typescript, python };
 
   function moveSelection(event: React.KeyboardEvent<HTMLDivElement>) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;

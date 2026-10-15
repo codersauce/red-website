@@ -116,7 +116,8 @@ export function SyntaxTokens({
   ))}</>;
 }
 
-const treeGuide = /[│├└]/;
+// Directory trees: a branch glyph followed by its horizontal rule at the start of a line.
+const treeGuide = /^[\s│]*[├└]──/m;
 
 /** Directory trees: dim the connectors and set folders apart without changing the text. */
 function TreeLines({ code }: { code: string }) {

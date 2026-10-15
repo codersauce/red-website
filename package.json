@@ -13,7 +13,7 @@
     "check:installers": "node scripts/sync-installers.mjs --check",
     "test": "npm run check:installers && npm run build && node --experimental-strip-types --test tests/*.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "typecheck": "tsc --noEmit --incremental false"
+    "typecheck": "tsc --noEmit --incremental false && tsc -p examples/tsconfig.json"
   },
   "dependencies": {
     "@shikijs/langs": "3.13.0",

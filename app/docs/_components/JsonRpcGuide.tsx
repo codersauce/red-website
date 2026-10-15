@@ -19,7 +19,7 @@ export default function JsonRpcGuide() {
       <h2 id="what-youll-build">What you'll build</h2>
       <Callout title="Available in Red v0.9.0 and later">Use <strong>Red v0.9.0 or later</strong> for standalone JSON-RPC plugins and the <code>0.19.0</code> host API surface. They are not included in Red v0.8.2.</Callout>
       <p>This guide builds <strong>Markdown Outline</strong>, a plugin that shows a live outline of the Markdown file you're editing and keeps its table of contents up to date. Along the way it uses most of Red's host API: document snapshots and watches, text panels with buttons, transactional edits and undo, the statusline, the clipboard, pickers, configuration, storage, and editor events.</p>
-      <CodeBlock language="text">{`README.md                      │ Outline  [t TOC] [c Copy] [u Undo] [x]\n# Bucket                       │ • Bucket\n                               │   • Install\nA token bucket for Rust.       │   • Usage\n                               │     • Configure\n<!-- toc -->                   │   • License\n- [Install](#install)          │\n- [Usage](#usage)              │\n  - [Configure](#configure)    │\n- [License](#license)          │\n<!-- tocstop -->               │\n                               │\n## Install                     │\nNORMAL  README.md                               § 5 headings · 39 words`}</CodeBlock>
+      <CodeBlock language="text">{`README.md                      │ Outline  [r TOC] [c Copy] [u Undo] [x]\n# Bucket                       │ • Bucket\n                               │   • Install\nA token bucket for Rust.       │   • Usage\n                               │     • Configure\n<!-- toc -->                   │   • License\n- [Install](#install)          │\n- [Usage](#usage)              │\n  - [Configure](#configure)    │\n- [License](#license)          │\n<!-- tocstop -->               │\n                               │\n## Install                     │\nNORMAL  README.md                               § 5 headings · 39 words`}</CodeBlock>
       <p>A JSON-RPC plugin is a package with a <code>red-plugin.toml</code> manifest and a program that Red starts as a child process. They talk in JSON-RPC 2.0 over standard input and output. Red keeps ownership of buffers, undo history, focus, panels, and sessions; your process asks for each operation through a versioned <code>red/*</code> host method.</p>
       <div className="docs-table-wrap"><table>
         <thead><tr><th>Rule</th><th>Protocol version 1 behavior</th></tr></thead>
@@ -90,7 +90,7 @@ export default function JsonRpcGuide() {
       <LanguageTabs
         label="Message handling"
         typescript={<CodeBlock language="typescript" {...snippet(excerpts(ts, ["function callHost", "let work =", "function enqueue"]))} />}
-        python={<CodeBlock language="python" {...snippet(excerpts(py, ["def call_host", "def main"]))} />}
+        python={<CodeBlock language="python" {...snippet(excerpts(py, ["def call_host", "def respond", "def fail", "def main"]))} />}
       />
       <p>Run <kbd>:Outline</kbd> and add a <code>## heading</code>. The panel and the statusline update as you type. Closing the file sends <InlineCode language="json">&quot;event&quot;: &quot;closed&quot;</InlineCode>, and the plugin closes the panel.</p>
     </section>
@@ -102,7 +102,7 @@ export default function JsonRpcGuide() {
       <LanguageTabs
         label="Table of contents"
         typescript={<CodeBlock language="typescript" {...snippet(excerpts(ts, ["function slugs", "function tocEntries", "function tableOfContents", "async function updateToc", "async function undoToc"]))} />}
-        python={<CodeBlock language="python" {...snippet(excerpts(py, ["def slugs", "def toc_entries", "def table_of_contents", "def update_toc", "def undo_toc"]))} />}
+        python={<CodeBlock language="python" {...snippet(excerpts(py, ["def slugs", "def toc_entries", "def table_of_contents", "def line_index", "def update_toc", "def undo_toc"]))} />}
       />
       <p>Run <kbd>:OutlineToc</kbd> in a README:</p>
       <CodeBlock language="text">{`<!-- toc -->\n- [Install](#install)\n- [Usage](#usage)\n  - [Configure](#configure)\n- [License](#license)\n<!-- tocstop -->`}</CodeBlock>
@@ -111,7 +111,7 @@ export default function JsonRpcGuide() {
 
     <section>
       <h2 id="5-add-panel-buttons">5. Add panel buttons</h2>
-      <p>The <code>actions</code> passed to <code>red/TextPanelCreate</code> become header buttons, panel shortcuts, and <kbd>F1</kbd> entries. When someone uses one, Red sends a <code>panel/event</code> notification with the action ID, and it sends <InlineCode language="json">&quot;action&quot;: &quot;close&quot;</InlineCode> for the panel's own close gesture too. <code>red/TextPanelSetActions</code> updates the buttons without resetting the panel's content or scroll position; the plugin uses it to enable Undo after a table of contents change. Red's panels already use some keys, such as <kbd>y</kbd> to copy the selected block, so choose others for your actions.</p>
+      <p>The <code>actions</code> passed to <code>red/TextPanelCreate</code> become header buttons, panel shortcuts, and <kbd>F1</kbd> entries. When someone uses one, Red sends a <code>panel/event</code> notification with the action ID, and it sends <InlineCode language="json">&quot;action&quot;: &quot;close&quot;</InlineCode> for the panel's own close gesture too. <code>red/TextPanelSetActions</code> updates the buttons without resetting the panel's content or scroll position; the plugin uses it to enable Undo after a table of contents change. Red's panels already use Vim-style keys, such as <kbd>y</kbd> to copy the selected block and <kbd>f</kbd>, <kbd>F</kbd>, <kbd>t</kbd>, and <kbd>T</kbd> to move to a character, so choose others for your actions.</p>
       <p>Copy uses <code>red/ClipboardWrite</code>, which can only write and is meant for an explicit action like a button. <code>red/MessageShow</code> confirms the result with a short message.</p>
       <LanguageTabs
         label="Panel actions"
@@ -126,7 +126,7 @@ export default function JsonRpcGuide() {
           <CodeBlock language="python" {...snippet(excerpt(py, 'elif method == "panel/event":', 'elif method == "picker/event":'))} />
         </>}
       />
-      <p>Move focus to the panel with <kbd>Ctrl-w l</kbd>, then press <kbd>t</kbd> to write the table of contents, <kbd>c</kbd> to copy it, <kbd>u</kbd> to undo the change, or <kbd>q</kbd> to close the panel.</p>
+      <p>Move focus to the panel with <kbd>Ctrl-w l</kbd>, then press <kbd>r</kbd> to write or refresh the table of contents, <kbd>c</kbd> to copy it, <kbd>u</kbd> to undo the change, or <kbd>q</kbd> to close the panel.</p>
     </section>
 
     <section>
@@ -198,7 +198,7 @@ export default function JsonRpcGuide() {
           <tr><td>Plugin fails to start or the executable is not found</td><td>A bare <code>command</code> such as <code>node</code> or <code>python3</code> resolves on <code>PATH</code>; a command containing <code>/</code> or <code>\</code> resolves relative to the package root, without a shell or <code>~</code> expansion. On Windows, add <InlineCode language="toml">[rpc.commands]</InlineCode> entries such as <InlineCode language="toml">x86_64-pc-windows-msvc = &quot;python&quot;</InlineCode>.</td></tr>
           <tr><td>Node.js reports an unknown <code>.ts</code> extension or a syntax error at a type annotation</td><td>Running <code>.ts</code> files directly needs Node.js 22.18 or later. Upgrade Node.js, or on 22.6 through 22.17 set <InlineCode language="toml">args = [&quot;--experimental-strip-types&quot;, &quot;plugin.ts&quot;]</InlineCode>.</td></tr>
           <tr><td>Plugin disconnects right after printing debug text</td><td>Standard output is reserved for JSON-RPC messages. Any <InlineCode language="javascript">console.log(...)</InlineCode> or <InlineCode language="python">print(...)</InlineCode> on <code>stdout</code> breaks the framing. Log to <code>stderr</code> with <InlineCode language="javascript">console.error(...)</InlineCode> or <InlineCode language="python">print(..., file=sys.stderr)</InlineCode>.</td></tr>
-          <tr><td>A panel shortcut doesn't reach the plugin</td><td>Red's panels reserve some keys for themselves, such as <kbd>y</kbd> to copy the selected block. Choose a different <code>key</code> for the action.</td></tr>
+          <tr><td>A panel shortcut doesn't reach the plugin</td><td>Red's panels reserve Vim-style keys for themselves, such as <kbd>y</kbd> to copy the selected block and <kbd>f</kbd>, <kbd>F</kbd>, <kbd>t</kbd>, and <kbd>T</kbd> to move to a character. Choose a different <code>key</code> for the action.</td></tr>
           <tr><td>Host method returns <code>-32601</code> (method not found) or <code>-32602</code> (invalid params)</td><td>The protocol exposes the typed version 1 <code>red/*</code> methods listed in <code>initialize.params.host_methods</code>, not Red's internal commands. Unknown parameter keys are rejected; check names against the protocol reference.</td></tr>
           <tr><td><code>red/DocumentApply</code> fails with <code>-32002</code> or <code>-32003</code></td><td><code>-32002</code> means the document changed after <code>red/DocumentSnapshot</code>; take a fresh snapshot before retrying. <code>-32003</code> means a range or <code>expected_text</code> did not match. In JavaScript, count characters with <InlineCode language="javascript">Array.from(text).length</InlineCode>, not <InlineCode language="javascript">text.length</InlineCode>.</td></tr>
           <tr><td>Command times out after 30 seconds</td><td>The handler called a <code>red/*</code> method before <code>initialized</code>, or it waited for a response without reading <code>stdin</code>. Keep reading while you wait, as in step 3.</td></tr>

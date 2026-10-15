@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Markdown Outline: a live outline panel and table of contents for Red.
-// Runs directly with Node.js 22.18 or later, which strips the types at load time.
+// Runs with Node.js 22.18 or later, which strips the types when loading it.
 import { createInterface } from "node:readline";
 
-// --- Protocol types: the subset of Red's JSON-RPC protocol this plugin uses ---
+// --- Protocol types used by this plugin ---
 
 type Params = Record<string, unknown>;
 type Message = {
@@ -14,14 +14,23 @@ type Message = {
   result?: any;
   error?: { code: number; message: string };
 };
-type Snapshot = { path: string | null; revision: string; text: string; document_id: string };
+type Snapshot = {
+  path: string | null;
+  revision: string;
+  text: string;
+  document_id: string;
+};
 type Heading = { level: number; title: string; line: number };
 type Settings = { max_depth?: number; auto_open?: boolean };
 
-// --- Talking to Red: one JSON message per line; stdout is reserved for protocol messages ---
+// --- Talking to Red ---
+// One JSON message per line. stdout carries only protocol messages, so logs
+// go to stderr.
 
-const send = (message: Params) => process.stdout.write(`${JSON.stringify({ jsonrpc: "2.0", ...message })}\n`);
-const log = (...args: unknown[]) => console.error("[markdown-outline]", ...args);
+const send = (message: Params) =>
+  process.stdout.write(`${JSON.stringify({ jsonrpc: "2.0", ...message })}\n`);
+const log = (...args: unknown[]) =>
+  console.error("[markdown-outline]", ...args);
 
 class HostError extends Error {
   code: number;
@@ -32,7 +41,10 @@ class HostError extends Error {
 }
 
 let nextRequest = 1;
-const waiting = new Map<string, { resolve: (value: any) => void; reject: (error: Error) => void }>();
+const waiting = new Map<
+  string,
+  { resolve: (value: any) => void; reject: (error: Error) => void }
+>();
 
 function callHost<T = null>(method: string, params: Params = {}): Promise<T> {
   const id = `outline-${nextRequest++}`;
@@ -56,12 +68,18 @@ function parseHeadings(text: string): Heading[] {
     const row = raw.replace(/\r$/, "");
     const marker = /^ {0,3}(`{3,}|~{3,})/.exec(row)?.[1];
     if (marker) {
-      if (!fence) fence = marker;
-      else if (marker[0] === fence[0] && marker.length >= fence.length) fence = null;
+      if (!fence) {
+        fence = marker;
+      } else if (marker[0] === fence[0] && marker.length >= fence.length) {
+        fence = null;
+      }
       return;
     }
-    const heading = !fence && /^ {0,3}(#{1,6})[ \t]+(.+?)(?:[ \t]+#+)?[ \t]*$/.exec(row);
-    if (heading) headings.push({ level: heading[1].length, title: heading[2], line });
+    const heading =
+      !fence && /^ {0,3}(#{1,6})[ \t]+(.+?)(?:[ \t]+#+)?[ \t]*$/.exec(row);
+    if (heading) {
+      headings.push({ level: heading[1].length, title: heading[2], line });
+    }
   });
   return headings;
 }
@@ -69,28 +87,49 @@ function parseHeadings(text: string): Heading[] {
 function slugs(headings: Heading[]): string[] {
   const seen = new Map<string, number>();
   return headings.map(({ title }) => {
-    const base = title.toLowerCase().trim().replace(/[^\p{L}\p{N}\s_-]/gu, "").replace(/\s/g, "-");
+    const base = title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\p{L}\p{N}\s_-]/gu, "")
+      .replace(/\s/g, "-");
     const count = seen.get(base) ?? 0;
     seen.set(base, count + 1);
     return count ? `${base}-${count}` : base;
   });
 }
 
-function nestedList(headings: Heading[], item: (heading: Heading, index: number) => string): string {
+function nestedList(
+  headings: Heading[],
+  item: (heading: Heading, index: number) => string,
+): string {
   const top = Math.min(...headings.map((heading) => heading.level));
-  return headings.map((heading, index) => `${"  ".repeat(heading.level - top)}- ${item(heading, index)}`).join("\n");
+  return headings
+    .map(
+      (heading, index) =>
+        `${"  ".repeat(heading.level - top)}- ${item(heading, index)}`,
+    )
+    .join("\n");
 }
 
 // The table of contents leaves out a lone H1, which is the document's title.
 function tocEntries(headings: Heading[], depth: number): Heading[] {
   const titled = headings.filter((heading) => heading.level === 1).length === 1;
-  return headings.filter((heading) => heading.level <= depth && !(titled && heading.level === 1));
+  return headings.filter(
+    (heading) => heading.level <= depth && !(titled && heading.level === 1),
+  );
 }
 
 function tableOfContents(headings: Heading[], depth: number): string {
-  const anchors = new Map(headings.map((heading, index) => [heading, slugs(headings)[index]]));
+  const anchors = new Map(
+    headings.map((heading, index) => [heading, slugs(headings)[index]]),
+  );
   const entries = tocEntries(headings, depth);
-  return entries.length ? nestedList(entries, (heading) => `[${heading.title}](#${anchors.get(heading)})`) : "";
+  return entries.length
+    ? nestedList(
+        entries,
+        (heading) => `[${heading.title}](#${anchors.get(heading)})`,
+      )
+    : "";
 }
 
 // --- Plugin state ---
@@ -101,55 +140,102 @@ let lastToc: { documentId: string; transactionId: string } | null = null;
 let settings: Settings = {};
 let depth = 3;
 
-const isMarkdown = (path: string | null) => !!path && /\.(md|markdown)$/i.test(path);
+const isMarkdown = (path: string | null) =>
+  !!path && /\.(md|markdown)$/i.test(path);
 
 function panelActions(): Params[] {
   return [
-    { id: "toc", label: "TOC", key: "t", description: "Write or refresh the table of contents" },
-    { id: "copy", label: "Copy", key: "c", description: "Copy the table of contents" },
-    { id: "undo", label: "Undo", key: "u", description: "Undo the last table of contents change", enabled: lastToc !== null },
+    {
+      id: "toc",
+      label: "TOC",
+      key: "r",
+      description: "Write or refresh the table of contents",
+    },
+    {
+      id: "copy",
+      label: "Copy",
+      key: "c",
+      description: "Copy the table of contents",
+    },
+    {
+      id: "undo",
+      label: "Undo",
+      key: "u",
+      description: "Undo the last table of contents change",
+      enabled: lastToc !== null,
+    },
     { id: "close", label: "Close", compact_label: "x", key: "q" },
   ];
 }
 
 async function loadSettings() {
   settings = (await callHost<Settings | null>("red/ConfigGet")) ?? {};
-  depth = (await callHost<number | null>("red/StorageGet", { key: "depth" })) ?? settings.max_depth ?? 3;
+  depth =
+    (await callHost<number | null>("red/StorageGet", { key: "depth" })) ??
+    settings.max_depth ??
+    3;
 }
 
 async function snapshot(selector: Params = {}): Promise<Snapshot> {
-  return callHost<Snapshot>("red/DocumentSnapshot", { ...selector, include_document_id: true });
+  return callHost<Snapshot>("red/DocumentSnapshot", {
+    ...selector,
+    include_document_id: true,
+  });
 }
 
 // --- The outline panel ---
 
 async function openOutline(selector: Params = {}) {
   const document = await snapshot(selector);
-  if (!isMarkdown(document.path)) throw new Error("Outline works on Markdown files (.md or .markdown)");
+  if (!isMarkdown(document.path)) {
+    throw new Error("Outline works on Markdown files (.md or .markdown)");
+  }
   if (following !== document.document_id) {
-    if (following) await callHost("red/DocumentUnwatch", { document_id: following });
-    // Watch before reading, so a change made in between still arrives as an event.
+    if (following) {
+      await callHost("red/DocumentUnwatch", { document_id: following });
+    }
+    // Watch before reading, so changes made meanwhile still send an event.
     await callHost("red/DocumentWatch", { document_id: document.document_id });
     following = document.document_id;
   }
-  await callHost("red/TextPanelCreate", { id: PANEL, side: "right", width: 40, title: "Outline", actions: panelActions() });
+  await callHost("red/TextPanelCreate", {
+    id: PANEL,
+    side: "right",
+    width: 40,
+    title: "Outline",
+    actions: panelActions(),
+  });
   await refresh();
 }
 
 async function refresh() {
   if (!following) return;
   const document = await snapshot({ document_id: following });
-  const headings = parseHeadings(document.text).filter((heading) => heading.level <= depth);
-  const words = document.text.match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu)?.length ?? 0;
-  const text = headings.length ? nestedList(headings, (heading) => heading.title) : "_No headings yet._";
-  await callHost("red/TextPanelSetContent", { id: PANEL, blocks: [{ id: "outline", format: "markdown", text }] });
-  await callHost("red/StatuslineSet", { text: `§ ${headings.length} headings · ${words.toLocaleString("en-US")} words` });
+  const headings = parseHeadings(document.text).filter(
+    (heading) => heading.level <= depth,
+  );
+  const words =
+    document.text.match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu)?.length ?? 0;
+  const text = headings.length
+    ? nestedList(headings, (heading) => heading.title)
+    : "_No headings yet._";
+  await callHost("red/TextPanelSetContent", {
+    id: PANEL,
+    blocks: [{ id: "outline", format: "markdown", text }],
+  });
+  const count = words.toLocaleString("en-US");
+  await callHost("red/StatuslineSet", {
+    text: `§ ${headings.length} headings · ${count} words`,
+  });
 }
 
 async function closeOutline() {
-  if (following) await callHost("red/DocumentUnwatch", { document_id: following });
+  if (following) {
+    await callHost("red/DocumentUnwatch", { document_id: following });
+  }
   following = null;
-  await callHost("red/TextPanelDispose", { id: PANEL }).catch(() => {}); // already closed by the user
+  // The user may have closed the panel already.
+  await callHost("red/TextPanelDispose", { id: PANEL }).catch(() => {});
   await callHost("red/StatuslineClear");
 }
 
@@ -163,53 +249,94 @@ async function updateToc(selector: Params): Promise<string> {
   const first = tocEntries(headings, depth)[0].line;
   const lines = document.text.split(/(?<=\n)/); // keep each line's ending
   const start = lines.findIndex((line) => line.trim() === "<!-- toc -->");
-  const stop = lines.findIndex((line, index) => index > start && line.trim() === "<!-- tocstop -->");
-  const edit = start >= 0 && stop > start
-    ? {
-      // Replace what is between the markers. Red rejects the edit if that text changed.
-      range: { start: { line: start + 1, character: 0 }, end: { line: stop, character: 0 } },
+  const stop = lines.findIndex(
+    (line, index) => index > start && line.trim() === "<!-- tocstop -->",
+  );
+  let edit;
+  if (start >= 0 && stop > start) {
+    // Replace the list between the markers. Red rejects the edit if that
+    // text changed after the snapshot.
+    edit = {
+      range: {
+        start: { line: start + 1, character: 0 },
+        end: { line: stop, character: 0 },
+      },
       text: `${toc}\n`,
       expected_text: lines.slice(start + 1, stop).join(""),
-    }
-    : {
-      // The first time, insert the markers just before the first section.
-      range: { start: { line: first, character: 0 }, end: { line: first, character: 0 } },
+    };
+  } else {
+    // The first time, insert the markers just before the first section.
+    const at = { line: first, character: 0 };
+    edit = {
+      range: { start: at, end: at },
       text: `<!-- toc -->\n${toc}\n<!-- tocstop -->\n\n`,
       expected_text: "",
     };
-  const applied = await callHost<{ transaction_id: string; revision: string }>("red/DocumentApply", {
-    document_id: document.document_id,
-    expected_revision: document.revision,
-    allow_inactive: true, // the panel may have focus instead of the document
-    label: "Update table of contents",
-    edits: [edit],
-  });
-  lastToc = { documentId: document.document_id, transactionId: applied.transaction_id };
-  if (following) await callHost("red/TextPanelSetActions", { id: PANEL, actions: panelActions() });
+  }
+  const applied = await callHost<{ transaction_id: string; revision: string }>(
+    "red/DocumentApply",
+    {
+      document_id: document.document_id,
+      expected_revision: document.revision,
+      // The panel may have focus instead of the document.
+      allow_inactive: true,
+      label: "Update table of contents",
+      edits: [edit],
+    },
+  );
+  lastToc = {
+    documentId: document.document_id,
+    transactionId: applied.transaction_id,
+  };
+  if (following) {
+    await callHost("red/TextPanelSetActions", {
+      id: PANEL,
+      actions: panelActions(),
+    });
+  }
   return "Table of contents updated";
 }
 
 async function undoToc(): Promise<string> {
   if (!lastToc) throw new Error("There is no table of contents change to undo");
   // Red only undoes it while it is still the document's latest change.
-  await callHost("red/DocumentUndo", { document_id: lastToc.documentId, transaction_id: lastToc.transactionId, allow_inactive: true });
+  await callHost("red/DocumentUndo", {
+    document_id: lastToc.documentId,
+    transaction_id: lastToc.transactionId,
+    allow_inactive: true,
+  });
   lastToc = null;
-  if (following) await callHost("red/TextPanelSetActions", { id: PANEL, actions: panelActions() });
+  if (following) {
+    await callHost("red/TextPanelSetActions", {
+      id: PANEL,
+      actions: panelActions(),
+    });
+  }
   return "Table of contents change undone";
 }
 
 async function copyToc() {
   const document = await snapshot({ document_id: following });
-  await callHost("red/ClipboardWrite", { text: `${tableOfContents(parseHeadings(document.text), depth)}\n` });
-  await callHost("red/MessageShow", { message: "Table of contents copied", severity: "success" });
+  await callHost("red/ClipboardWrite", {
+    text: `${tableOfContents(parseHeadings(document.text), depth)}\n`,
+  });
+  await callHost("red/MessageShow", {
+    message: "Table of contents copied",
+    severity: "success",
+  });
 }
 
 // --- Commands, events, and notifications ---
 
+const command = (name: string, title: string) => ({
+  name,
+  metadata: { title, category: "Markdown" },
+});
+
 const commands = [
-  { name: "Outline", metadata: { title: "Show the Markdown outline", category: "Markdown" } },
-  { name: "OutlineToc", metadata: { title: "Write or refresh the table of contents", category: "Markdown" } },
-  { name: "OutlineDepth", metadata: { title: "Choose the outline depth", category: "Markdown" } },
+  command("Outline", "Show the Markdown outline"),
+  command("OutlineToc", "Write or refresh the table of contents"),
+  command("OutlineDepth", "Choose the outline depth"),
 ];
 
 async function runCommand(name: string): Promise<string | null> {
@@ -224,7 +351,11 @@ async function runCommand(name: string): Promise<string | null> {
       label: `Up to H${level}`,
       ...(level === depth ? { detail: "current" } : {}),
     }));
-    await callHost("red/PickerOpen", { id: "depth", title: "Outline depth", items });
+    await callHost("red/PickerOpen", {
+      id: "depth",
+      title: "Outline depth",
+      items,
+    });
     return null;
   }
   throw new Error(`Unknown command ${name}`);
@@ -232,12 +363,21 @@ async function runCommand(name: string): Promise<string | null> {
 
 async function onPanelAction(action: string) {
   try {
-    if (action === "toc") await callHost("red/MessageShow", { message: await updateToc({ document_id: following }) });
-    else if (action === "undo") await callHost("red/MessageShow", { message: await undoToc() });
-    else if (action === "copy") await copyToc();
-    else if (action === "close") await closeOutline();
+    if (action === "toc") {
+      const message = await updateToc({ document_id: following });
+      await callHost("red/MessageShow", { message });
+    } else if (action === "undo") {
+      await callHost("red/MessageShow", { message: await undoToc() });
+    } else if (action === "copy") {
+      await copyToc();
+    } else if (action === "close") {
+      await closeOutline();
+    }
   } catch (error) {
-    await callHost("red/MessageShow", { message: (error as Error).message, severity: "warning" });
+    await callHost("red/MessageShow", {
+      message: (error as Error).message,
+      severity: "warning",
+    });
   }
 }
 
@@ -245,7 +385,9 @@ async function onPicked(item: { id: string }) {
   depth = Number(item.id);
   await callHost("red/StorageSet", { key: "depth", value: depth });
   await refresh();
-  await callHost("red/MessageShow", { message: `Outline shows headings up to H${depth}` });
+  await callHost("red/MessageShow", {
+    message: `Outline shows headings up to H${depth}`,
+  });
 }
 
 function dispatch(message: Message) {
@@ -253,14 +395,20 @@ function dispatch(message: Message) {
     // A response to one of our host calls.
     const call = waiting.get(String(message.id));
     waiting.delete(String(message.id));
-    if (message.error) call?.reject(new HostError(message.error.code, message.error.message));
-    else call?.resolve(message.result ?? null);
+    if (message.error) {
+      call?.reject(new HostError(message.error.code, message.error.message));
+    } else {
+      call?.resolve(message.result ?? null);
+    }
     return;
   }
   const { id, method, params } = message;
   switch (method) {
     case "initialize":
-      send({ id, result: { protocol_version: 1, commands, events: ["file:opened"] } });
+      send({
+        id,
+        result: { protocol_version: 1, commands, events: ["file:opened"] },
+      });
       break;
     case "initialized":
       enqueue(loadSettings);
@@ -271,13 +419,19 @@ function dispatch(message: Message) {
           const text = await runCommand(params.name);
           send({ id, result: text ? { message: text } : null });
         } catch (error) {
-          send({ id, error: { code: -32000, message: (error as Error).message } });
+          send({
+            id,
+            error: { code: -32000, message: (error as Error).message },
+          });
         }
       });
       break;
     case "event/notify": // file:opened, declared in red-plugin.toml
       enqueue(async () => {
-        if (settings.auto_open && isMarkdown(params.payload.file)) await openOutline({ path: params.payload.file });
+        const file = params.payload.file;
+        if (settings.auto_open && isMarkdown(file)) {
+          await openOutline({ path: file });
+        }
       });
       break;
     case "document/event":
@@ -296,7 +450,10 @@ function dispatch(message: Message) {
     case "exit":
       process.exit(0);
     default:
-      if (id !== undefined) send({ id, error: { code: -32601, message: `Unknown method ${method}` } });
+      if (id !== undefined) {
+        const error = { code: -32601, message: `Unknown method ${method}` };
+        send({ id, error });
+      }
   }
 }
 

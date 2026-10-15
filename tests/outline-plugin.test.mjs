@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn, spawnSync } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 // The guide's Markdown Outline plugin, driven by a scripted stand-in for Red.
@@ -168,6 +168,16 @@ for (const plugin of plugins) {
     assert.equal(await red.exited, 0);
   });
 }
+
+test("example files fit an 80-column code block", async () => {
+  // The guide shows these files verbatim; wider lines scroll sideways on desktop.
+  const files = (await readdir(examples, { recursive: true })).filter((name) => /\.(ts|py|toml)$/.test(name));
+  assert.ok(files.length >= 8);
+  for (const file of files) {
+    const lines = (await readFile(new URL(file, examples), "utf8")).split("\n");
+    lines.forEach((line, index) => assert.ok(line.length <= 80, `${file}:${index + 1} is ${line.length} columns`));
+  }
+});
 
 test("both outline plugins make the same host calls", { skip: !pythonAvailable && "python3 is not installed" }, () => {
   const [typescript, python] = ["TypeScript", "Python"].map((name) => results.get(name));

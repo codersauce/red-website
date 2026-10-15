@@ -169,7 +169,7 @@ test("syntax-highlights every documentation example without changing its text", 
         assert.equal(grammar, "plaintext");
         assert.doesNotMatch(code, /syntax-token/);
       } else {
-        assert.match(code, /class="syntax-token syntax-token-dark"/);
+        assert.match(code, /class="syntax-token syntax-token-theme"/);
         assert.match(code, /--syntax-dark:/);
         assert.match(code, /--syntax-light:/);
       }
@@ -187,6 +187,11 @@ test("syntax-highlights every documentation example without changing its text", 
   }
 
   assert.equal(renderedBlocks, expectedBlocks.length);
+
+  const pluginGuide = await (await render("/docs/plugins/json-rpc")).text();
+  assert.match(pluginGuide, /<div class="code-frame" data-title="rpc-hello-plugin\/plugin\.py"><div class="code-frame-header" data-doc-ignore="true">/);
+  assert.match(pluginGuide, /<span class="code-frame-language">Python<\/span>/);
+  assert.match(pluginGuide, /class="code-frame-copy"[^>]*aria-label="Copy rpc-hello-plugin\/plugin\.py"/);
   assert.equal(renderedInline, expectedInline.length);
 
   const installGuide = await (await render("/docs/getting-started/install")).text();

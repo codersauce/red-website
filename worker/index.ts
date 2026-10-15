@@ -1,6 +1,8 @@
 /** Cloudflare Worker entry point for the RED website. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { handleMarkdownRequest } from "./docs-markdown";
+import { handleDocumentationNegotiation } from "./docs-negotiation";
 import homepageHtml from "./design-a.html?raw";
 
 interface Env {
@@ -28,6 +30,12 @@ interface ExecutionContext {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    const markdown = await handleMarkdownRequest(request, env.ASSETS);
+    if (markdown) return markdown;
+
+    const documentation = await handleDocumentationNegotiation(request, env.ASSETS, () => handler.fetch(request, env, ctx));
+    if (documentation) return documentation;
 
     if (url.pathname === "/" && (request.method === "GET" || request.method === "HEAD")) {
       return new Response(request.method === "HEAD" ? null : homepageHtml, {

@@ -2,7 +2,9 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import DocsShell from "./DocsShell";
+import MarkdownControls from "./MarkdownControls";
 import { docPages, type DocPageDefinition } from "../content";
+import { markdownPath } from "../manifest";
 
 export default function DocPage({ page, body }: { page: DocPageDefinition; body: ReactNode }) {
   const index = docPages.findIndex((candidate) => candidate.id === page.id);
@@ -16,6 +18,8 @@ export default function DocPage({ page, body }: { page: DocPageDefinition; body:
         <h1>{page.title}</h1>
         <p>{page.description}</p>
       </header>
+
+      <MarkdownControls href={markdownPath(page.href)} key={page.href} />
 
       <div className="docs-body">{body}</div>
 

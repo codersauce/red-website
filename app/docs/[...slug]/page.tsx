@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { resolvePublicOrigin } from "../../public-origin";
 import DocPage from "../_components/DocPage";
 import { docPageBySlug, docPages } from "../content";
+import { markdownPath } from "../manifest";
 
 type RouteProps = { params: Promise<{ slug: string[] }> };
 
@@ -18,7 +19,7 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
   return {
     title: `${page.title} — Red documentation`,
     description: page.description,
-    alternates: { canonical: page.href },
+    alternates: { canonical: page.href, types: { "text/markdown": markdownPath(page.href) } },
   };
 }
 

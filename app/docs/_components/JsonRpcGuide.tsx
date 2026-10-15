@@ -4,6 +4,10 @@ import Callout from "./Callout";
 import { CodeBlock, InlineCode } from "./Code";
 import LanguageTabs from "./LanguageTabs";
 import { excerpt, excerpts, outlinePlugin } from "../examples";
+import type { Highlighted } from "./highlight";
+
+// CodeBlock props for code highlighted at build time.
+const snippet = ({ code, lines }: Highlighted) => ({ children: code, tokens: lines });
 
 const ts = outlinePlugin.typescript.source;
 const py = outlinePlugin.python.source;
@@ -38,13 +42,13 @@ export default function JsonRpcGuide() {
         label="First plugin files"
         typescript={<>
           <CodeBlock language="text">{`markdown-outline/\n├── red-plugin.toml\n└── plugin.ts`}</CodeBlock>
-          <CodeBlock language="toml" title="markdown-outline/red-plugin.toml">{outlinePlugin.firstCommand.typescript.manifest.trimEnd()}</CodeBlock>
-          <CodeBlock language="typescript" title="markdown-outline/plugin.ts">{outlinePlugin.firstCommand.typescript.source.trimEnd()}</CodeBlock>
+          <CodeBlock language="toml" title="markdown-outline/red-plugin.toml" {...snippet(outlinePlugin.firstCommand.typescript.manifest)} />
+          <CodeBlock language="typescript" title="markdown-outline/plugin.ts" {...snippet(outlinePlugin.firstCommand.typescript.source)} />
         </>}
         python={<>
           <CodeBlock language="text">{`markdown-outline/\n├── red-plugin.toml\n└── plugin.py`}</CodeBlock>
-          <CodeBlock language="toml" title="markdown-outline/red-plugin.toml">{outlinePlugin.firstCommand.python.manifest.trimEnd()}</CodeBlock>
-          <CodeBlock language="python" title="markdown-outline/plugin.py">{outlinePlugin.firstCommand.python.source.trimEnd()}</CodeBlock>
+          <CodeBlock language="toml" title="markdown-outline/red-plugin.toml" {...snippet(outlinePlugin.firstCommand.python.manifest)} />
+          <CodeBlock language="python" title="markdown-outline/plugin.py" {...snippet(outlinePlugin.firstCommand.python.source)} />
         </>}
       />
       <p>Red sends <code>initialize</code> first. The plugin answers with protocol version 1 and the commands it declared under <InlineCode language="toml">[activation]</InlineCode>. Each <kbd>:Outline</kbd> arrives as a <code>command/execute</code> request. To read the document, the plugin sends its own request, <code>red/DocumentSnapshot</code>, with a fresh <code>id</code>, and Red answers with that same <code>id</code>. On <code>shutdown</code> the plugin replies, and on <code>exit</code> it stops.</p>
@@ -59,8 +63,8 @@ export default function JsonRpcGuide() {
       <p>Markdown headings start with one to six <code>#</code> characters and a space, except inside fenced code blocks. The parser tracks fences (three or more backticks or tildes, closed by the same character at least as many times), removes optional closing <code>#</code> characters, and records each heading's line number. Step 4 uses those line numbers to place the table of contents.</p>
       <LanguageTabs
         label="Heading parser"
-        typescript={<CodeBlock language="typescript">{excerpts(ts, ["function parseHeadings", "function nestedList"])}</CodeBlock>}
-        python={<CodeBlock language="python">{excerpts(py, ["FENCE =", "HEADING =", "def parse_headings", "def nested_list"])}</CodeBlock>}
+        typescript={<CodeBlock language="typescript" {...snippet(excerpts(ts, ["function parseHeadings", "function nestedList"]))} />}
+        python={<CodeBlock language="python" {...snippet(excerpts(py, ["FENCE =", "HEADING =", "def parse_headings", "def nested_list"]))} />}
       />
       <p>Splitting on <code>\n</code> gives the same zero-based line numbers that Red uses for edits. <code>nestedList</code> renders headings as a Markdown list, indented relative to the shallowest heading, which the panel in the next step displays.</p>
     </section>
@@ -71,14 +75,22 @@ export default function JsonRpcGuide() {
       <p>To keep the outline current, the plugin watches the document. Ask for the snapshot with <InlineCode language="json">&quot;include_document_id&quot;: true</InlineCode>, then call <code>red/DocumentWatch</code> with that ID. Red collects changes for 50 ms and sends one <code>document/event</code> notification with <InlineCode language="json">&quot;event&quot;: &quot;changed&quot;</InlineCode>. The event only says that something changed, so the plugin reads the document again. Install the watch before reading, so an edit made in between still produces an event. A plugin can watch two documents at a time; this one follows a single file and releases the previous watch when you switch.</p>
       <LanguageTabs
         label="Outline panel and document watch"
-        typescript={<CodeBlock language="typescript">{`${excerpts(ts, ["async function snapshot", "async function openOutline", "async function refresh", "async function closeOutline"])}\n\n// In dispatch():\n${excerpt(ts, 'case "document/event":', 'case "panel/event":')}`}</CodeBlock>}
-        python={<CodeBlock language="python">{`${excerpts(py, ["def snapshot", "def open_outline", "def refresh", "def close_outline"])}\n\n# In handle():\n${excerpt(py, 'elif method == "document/event":', 'elif method == "panel/event":')}`}</CodeBlock>}
+        typescript={<>
+          <CodeBlock language="typescript" {...snippet(excerpts(ts, ["async function snapshot", "async function openOutline", "async function refresh", "async function closeOutline"]))} />
+          <p className="docs-code-caption">Then route the notification in <code>dispatch()</code>:</p>
+          <CodeBlock language="typescript" {...snippet(excerpt(ts, 'case "document/event":', 'case "panel/event":'))} />
+        </>}
+        python={<>
+          <CodeBlock language="python" {...snippet(excerpts(py, ["def snapshot", "def open_outline", "def refresh", "def close_outline"]))} />
+          <p className="docs-code-caption">Then route the notification in <code>handle()</code>:</p>
+          <CodeBlock language="python" {...snippet(excerpt(py, 'elif method == "document/event":', 'elif method == "panel/event":'))} />
+        </>}
       />
       <p>Watching changes how the program reads messages. In step 1, nothing could arrive while the plugin waited for a reply. Now a <code>document/event</code> can arrive at any moment, including while a handler is waiting for Red. The TypeScript version delivers each response as soon as it arrives and runs handlers one at a time through a queue. The Python version keeps reading while it waits and handles everything else afterward:</p>
       <LanguageTabs
         label="Message handling"
-        typescript={<CodeBlock language="typescript">{excerpts(ts, ["function callHost", "let work =", "function enqueue"])}</CodeBlock>}
-        python={<CodeBlock language="python">{excerpts(py, ["def call_host", "def main"])}</CodeBlock>}
+        typescript={<CodeBlock language="typescript" {...snippet(excerpts(ts, ["function callHost", "let work =", "function enqueue"]))} />}
+        python={<CodeBlock language="python" {...snippet(excerpts(py, ["def call_host", "def main"]))} />}
       />
       <p>Run <kbd>:Outline</kbd> and add a <code>## heading</code>. The panel and the statusline update as you type. Closing the file sends <InlineCode language="json">&quot;event&quot;: &quot;closed&quot;</InlineCode>, and the plugin closes the panel.</p>
     </section>
@@ -89,8 +101,8 @@ export default function JsonRpcGuide() {
       <p>The first <kbd>:OutlineToc</kbd> inserts a list between <code>&lt;!-- toc --&gt;</code> and <code>&lt;!-- tocstop --&gt;</code> markers, just before the first section. Later runs replace what is between the markers and pass the current list as <code>expected_text</code>, so Red rejects the edit if the list changed after the snapshot. Anchors follow GitHub's rules: lowercase, punctuation removed, spaces turned into hyphens, and repeated titles numbered.</p>
       <LanguageTabs
         label="Table of contents"
-        typescript={<CodeBlock language="typescript">{excerpts(ts, ["function slugs", "function tocEntries", "function tableOfContents", "async function updateToc", "async function undoToc"])}</CodeBlock>}
-        python={<CodeBlock language="python">{excerpts(py, ["def slugs", "def toc_entries", "def table_of_contents", "def update_toc", "def undo_toc"])}</CodeBlock>}
+        typescript={<CodeBlock language="typescript" {...snippet(excerpts(ts, ["function slugs", "function tocEntries", "function tableOfContents", "async function updateToc", "async function undoToc"]))} />}
+        python={<CodeBlock language="python" {...snippet(excerpts(py, ["def slugs", "def toc_entries", "def table_of_contents", "def update_toc", "def undo_toc"]))} />}
       />
       <p>Run <kbd>:OutlineToc</kbd> in a README:</p>
       <CodeBlock language="text">{`<!-- toc -->\n- [Install](#install)\n- [Usage](#usage)\n  - [Configure](#configure)\n- [License](#license)\n<!-- tocstop -->`}</CodeBlock>
@@ -103,8 +115,16 @@ export default function JsonRpcGuide() {
       <p>Copy uses <code>red/ClipboardWrite</code>, which can only write and is meant for an explicit action like a button. <code>red/MessageShow</code> confirms the result with a short message.</p>
       <LanguageTabs
         label="Panel actions"
-        typescript={<CodeBlock language="typescript">{`${excerpts(ts, ["function panelActions", "async function copyToc", "async function onPanelAction"])}\n\n// In dispatch():\n${excerpt(ts, 'case "panel/event":', 'case "picker/event":')}`}</CodeBlock>}
-        python={<CodeBlock language="python">{`${excerpts(py, ["def panel_actions", "def copy_toc", "def on_panel_action"])}\n\n# In handle():\n${excerpt(py, 'elif method == "panel/event":', 'elif method == "picker/event":')}`}</CodeBlock>}
+        typescript={<>
+          <CodeBlock language="typescript" {...snippet(excerpts(ts, ["function panelActions", "async function copyToc", "async function onPanelAction"]))} />
+          <p className="docs-code-caption">Then route the notification in <code>dispatch()</code>:</p>
+          <CodeBlock language="typescript" {...snippet(excerpt(ts, 'case "panel/event":', 'case "picker/event":'))} />
+        </>}
+        python={<>
+          <CodeBlock language="python" {...snippet(excerpts(py, ["def panel_actions", "def copy_toc", "def on_panel_action"]))} />
+          <p className="docs-code-caption">Then route the notification in <code>handle()</code>:</p>
+          <CodeBlock language="python" {...snippet(excerpt(py, 'elif method == "panel/event":', 'elif method == "picker/event":'))} />
+        </>}
       />
       <p>Move focus to the panel with <kbd>Ctrl-w l</kbd>, then press <kbd>t</kbd> to write the table of contents, <kbd>c</kbd> to copy it, <kbd>u</kbd> to undo the change, or <kbd>q</kbd> to close the panel.</p>
     </section>
@@ -117,19 +137,27 @@ export default function JsonRpcGuide() {
       <p>With <code>auto_open</code>, the outline opens by itself when you open a Markdown file. The plugin declares the <code>file:opened</code> event in <InlineCode language="toml">[activation].events</InlineCode> and in its <code>initialize</code> response, and Red delivers it as an <code>event/notify</code> notification. Red starts the plugin on demand for a declared event, so a plugin that listens to <code>file:opened</code> starts the first time you open any file. Version 1 also offers <code>editor:ready</code> and <code>file:saved</code>.</p>
       <LanguageTabs
         label="Settings, picker, and events"
-        typescript={<CodeBlock language="typescript">{`${excerpts(ts, ["async function loadSettings", "async function runCommand", "async function onPicked"])}\n\n// In dispatch():\n${excerpt(ts, 'case "event/notify":', 'case "document/event":')}`}</CodeBlock>}
-        python={<CodeBlock language="python">{`${excerpts(py, ["def load_settings", "def run_command", "def on_picked"])}\n\n# In handle():\n${excerpt(py, 'elif method == "event/notify":', 'elif method == "document/event":')}`}</CodeBlock>}
+        typescript={<>
+          <CodeBlock language="typescript" {...snippet(excerpts(ts, ["async function loadSettings", "async function runCommand", "async function onPicked"]))} />
+          <p className="docs-code-caption">Then route the notification in <code>dispatch()</code>:</p>
+          <CodeBlock language="typescript" {...snippet(excerpt(ts, 'case "event/notify":', 'case "document/event":'))} />
+        </>}
+        python={<>
+          <CodeBlock language="python" {...snippet(excerpts(py, ["def load_settings", "def run_command", "def on_picked"]))} />
+          <p className="docs-code-caption">Then route the notification in <code>handle()</code>:</p>
+          <CodeBlock language="python" {...snippet(excerpt(py, 'elif method == "event/notify":', 'elif method == "document/event":'))} />
+        </>}
       />
       <p>Here is the complete package. These are the same files the website's test suite runs against a scripted stand-in for Red on every build, and you can also <a href="https://github.com/codersauce/red-website/tree/main/examples/markdown-outline" target="_blank" rel="noreferrer">view the source on GitHub</a>.</p>
       <LanguageTabs
         label="Complete plugin package"
         typescript={<>
-          <CodeBlock language="toml" title="markdown-outline/red-plugin.toml">{outlinePlugin.typescript.manifest.trimEnd()}</CodeBlock>
-          <CodeBlock language="typescript" title="markdown-outline/plugin.ts">{outlinePlugin.typescript.source.trimEnd()}</CodeBlock>
+          <CodeBlock language="toml" title="markdown-outline/red-plugin.toml" {...snippet(outlinePlugin.typescript.manifest)} />
+          <CodeBlock language="typescript" title="markdown-outline/plugin.ts" {...snippet(outlinePlugin.typescript.source)} />
         </>}
         python={<>
-          <CodeBlock language="toml" title="markdown-outline/red-plugin.toml">{outlinePlugin.python.manifest.trimEnd()}</CodeBlock>
-          <CodeBlock language="python" title="markdown-outline/plugin.py">{outlinePlugin.python.source.trimEnd()}</CodeBlock>
+          <CodeBlock language="toml" title="markdown-outline/red-plugin.toml" {...snippet(outlinePlugin.python.manifest)} />
+          <CodeBlock language="python" title="markdown-outline/plugin.py" {...snippet(outlinePlugin.python.source)} />
         </>}
       />
     </section>

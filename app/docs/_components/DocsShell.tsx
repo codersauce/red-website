@@ -36,8 +36,8 @@ export default function DocsShell({
   children: ReactNode;
 }) {
   return <main>
-    <div className="nav-wrap"><div className="page-shell"><SiteNav /></div></div>
-    <div className="docs-layout page-shell">
+    <div className="nav-wrap"><div className="page-shell page-shell-wide"><SiteNav section={{ label: "docs", href: "/docs" }} /></div></div>
+    <div className="docs-layout page-shell page-shell-wide">
       <aside className="docs-sidebar">
         <Link className="docs-sidebar-title" href="/docs">Red documentation</Link>
         <DocsNavigation current={current} />

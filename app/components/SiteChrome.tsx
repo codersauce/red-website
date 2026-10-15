@@ -3,9 +3,15 @@ import { FaGithub } from "react-icons/fa6";
 import { FiExternalLink } from "react-icons/fi";
 import ThemeToggle from "./ThemeToggle";
 
-export function SiteNav() {
+export function SiteNav({ section }: { section?: { label: string; href: string } }) {
   return <nav className="site-nav">
-    <Link className="brand" href="/" aria-label="Red home">getred.dev</Link>
+    <div className="brand-lockup">
+      <Link className="brand" href="/" aria-label="Red home">red<span className="brand-caret" aria-hidden="true" /></Link>
+      {section ? <>
+        <span className="brand-divider" aria-hidden="true" />
+        <Link className="brand-section" href={section.href}>{section.label}</Link>
+      </> : null}
+    </div>
     <div className="nav-links">
       {/* The homepage's sections, in its order. */}
       <Link className="nav-section" href="/#agent">Agent</Link>

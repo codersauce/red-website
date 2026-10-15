@@ -24,8 +24,8 @@ function ReleaseNavigation() {
 
 export default function ReleasesPage() {
   return <main>
-    <div className="nav-wrap"><div className="page-shell"><SiteNav /></div></div>
-    <div className="docs-layout page-shell">
+    <div className="nav-wrap"><div className="page-shell page-shell-wide"><SiteNav section={{ label: "releases", href: "/releases" }} /></div></div>
+    <div className="docs-layout page-shell page-shell-wide">
       <aside className="docs-sidebar">
         <p className="docs-sidebar-title">Release highlights</p>
         <ReleaseNavigation />

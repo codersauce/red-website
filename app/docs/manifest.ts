@@ -86,7 +86,8 @@ export const docManifest = [
     "href": "/docs/languages/typescript-eslint",
     "section": "Editor",
     "title": "TypeScript and ESLint (multiple language servers)",
-    "description": "Attach TypeScript and ESLint language servers to the same buffer, keep Prettier formatting, and troubleshoot multi-server setups."
+    "description": "Attach TypeScript and ESLint language servers to the same buffer, keep Prettier formatting, and troubleshoot multi-server setups.",
+    "minVersion": "v0.9.0"
   },
   {
     "id": "git",
@@ -142,7 +143,8 @@ export const docManifest = [
     "href": "/docs/plugins/json-rpc",
     "section": "Customize",
     "title": "Write a JSON-RPC plugin",
-    "description": "Build, install, and test a standalone JSON-RPC 2.0 plugin in Python or Node.js using Red's versioned host API."
+    "description": "Build, install, and test a standalone JSON-RPC 2.0 plugin in Python or Node.js using Red's versioned host API.",
+    "minVersion": "v0.9.0"
   },
   {
     "id": "husk",
@@ -194,6 +196,8 @@ export interface DocMetadata {
   section: string;
   title: string;
   description: string;
+  /** Oldest Red release the whole guide applies to, shown as a header badge. */
+  minVersion?: string;
 }
 
 export function docMetadata(id: DocPageId): DocMetadata {

@@ -206,6 +206,20 @@ test("syntax-highlights every documentation example without changing its text", 
   assert.match(firstSession, /data-language="red-command" data-grammar="vimscript"/);
 });
 
+test("gives every guide section a unique id and shows version badges from the manifest", async () => {
+  for (const page of docManifest.filter((entry) => entry.href !== "/docs")) {
+    const html = await (await render(page.href)).text();
+    const article = html.slice(html.indexOf('<div class="docs-body">'), html.indexOf('<nav class="docs-pagination"'));
+    const headings = [...article.matchAll(/<h2([^>]*)>/g)].map(([, attributes]) => /id="([^"]+)"/.exec(attributes)?.[1]);
+    assert.ok(headings.length > 0, page.href);
+    assert.ok(headings.every(Boolean), `${page.href}: section without an id`);
+    assert.equal(new Set(headings).size, headings.length, `${page.href}: duplicate section id`);
+    assert.match(html, /<aside class="docs-toc-column">/, page.href);
+    const badge = /<span class="docs-version" data-doc-ignore="true">Requires Red (v[\d.]+)\+<\/span>/.exec(html)?.[1];
+    assert.equal(badge, page.minVersion, page.href);
+  }
+});
+
 test("keeps the syntax highlighter out of browser chunks", async () => {
   const assets = new URL("../dist/client/assets/", import.meta.url);
   const chunks = (await readdir(assets)).filter((name) => name.endsWith(".js"));

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import DocsShell from "./DocsShell";
 import CopyPageMenu from "./CopyPageMenu";
+import OnThisPage from "./OnThisPage";
 import { docPages, type DocPageDefinition } from "../content";
 import { markdownPath } from "../manifest";
 
@@ -15,7 +16,12 @@ export default function DocPage({ page, body }: { page: DocPageDefinition; body:
     <article className="docs-content">
       <header className="docs-header">
         <div className="docs-header-top">
-          <p className="docs-eyebrow">{page.section}</p>
+          <div className="docs-header-meta">
+            <p className="docs-eyebrow">{page.section}</p>
+            {page.minVersion
+              ? <span className="docs-version" data-doc-ignore>{`Requires Red ${page.minVersion}+`}</span>
+              : null}
+          </div>
           <CopyPageMenu href={markdownPath(page.href)} key={page.href} />
         </div>
         <h1>{page.title}</h1>
@@ -33,5 +39,8 @@ export default function DocPage({ page, body }: { page: DocPageDefinition; body:
           : <span />}
       </nav>
     </article>
+    <aside className="docs-toc-column">
+      <OnThisPage key={page.href} />
+    </aside>
   </DocsShell>;
 }

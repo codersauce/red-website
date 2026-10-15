@@ -7,14 +7,14 @@ const releaseSource = "https://github.com/codersauce/red/blob/eb5e2b6be15325abd1
 export default function ForAgents() {
   return <>
     <section>
-      <h2>Start with the installed version</h2>
+      <h2 id="start-with-the-installed-version">Start with the installed version</h2>
       <p>Use this page when helping a user install, configure, or extend Red. Red&apos;s built-in coding assistant has its own <Link className="text-link" href="/docs/agent">Agent guide</Link>. Find documentation through <a className="text-link" href="/llms.txt">the documentation index</a>; each guide is also available at its URL with <code>.md</code> appended.</p>
       <CodeBlock language="shell">{`red --version\nred --help`}</CodeBlock>
       <p>This website&apos;s release metadata identifies <strong>{releaseVersion}</strong>. Compare that with the installed version and read each guide&apos;s minimum-version note before applying instructions. Multiple language servers per document and standalone JSON-RPC plugins require Red v0.9.0 or later. Follow <Link className="text-link" href="/docs/getting-started/install">installation</Link> and <Link className="text-link" href="/docs/getting-started/updating">update instructions</Link> for the user&apos;s installation method. <InlineCode language="shell">red update --check</InlineCode> checks availability without replacing the executable.</p>
     </section>
 
     <section>
-      <h2>Identify the configuration layer</h2>
+      <h2 id="identify-the-configuration-layer">Identify the configuration layer</h2>
       <div className="docs-table-wrap"><table>
         <thead><tr><th>Layer</th><th>What belongs there</th></tr></thead>
         <tbody>
@@ -27,20 +27,20 @@ export default function ForAgents() {
     </section>
 
     <section>
-      <h2>Choose the interface</h2>
+      <h2 id="choose-the-interface">Choose the interface</h2>
       <p>Use terminal commands for installation, package management, and configuration checks; use editor commands for interactive operations. For example, <InlineCode language="shell">red plugin list</InlineCode> runs in a terminal, while <InlineCode language="red-command">:languages reload</InlineCode> and <InlineCode language="red-command">:messages</InlineCode> run inside Red. Consult the <Link className="text-link" href="/docs/reference/cli">CLI reference</Link> and <Link className="text-link" href="/docs/sessions">session guide</Link>.</p>
       <p>Use the documented <Link className="text-link" href="/docs/plugins/json-rpc">JSON-RPC</Link> or <Link className="text-link" href="/docs/husk">Husk</Link> API to develop plugins. Red launches an RPC plugin as a child process and owns its editor resources. The protocol is not a general remote-control endpoint for arbitrary external clients and has no generic host-action escape hatch.</p>
     </section>
 
     <section>
-      <h2>Configure TypeScript, ESLint, and Prettier</h2>
+      <h2 id="configure-typescript-eslint-and-prettier">Configure TypeScript, ESLint, and Prettier</h2>
       <p>Follow the complete <Link className="text-link" href="/docs/languages/typescript-eslint">TypeScript and ESLint guide</Link>, including its recorded compatibility baseline. Keep Red&apos;s built-in TypeScript server and register ESLint with overlapping document selectors. Install both server executables on <code>PATH</code>, and install ESLint, TypeScript, and Prettier in the project. ESLint also needs the guide&apos;s empty-section <code>workspace/configuration</code> settings.</p>
       <p>Retain external Prettier formatting with <InlineCode language="toml">formatting.provider = &quot;auto&quot;</InlineCode> and a language formatter definition. Formatter lookup checks the project&apos;s <code>node_modules/.bin</code> before <code>PATH</code>; do not assume language-server startup uses that same lookup. Add formatter definitions for the other language keys if editing JSX or TSX.</p>
       <p>Validate the config and restart Red after server-definition changes, then verify hover, completion, diagnostics from both servers, and an ESLint code action. With the guide&apos;s sample, changing quotes and pressing <kbd>Space f</kbd> should produce <code>formatted with Prettier</code>. Record the observed result, not just a successful config check.</p>
     </section>
 
     <section>
-      <h2>Create and validate a plugin</h2>
+      <h2 id="create-and-validate-a-plugin">Create and validate a plugin</h2>
       <p>Start with one complete Python or Node.js example in the <Link className="text-link" href="/docs/plugins/json-rpc">JSON-RPC tutorial</Link>. Red v0.9.0 uses host API <code>0.19.0</code> and protocol version <code>1</code>; these are distinct from Red&apos;s application version. Use the tutorial&apos;s manifest and initialization response together.</p>
       <CodeBlock language="shell">{`red plugin install --path ./rpc-hello-plugin\nred plugin list`}</CodeBlock>
       <p>The command above uses the Python example&apos;s directory; use the Node example&apos;s directory if chosen. Open Red, run <InlineCode language="red-command">:RpcHello world</InlineCode>, and confirm the expected greeting. Listing a package proves installation; invoking its command also exercises process startup and the handshake.</p>
@@ -48,7 +48,7 @@ export default function ForAgents() {
     </section>
 
     <section>
-      <h2>Diagnose the failing stage</h2>
+      <h2 id="diagnose-the-failing-stage">Diagnose the failing stage</h2>
       <ul>
         <li><strong>Executable:</strong> a bare RPC command resolves on <code>PATH</code>; a command containing a path separator resolves inside the package. Arguments are passed without a shell or <code>~</code> expansion.</li>
         <li><strong>Manifest and handshake:</strong> check API compatibility and ensure returned commands/events match the activation declarations exactly. Wait for <code>initialized</code> before calling host methods.</li>

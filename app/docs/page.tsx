@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
 import DocsShell from "./_components/DocsShell";
-import MarkdownControls from "./_components/MarkdownControls";
+import CopyCodeButton from "./_components/CopyCodeButton";
+import CopyPageMenu from "./_components/CopyPageMenu";
 import { docMetadata, markdownPath } from "./manifest";
+import { canonicalOrigin } from "../public-origin";
 
 const overview = docMetadata("overview");
 
@@ -14,11 +16,6 @@ export const metadata: Metadata = {
 };
 
 const topics = [
-  {
-    title: "Coding agents",
-    description: "Version-aware guidance for agents configuring and extending Red.",
-    links: [["For coding agents", "/docs/for-agents"]],
-  },
   {
     title: "Editor",
     description: "Files, editing, search, windows, language tools, and Git.",
@@ -64,12 +61,13 @@ export default function DocsPage() {
   return <DocsShell current="overview" currentLabel="Overview">
     <article className="docs-content docs-landing">
       <header className="docs-header">
-        <p className="docs-eyebrow">Documentation</p>
+        <div className="docs-header-top">
+          <p className="docs-eyebrow">Documentation</p>
+          <CopyPageMenu href={markdownPath(overview.href)} key={overview.href} />
+        </div>
         <h1>{overview.title}</h1>
         <p>{overview.description}</p>
       </header>
-
-      <MarkdownControls href={markdownPath(overview.href)} key={overview.href} />
 
       <section aria-labelledby="start-here">
         <h2 id="start-here">Start here</h2>
@@ -84,6 +82,21 @@ export default function DocsPage() {
             <div><h3>Your first session</h3><p>Open a project, edit and save a file, and find commands when you need them.</p></div>
             <FiArrowRight aria-hidden="true" />
           </Link>
+        </div>
+      </section>
+
+      <section aria-labelledby="agent-docs">
+        <div className="docs-agent-strip">
+          <div>
+            <h2 id="agent-docs">Point your agent at the docs</h2>
+            <p>Every page is also plain Markdown. Start a coding agent at the index, or <Link href="/docs/getting-started/agent-docs">add Red to its instructions</Link> once. Agents that configure or extend Red should read <Link href="/docs/for-agents">For coding agents</Link>.</p>
+          </div>
+          <ul className="docs-agent-urls">
+            {[["/llms.txt", "Documentation index"], ["/docs.md", "Overview as Markdown"]].map(([path, label]) => <li key={path}>
+              <a href={path} aria-label={label}><code>{canonicalOrigin.replace("https://", "")}{path}</code></a>
+              <CopyCodeButton code={`${canonicalOrigin}${path}`} label={`${label} URL`} />
+            </li>)}
+          </ul>
         </div>
       </section>
 

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { convertDocumentation, discoveryMarkdown, documentationAnchors, markdownCodeBlocks } from "../scripts/docs-markdown.mjs";
+import { convertDocumentation, discoveryMarkdown, discoveryOrder, documentationAnchors, fullDocumentationMarkdown, markdownCodeBlocks } from "../scripts/docs-markdown.mjs";
 
 const page = { id: "test", slug: "test", href: "/docs/test", title: "Test guide", description: "Test documentation", section: "Reference" };
 const origin = "https://getred.dev";
@@ -127,4 +127,23 @@ test("discovery includes every manifest entry, with descriptions and Markdown li
   for (const url of ["/docs.md", "/docs/for-agents.md", "/docs/test.md"]) assert.equal(markdown.split(`${origin}${url}`).length - 1, 1);
   assert.match(markdown, /More documentation/);
   assert.equal(markdown.split(": Test documentation").length - 1, manifest.length);
+  assert.equal(markdown.split(`${origin}/llms-full.txt`).length - 1, 1);
+});
+
+test("lists the guide for people under optional background, and orders the full export like the index", () => {
+  const manifest = [
+    { ...page, id: "agent-docs", slug: "getting-started/agent-docs", href: "/docs/getting-started/agent-docs", title: "Agent docs" },
+    { ...page, id: "overview", slug: "", href: "/docs", title: "Overview" },
+    { ...page, id: "for-agents", slug: "for-agents", href: "/docs/for-agents", title: "For agents" },
+  ];
+  const markdown = discoveryMarkdown(manifest, origin, "v0.9.0");
+  const optional = markdown.slice(markdown.indexOf("## Optional background and releases"));
+  assert.match(optional, /\[Agent docs\]\(https:\/\/getred\.dev\/docs\/getting-started\/agent-docs\.md\)/);
+  assert.deepEqual(discoveryOrder(manifest).map((entry) => entry.id), ["for-agents", "overview", "agent-docs"]);
+
+  const full = fullDocumentationMarkdown(["# For agents\n\nBody one.\n", "# Overview\n\nBody two.\n"], origin, "v0.9.0");
+  assert.ok(full.startsWith("# Red documentation (complete)\n"));
+  assert.match(full, /\(https:\/\/getred\.dev\/llms\.txt\)/);
+  assert.ok(full.indexOf("# For agents") < full.indexOf("# Overview"));
+  assert.ok(full.endsWith("Body two.\n"));
 });

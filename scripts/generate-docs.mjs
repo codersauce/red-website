@@ -4,7 +4,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { docManifest } from "../app/docs/manifest.ts";
 import { canonicalOrigin } from "../app/public-origin.ts";
-import { convertDocumentation, discoveryMarkdown, documentationAnchors } from "./docs-markdown.mjs";
+import { convertDocumentation, discoveryMarkdown, discoveryOrder, documentationAnchors, fullDocumentationMarkdown } from "./docs-markdown.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = resolve(root, "dist/client/_generated/docs");
@@ -39,6 +39,7 @@ const pages = [
   ...docManifest.filter((page) => !proofIds.includes(page.id)),
 ];
 const exports = new Map();
+const markdownById = new Map();
 let codeBlockCount = 0;
 for (const page of pages) {
   const relativePath = page.href === "/docs" ? "overview.md" : `${page.slug}.md`;
@@ -57,13 +58,19 @@ for (const page of pages) {
     installerSourceCommit: installerManifest.sourceCommit,
   });
   exports.set(filename, result.markdown);
+  markdownById.set(page.id, result.markdown);
   codeBlockCount += result.codeBlocks.length;
 }
 exports.set(resolve(output, "llms.txt"), discoveryMarkdown(docManifest, canonicalOrigin, `v${installerManifest.version}`));
+exports.set(resolve(output, "llms-full.txt"), fullDocumentationMarkdown(
+  discoveryOrder(docManifest).map((page) => markdownById.get(page.id)),
+  canonicalOrigin,
+  `v${installerManifest.version}`,
+));
 
 await rm(output, { recursive: true, force: true });
 for (const [filename, markdown] of exports) {
   await mkdir(dirname(filename), { recursive: true });
   await writeFile(filename, markdown);
 }
-console.log(`Generated ${pages.length} documentation exports and llms.txt; verified ${codeBlockCount} code blocks (${sourceRevision.slice(0, 12)}${dirty ? ", uncommitted changes" : ", clean"}).`);
+console.log(`Generated ${pages.length} documentation exports, llms.txt, and llms-full.txt; verified ${codeBlockCount} code blocks (${sourceRevision.slice(0, 12)}${dirty ? ", uncommitted changes" : ", clean"}).`);

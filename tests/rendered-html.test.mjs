@@ -149,7 +149,7 @@ test("serves direction A at the root and keeps docs and releases", async () => {
 });
 
 test("syntax-highlights every documentation example without changing its text", async () => {
-  const docsSource = (await Promise.all(["../app/docs/content.tsx", "../app/docs/_components/ForAgents.tsx"].map((path) => readFile(new URL(path, import.meta.url), "utf8")))).join("\n");
+  const docsSource = (await Promise.all(["../app/docs/content.tsx", "../app/docs/_components/ForAgents.tsx", "../app/docs/_components/AgentDocs.tsx"].map((path) => readFile(new URL(path, import.meta.url), "utf8")))).join("\n");
   const guidePaths = docManifest.map((page) => page.href);
   const expectedBlocks = [...docsSource.matchAll(/<CodeBlock language="([^"]+)"/g)];
   const expectedInline = [...docsSource.matchAll(/<InlineCode language="([^"]+)"/g)];

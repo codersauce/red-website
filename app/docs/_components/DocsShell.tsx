@@ -18,6 +18,14 @@ function DocsNavigation({ current }: { current: DocPageId }) {
   </nav>;
 }
 
+function AgentLinks() {
+  return <div className="docs-agent-links">
+    <Link href="/docs/getting-started/agent-docs">For agents</Link>
+    <a href="/llms.txt" rel="index" type="text/markdown"><code>llms.txt</code></a>
+    <a href="/llms-full.txt" type="text/markdown"><code>llms-full.txt</code></a>
+  </div>;
+}
+
 export default function DocsShell({
   current,
   currentLabel,
@@ -33,7 +41,7 @@ export default function DocsShell({
       <aside className="docs-sidebar">
         <Link className="docs-sidebar-title" href="/docs">Red documentation</Link>
         <DocsNavigation current={current} />
-        <a className="docs-source" href="/llms.txt" rel="index" type="text/markdown">Documentation index for agents</a>
+        <AgentLinks />
         <a className="docs-source" href="https://github.com/codersauce/red/tree/main/docs" target="_blank" rel="noreferrer">
           <FaGithub className="inline-icon github-icon" aria-hidden="true" /> Source documentation
         </a>
@@ -42,7 +50,7 @@ export default function DocsShell({
       <details className="docs-mobile-nav">
         <summary>{currentLabel}</summary>
         <DocsNavigation current={current} />
-        <a className="docs-source" href="/llms.txt" rel="index" type="text/markdown">Documentation index for agents</a>
+        <AgentLinks />
       </details>
 
       {children}

@@ -10,10 +10,11 @@ Documentation remains authored in JSX. A build generates Markdown for the landin
 | `/docs/<slug>.md` | The corresponding guide |
 | `/docs/for-agents.md` | Guidance for coding agents working with Red |
 | `/llms.txt` | Task-oriented index with descriptions and Markdown links |
+| `/llms-full.txt` | Every guide in one file, in index order, after a short preamble |
 
 GET and HEAD work without JavaScript, cookies, or authentication. Responses use `Content-Type: text/markdown; charset=utf-8`; HEAD has no body. Known export URLs with a trailing slash redirect with 308, preserving the query string. `/docs/index.md` is not an alias. Unknown documentation Markdown paths return HTTP 404 with a Markdown index link. Unsupported methods on known exports return 405 with `Allow: GET, HEAD`. Malformed encoding returns 400.
 
-The human documentation pages advertise their Markdown alternate and link to `/llms.txt`. View Markdown opens the export; Copy Markdown fetches those same bytes. The separate `/docs/agent` page still describes Red's built-in Agent feature.
+The human documentation pages advertise their Markdown alternate and link to `/llms.txt`. Each page header has a Copy page button that fetches the export's exact bytes. Its menu offers View as Markdown, Copy Markdown URL, and Open in ChatGPT or Claude; the chat links pass only a prompt naming the page's public `.md` URL. [Use these docs with your agent](https://getred.dev/docs/getting-started/agent-docs) explains the URLs to people and is listed under the optional section of `/llms.txt`. The separate `/docs/agent` page still describes Red's built-in Agent feature.
 
 Canonical documentation URLs also support content negotiation in the dependent delivery. GET and HEAD requests with `Accept: text/markdown` return the exact bytes and validators from the corresponding `.md` endpoint. Missing Accept and wildcard ties select HTML. Quality and specificity take precedence; equally explicit preferences follow their order in Accept. `q=0` excludes a representation, unsupported charsets do not match UTF-8, and requests accepting neither HTML nor Markdown receive 406. Known trailing-slash URLs redirect with 308 before ordinary representation selection.
 
@@ -61,6 +62,7 @@ curl -I http://127.0.0.1:8788/docs.md
 curl -i http://127.0.0.1:8788/docs/missing.md
 curl -i 'http://127.0.0.1:8788/docs.md/?download=1'
 curl -i http://127.0.0.1:8788/llms.txt
+curl -i http://127.0.0.1:8788/llms-full.txt
 curl -i -H 'Accept: text/markdown' http://127.0.0.1:8788/docs/plugins/json-rpc
 curl -I -H 'Accept: text/markdown' http://127.0.0.1:8788/docs/for-agents
 curl -i -H 'Accept: application/json' http://127.0.0.1:8788/docs

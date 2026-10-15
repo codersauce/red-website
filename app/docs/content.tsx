@@ -6,6 +6,7 @@ import { CodeBlock, InlineCode } from "./_components/Code";
 import HighlightedInstallPicker from "./_components/HighlightedInstallPicker";
 import LanguageTabs from "./_components/LanguageTabs";
 
+import AgentDocs from "./_components/AgentDocs";
 import ForAgents from "./_components/ForAgents";
 import { docMetadata, type DocMetadata } from "./manifest";
 export { docNavigation, type DocPageId } from "./manifest";
@@ -136,6 +137,7 @@ export const docPages: DocPageDefinition[] = [
       </section>
     </>,
   },
+  { ...docMetadata("agent-docs"), render: () => <AgentDocs /> },
   { ...docMetadata("for-agents"), render: () => <ForAgents /> },
   {
     ...docMetadata("navigation"),

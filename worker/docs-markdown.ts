@@ -10,6 +10,7 @@ const markdownRoutes = new Map(docManifest.map((page) => [
   { asset: `/_generated/docs/${page.slug || "overview"}.md`, html: page.href },
 ]));
 markdownRoutes.set("/llms.txt", { asset: "/_generated/docs/llms.txt", html: "/docs" });
+markdownRoutes.set("/llms-full.txt", { asset: "/_generated/docs/llms-full.txt", html: "/docs" });
 
 function markdownError(request: Request, status: number, message: string): Response {
   return new Response(request.method === "HEAD" ? null : `# ${message}\n\nFind Red documentation in the [documentation index](${canonicalOrigin}/llms.txt).\n`, {
@@ -34,7 +35,7 @@ function matchesEtag(condition: string | null, etag: string | null): boolean {
 /** Serve generated documentation without involving the app router or a converter. */
 export async function handleMarkdownRequest(request: Request, assets: DocumentationAssets): Promise<Response | null> {
   const url = new URL(request.url);
-  if (!/^\/(?:docs(?:\/.*)?\.md|llms\.txt)\/?$/.test(url.pathname)) return null;
+  if (!/^\/(?:docs(?:\/.*)?\.md|llms(?:-full)?\.txt)\/?$/.test(url.pathname)) return null;
 
   let pathname: string;
   try {

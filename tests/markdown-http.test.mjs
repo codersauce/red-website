@@ -10,8 +10,8 @@ test("serves every generated document and the discovery index through public URL
   const files = (await readdir(exportDirectory, { recursive: true })).filter((name) => name.endsWith(".md"));
   assert.ok(files.includes("overview.md"));
   assert.ok(files.includes("for-agents.md"));
-  for (const file of [...files, "llms.txt"]) {
-    const path = file === "overview.md" ? "/docs.md" : file === "llms.txt" ? "/llms.txt" : `/docs/${file}`;
+  for (const file of [...files, "llms.txt", "llms-full.txt"]) {
+    const path = file === "overview.md" ? "/docs.md" : file.startsWith("llms") ? `/${file}` : `/docs/${file}`;
     const response = await fetchBuiltWorker(path);
     assert.equal(response.status, 200, path);
     assert.equal(response.headers.get("Content-Type"), markdownType, path);
@@ -21,8 +21,17 @@ test("serves every generated document and the discovery index through public URL
   }
 });
 
+test("the complete export contains every generated guide exactly once", async () => {
+  const full = await (await fetchBuiltWorker("/llms-full.txt")).text();
+  const files = (await readdir(exportDirectory, { recursive: true })).filter((name) => name.endsWith(".md"));
+  for (const file of files) {
+    const guide = (await readFile(new URL(file, exportDirectory), "utf8")).trimEnd();
+    assert.equal(full.split(guide).length - 1, 1, file);
+  }
+});
+
 test("canonicalizes known trailing-slash URLs while preserving queries", async () => {
-  for (const path of ["/docs.md", "/docs/plugins/json-rpc.md", "/llms.txt"]) {
+  for (const path of ["/docs.md", "/docs/plugins/json-rpc.md", "/llms.txt", "/llms-full.txt"]) {
     const response = await fetchBuiltWorker(`${path}/?download=1`);
     assert.equal(response.status, 308);
     assert.equal(response.headers.get("Location"), `${path}?download=1`);

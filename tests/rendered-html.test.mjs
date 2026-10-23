@@ -93,7 +93,7 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(releases, new RegExp(escapeRegExp(publishedVersion)));
   assert.match(releases, /Available now/i);
   const versions = [...releases.matchAll(/<h2>(v\d+\.\d+\.\d+)<\/h2>/g)].map((match) => match[1]);
-  assert.deepEqual(versions, ["v0.9.1", "v0.9.0", "v0.8.2", "v0.8.1", "v0.8.0"]);
+  assert.deepEqual(versions, ["v0.10.0", "v0.9.1", "v0.9.0", "v0.8.2", "v0.8.1", "v0.8.0"]);
   assert.equal(versions[0], publishedVersion);
   for (const version of versions) {
     assert.match(releases, new RegExp(`id="release-${version.replaceAll(".", "-")}"`));

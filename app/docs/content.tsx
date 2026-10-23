@@ -10,6 +10,7 @@ import AgentDocs from "./_components/AgentDocs";
 import ForAgents from "./_components/ForAgents";
 import JsonRpcGuide from "./_components/JsonRpcGuide";
 import { docMetadata, type DocMetadata } from "./manifest";
+import { installerSourceCommit } from "../installers.generated";
 export { docNavigation, type DocPageId } from "./manifest";
 
 export type DocPageDefinition = DocMetadata & {
@@ -62,7 +63,7 @@ export const docPages: DocPageDefinition[] = [
         <p>Install the latest stable release:</p>
         <CodeBlock language="shell">red update</CodeBlock>
         <p>Inside the editor, run <kbd>:update</kbd> or choose <strong>Update Red</strong> in the command palette. You can continue editing while the update worker runs.</p>
-        <p>The updater verifies the archive's published SHA-256 checksum, candidate version, and bundled runtime before replacing the executable. Restart your editing sessions to use the new version. If a detached session is active, save and stop it before updating.</p>
+        <p>The updater verifies the archive's published SHA-256 checksum, candidate version, and bundled runtime before replacing the executable. From Red v0.10.0, it also checks the release's minisign signature on that checksum list first, so a release whose checksums were changed after signing is refused. Restart your editing sessions to use the new version. If a detached session is active, save and stop it before updating.</p>
       </section>
       <section>
         <h2 id="migrate-an-older-standalone-installation">Migrate an older standalone installation</h2>
@@ -82,10 +83,18 @@ export const docPages: DocPageDefinition[] = [
         <p>Source builds use your existing build and install process. The standalone updater refuses to replace executables it doesn't own.</p>
       </section>
       <section>
-        <h2 id="disable-daily-checks">Disable daily checks</h2>
-        <p>Red checks for a newer stable release once per day by default and only notifies you. Installation requires your command. To disable automatic checks, add this to <code>~/.config/red/config.toml</code> and restart Red:</p>
-        <CodeBlock language="toml">{`[updates]\nmode = "off"`}</CodeBlock>
-        <p><InlineCode language="shell">red update --check</InlineCode>, <InlineCode language="shell">red update</InlineCode>, and <kbd>:update</kbd> remain available.</p>
+        <h2 id="choose-when-updates-install">Choose when updates install</h2>
+        <Callout title="Available in Red v0.10.0 and later">Red v0.10.0 and later install updates in the background by default. Red v0.9.1 and earlier only notify you.</Callout>
+        <p>Red checks for a newer stable release at most once per day. By default it installs that release in the background, with the same verification as <InlineCode language="shell">red update</InlineCode>, and tells you to restart. Sessions that are already running keep their version until you restart them.</p>
+        <p>If another update or a detached session holds the installation, Red tries again at the next day's check. If an automatic installation fails, Red shows a warning, keeps the current version, and tries again the next day. Homebrew and source builds aren't replaced; Red only tells you a release is available.</p>
+        <p>To choose when updates install, set <code>mode</code> in <code>~/.config/red/config.toml</code> and restart Red. Use <code>"notify"</code> to only announce new releases, or <code>"off"</code> to stop checking:</p>
+        <CodeBlock language="toml">{`[updates]\nmode = "notify" # "auto" (default), "notify", or "off"`}</CodeBlock>
+        <p><InlineCode language="shell">red update --check</InlineCode>, <InlineCode language="shell">red update</InlineCode>, and <kbd>:update</kbd> remain available in every mode, including <code>mode = "off"</code>.</p>
+      </section>
+      <section>
+        <h2 id="verify-a-release-yourself">Verify a release yourself</h2>
+        <p>From Red v0.10.0, each release publishes <code>SHA256SUMS.txt</code> and its minisign signature, <code>SHA256SUMS.txt.minisig</code>. Download both next to the archive, save <a className="text-link" href={`https://github.com/codersauce/red/blob/${installerSourceCommit}/install/release-signing.pub`} target="_blank" rel="noreferrer">Red's release public key</a> as <code>release-signing.pub</code>, and run:</p>
+        <CodeBlock language="shell">{`minisign -Vm SHA256SUMS.txt -p release-signing.pub\nshasum -a 256 -c SHA256SUMS.txt --ignore-missing`}</CodeBlock>
         <p><Link className="text-link" href="/docs/getting-started/first-session">Continue with your first session</Link></p>
       </section>
     </>,
@@ -517,6 +526,25 @@ export const docPages: DocPageDefinition[] = [
           <li><span>4</span><div><strong>Inspect the result.</strong><p>Agent file writes pass through Red's revision-checked editor tools and are saved to disk. Use <kbd>:AgentHistory</kbd> to inspect attributed transactions.</p></div></li>
         </ol>
         <p>Press <kbd>Alt+m</kbd> in the Agent pane or run <kbd>:AgentModel</kbd> to choose the model and reasoning effort for that conversation. This doesn't change your global Codex settings.</p>
+        <p>The pane docks on the left, between the file tree and the editor, and sizes itself to the terminal. On a terminal too narrow to share, it covers the screen while you use it. With the pane focused, <kbd>Ctrl-w L</kbd> moves it to the right; Red remembers the side for each workspace. The row under the composer lists <kbd>Alt-s</kbd> sessions, <kbd>Alt-n</kbd> new, and <kbd>Alt-c</kbd> clear.</p>
+        <p>When the agent edits a file you've changed but not saved, Red asks before saving your changes. Agent edits change only the lines they need, so your cursor stays on its text, and one <kbd>u</kbd> undoes the whole edit.</p>
+      </section>
+
+      <section>
+        <h2 id="continue-a-previous-conversation">Continue a previous conversation</h2>
+        <Callout title="Available in Red v0.10.0 and later">Use <strong>Red v0.10.0 or later</strong> to resume conversations after relaunching and to browse previous Codex sessions.</Callout>
+        <p>Quitting Red doesn't end the conversation. The next time you open Red in the same workspace, the pane picks up the same Codex thread. Run <kbd>:AgentNew</kbd> to start fresh instead. Only one Red at a time drives a workspace's conversation; a second editor opened in the same workspace starts its own thread.</p>
+        <p>Press <kbd>Alt-s</kbd> in the Agent pane or run <kbd>:AgentSessions</kbd> to browse previous sessions. The tabs under the search field choose what's listed:</p>
+        <div className="docs-table-wrap"><table>
+          <thead><tr><th>Tab</th><th>Lists</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Red</strong></td><td>Red sessions started in this workspace</td></tr>
+            <tr><td><strong>This workspace</strong></td><td>Every Codex session started in this workspace</td></tr>
+            <tr><td><strong>All Codex</strong></td><td>Every interactive Codex session</td></tr>
+          </tbody>
+        </table></div>
+        <p>Press <kbd>Tab</kbd> or <kbd>Shift-Tab</kbd> to switch tabs. Type to search session titles; Red then searches conversation text, which takes longer. Press <kbd>Alt-p</kbd> to peek at the selected session's latest exchange and <kbd>Enter</kbd> to continue it. A Red session from this workspace resumes in place; any other session continues in a new thread that starts from its recent history. <kbd>Esc</kbd> returns to your conversation and its unsent draft.</p>
+        <p>If Codex stops in the middle of a reply, the pane keeps what already streamed and holds queued follow-ups. Choose <strong>Retry the message</strong>, <strong>Ask Codex to continue where it stopped</strong>, or <strong>Leave it here</strong>, or run <kbd>:AgentRecover</kbd>. Edits the interrupted turn made stay applied.</p>
       </section>
 
       <section>
@@ -536,7 +564,7 @@ export const docPages: DocPageDefinition[] = [
       <section>
         <h2 id="return-to-earlier-work">Return to earlier work</h2>
         <p>Press <kbd>Space H</kbd> or run <kbd>:InlineHistory</kbd> to browse inline prompts, answers, ready edits, and applied changes. Press <kbd>Space N</kbd> to reopen the latest completed inline result.</p>
-        <p>Agent conversation state and inline history participate in Red's recovery snapshots. After a restart, Red resumes a persisted Codex thread when possible. If it can't, the old transcript remains visible as archived context and the next prompt begins a new session.</p>
+        <p>Agent conversation state and inline history participate in Red's recovery snapshots. After a restart, Red resumes a persisted Codex thread when possible. If it can't, the old transcript remains visible as archived context and the next prompt begins a new session. To return to an older Agent conversation, see <a className="text-link" href="#continue-a-previous-conversation">Continue a previous conversation</a>.</p>
       </section>
     </>,
   },
@@ -565,12 +593,20 @@ export const docPages: DocPageDefinition[] = [
             <tr><td><InlineCode language="toml">[search]</InlineCode></td><td>Incremental search, highlighting, wrapping, and case behavior</td></tr>
             <tr><td><InlineCode language="toml">[completion]</InlineCode></td><td>Automatic completion, buffer words, prefix length, and menu timing</td></tr>
             <tr><td><InlineCode language="toml">[agent]</InlineCode></td><td>Codex command, inline review behavior, followed tool calls, and explicitly enabled integrations</td></tr>
+            <tr><td><InlineCode language="toml">[updates]</InlineCode></td><td>Whether Red installs updates in the background, only announces them, or doesn't check</td></tr>
+            <tr><td><InlineCode language="toml">[clipboard]</InlineCode></td><td>Where yanks and copies go: the native clipboard, OSC 52 through the terminal, or nowhere</td></tr>
             <tr><td><InlineCode language="toml">[keys.MODE]</InlineCode></td><td>Mode-specific keybindings and chords</td></tr>
             <tr><td><InlineCode language="toml">[languages.ID]</InlineCode></td><td>Detection, comments, indentation, grammar, and language-server settings</td></tr>
             <tr><td><InlineCode language="toml">[plugin_config.ID]</InlineCode></td><td>Settings owned by an enabled plugin</td></tr>
           </tbody>
         </table></div>
         <p><a className="text-link" href="https://github.com/codersauce/red/blob/main/default_config.toml" target="_blank" rel="noreferrer">Open the commented default configuration</a></p>
+      </section>
+
+      <section>
+        <h2 id="copy-over-ssh-herdr-and-tmux">Copy over SSH, Herdr, and tmux</h2>
+        <p>From Red v0.10.0, yanks, Agent transcript copies, and plugin clipboard writes reach the clipboard of the computer you're typing on. Over SSH, inside Herdr, or in tmux, Red sends them through the terminal with OSC 52; on a local desktop it uses the native clipboard. Your terminal and every multiplexer in between must allow OSC 52 clipboard writes: attach Herdr with <InlineCode language="shell">herdr --remote</InlineCode>, and set <code>set-clipboard on</code> in tmux. Red keeps the text in its register even when delivery fails. To choose the route yourself:</p>
+        <CodeBlock language="toml">{`[clipboard]\nbackend = "osc52" # "auto" (default), "native", "osc52", or "none"`}</CodeBlock>
       </section>
     </>,
   },
@@ -888,7 +924,7 @@ export const docPages: DocPageDefinition[] = [
 
       <section>
         <h2 id="read-messages-and-logs">Read messages and logs</h2>
-        <p>Press <kbd>Space m</kbd> or run <kbd>:messages</kbd> to browse editor notifications, command output, and recent errors. Red writes <code>red.log</code> in its configuration directory by default. Relative <code>log_file</code> paths are resolved from that directory.</p>
+        <p>Press <kbd>Space m</kbd> or run <kbd>:messages</kbd> to see problems that need your attention, such as a failed save, a file changed on disk, or a disabled plugin. Each item's details give the next step, and it clears once the problem is fixed. From Red v0.10.0, routine feedback stays in the status line, and shell and update output appear in <kbd>:jobs</kbd>. Red writes <code>red.log</code> in its configuration directory by default. Relative <code>log_file</code> paths are resolved from that directory.</p>
       </section>
 
       <section>

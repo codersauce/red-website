@@ -93,7 +93,7 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(releases, new RegExp(escapeRegExp(publishedVersion)));
   assert.match(releases, /Available now/i);
   const versions = [...releases.matchAll(/<h2>(v\d+\.\d+\.\d+)<\/h2>/g)].map((match) => match[1]);
-  assert.deepEqual(versions, ["v0.9.1", "v0.9.0", "v0.8.2", "v0.8.1", "v0.8.0"]);
+  assert.deepEqual(versions, ["v0.10.0", "v0.9.1", "v0.9.0", "v0.8.2", "v0.8.1", "v0.8.0"]);
   assert.equal(versions[0], publishedVersion);
   for (const version of versions) {
     assert.match(releases, new RegExp(`id="release-${version.replaceAll(".", "-")}"`));
@@ -116,6 +116,18 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(updateText, /red update --check/);
   assert.match(updateText, /Migrate an older standalone installation/);
   assert.match(updateText, /mode = "off"/);
+  assert.match(updateText, /Choose when updates install/);
+  assert.match(updateText, /mode = "notify"/);
+  assert.match(updateText, /minisign -Vm SHA256SUMS\.txt/);
+
+  const agentText = visibleText(await (await render("/docs/agent")).text());
+  assert.match(agentText, /Continue a previous conversation/);
+  assert.match(agentText, /:AgentSessions/);
+  assert.match(agentText, /All Codex/);
+  const configurationText = visibleText(await (await render("/docs/configuration")).text());
+  assert.match(configurationText, /Copy over SSH, Herdr, and tmux/);
+  const troubleshootingText = visibleText(await (await render("/docs/troubleshooting")).text());
+  assert.match(troubleshootingText, /:jobs/);
 
   const navigation = await (await render("/docs/editor/navigation")).text();
   assert.match(navigation, /Alt-p/);

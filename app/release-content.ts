@@ -1,5 +1,53 @@
 export const releases = [
 {
+  "version": "v0.10.0",
+  "id": "release-v0-10-0",
+  "headline": "Pick up any Codex conversation, and updates that install themselves",
+  "summary": "Red v0.10.0 keeps Agent conversations going across relaunches, lets you resume or continue any previous Codex session from the Agent pane, and makes agent edits gentler on your work. Updates now install in the background with signed checksums, and copying works over SSH, Herdr, and tmux.",
+  "highlights": [
+    {
+      "id": "agent-sessions",
+      "title": "Pick up a previous Codex conversation",
+      "description": "Press Alt-s in the Agent pane, or run :AgentSessions, to browse previous Codex sessions from Red, this workspace, or all of Codex, switching with Tab. Type to search titles, then conversation text; Alt-p peeks at the latest exchange. A Red session from this workspace resumes in place, and any other conversation continues in a new thread with its recent history."
+    },
+    {
+      "id": "conversation-continuity",
+      "title": "Keep the conversation after a relaunch or a crash",
+      "description": "Quitting and reopening Red in a workspace resumes the same Codex thread instead of starting over. If Codex stops in the middle of a reply, the pane keeps what streamed, holds queued follow-ups, and asks whether to retry, continue, or leave it. Only one editor can drive a workspace's conversation at a time."
+    },
+    {
+      "id": "automatic-updates",
+      "title": "Install updates in the background",
+      "description": "Official standalone installations now install a new stable release in the background, verified like red update, and new sessions use it. Release checksums are signed with minisign, and the updater checks the signature before installing. Set [updates] mode = \"notify\" to install yourself, or \"off\" to stop checking. Homebrew and source builds keep their own update process."
+    },
+    {
+      "id": "agent-edits",
+      "title": "Agent edits that respect your work",
+      "description": "Agent edits change only the lines they need, so your cursor and view stay put and one u undoes the whole edit. When the agent edits a buffer with unsaved changes, Red asks before saving them. :AgentHistory shows readable diffs across every file the agent touched."
+    },
+    {
+      "id": "agent-pane",
+      "title": "An Agent pane that fits your terminal",
+      "description": "The Agent pane now opens on the left, beside the file tree, and sizes itself to the terminal; on a narrow one it takes the whole screen while you use it. Sessions, New, and Clear sit under the composer, and a turn that fails on its own offers Retry and Continue."
+    },
+    {
+      "id": "remote-clipboard",
+      "title": "Copy over SSH, Herdr, and tmux",
+      "description": "Yanks, transcript copies, and plugin clipboard writes reach your local clipboard through OSC 52 when Red runs over SSH, inside Herdr, or in tmux, and use the native clipboard on a local desktop. Set [clipboard] backend to override the choice."
+    },
+    {
+      "id": "messages-inbox",
+      "title": "Messages that need your attention",
+      "description": ":messages is now an inbox of problems that need you, such as a failed save or a file changed on disk, and each one clears when it is fixed. Routine feedback stays in the status line, and shell and update output moved to :jobs."
+    },
+    {
+      "id": "learn-essentials",
+      "title": "Finish the Essentials lessons",
+      "description": "All four Essentials lessons in :learn now run, covering editing, finding commands, and saving a practice file. Red remembers your progress, and :learn next, :learn restart, and :learn quit move you through it without touching your project."
+    }
+  ]
+},
+{
   "version": "v0.9.1",
   "id": "release-v0-9-1",
   "headline": "More reliable completion, symbol search, and plugins",

@@ -1,16 +1,20 @@
 # Website dependency audit
 
-Checked on 2026-10-12 for the Red v0.8.2 website update. Rerun the audits before
+Checked on 2026-10-23 for the Red v0.10.0 website update. Rerun the audits before
 publication; advisory counts are a snapshot.
 
-`npm audit --omit=dev` reports zero vulnerabilities. The full `npm audit`
-reports 21 findings in the local build and development toolchain (19 high and
-2 low), with no critical findings.
+`npm audit --omit=dev` reported one critical finding in Next.js 16.4.0
+([GHSA-2464-fhr4-w9xw](https://github.com/advisories/GHSA-2464-fhr4-w9xw),
+[GHSA-p3m5-59mp-jv5r](https://github.com/advisories/GHSA-p3m5-59mp-jv5r) and
+[GHSA-673q-mjm6-r5xr](https://github.com/advisories/GHSA-673q-mjm6-r5xr)).
+Next.js is pinned to 16.4.3, which fixes them, and the production audit now
+reports zero vulnerabilities. The upgrade changes only the `next` and `@next/*`
+packages.
 
 ## Bundled runtime
 
-- Next.js is updated to 16.4.0, along with the affected indirect production
-  dependencies.
+- Next.js is updated to 16.4.3 (16.4.0 on 2026-10-12, along with the affected
+  indirect production dependencies).
 - React, React DOM, and `react-server-dom-webpack` are aligned at 19.2.8. The
   server renderer is bundled despite being listed as a development dependency;
   this version fixes [GHSA-wx67-qw84-cm4g](https://github.com/advisories/GHSA-wx67-qw84-cm4g).

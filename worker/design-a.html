@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>red — Vim keys. Agent inside.</title>
-<meta name="description" content="A Vim-style terminal editor where your coding agent works through your editor.">
+<meta name="description" content="A Vim-style terminal editor with Markdown that reads like the document, a code explore mode, and a coding agent that works through your editor.">
 <link rel="canonical" href="https://getred.dev/">
 <meta name="theme-color" content="#D7182A">
 <!-- Social cards. Image URLs must be absolute; og.png is rendered by site/captures/og/render.sh. -->
@@ -152,8 +152,9 @@ footer a{text-decoration:none}
   <nav class="top" aria-label="Primary">
     <a href="#top" aria-label="red home">getred.dev</a>
     <div class="links">
+      <a href="#markdown">Markdown</a>
       <a href="#agent">Agent</a>
-      <a href="#inline">Inline</a>
+      <a href="#explore">Explore</a>
       <a href="#git">Git</a>
       <a href="#sessions">Sessions</a>
       <a href="#install">Install</a>
@@ -184,8 +185,23 @@ footer a{text-decoration:none}
 
 <div class="tape" aria-hidden="true"><div id="tape"></div></div>
 
-<section class="onink" id="agent">
+<section class="onink" id="markdown">
   <div class="wrap split">
+    <div class="copy">
+      <div class="label"><i></i>*.md</div>
+      <h2>Markdown that reads like <em>the document.</em></h2>
+      <p>Tables draw as grids, link URLs and emphasis markers step aside, and images appear right in the buffer. Move onto a line and it is plain Markdown again, so you always edit the source you see. The file never changes.</p>
+      <div class="keys"><span><kbd>gx</kbd> follow a link</span><span><kbd>Ctrl-w x</kbd> open it beside</span><span><kbd>gT</kbd> tick a task</span><span><code>:markdown-conceal</code> show markup</span></div>
+    </div>
+    <figure class="slab" style="margin:0">
+      <video src="/media/a-images.mp4" poster="/media/a-images-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: a chart drawn inline in a Markdown file, its source shown on the image line, scrolling and a popup over the image"></video>
+      <figcaption class="meta"><span>:32 · i · Esc · Alt-e ×6 · g · Ctrl-d</span><span>Ghostty · real time</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="red" id="agent">
+  <div class="wrap split flip">
     <div class="copy">
       <div class="label"><i></i>Space A</div>
       <h2>The agent works <em>through</em> your editor.</h2>
@@ -194,70 +210,57 @@ footer a{text-decoration:none}
         <li>Reads the live buffer, including edits you haven't saved.</li>
         <li>Changes are revision-checked and confined to the workspace.</li>
         <li>Every edit is attributed to its conversation, and you can resume it later.</li>
+        <li>Select a line and press <kbd>Space i</kbd> to ask about just that. The answer is one undoable edit.</li>
       </ul>
     </div>
-    <figure class="slab" style="margin:0">
+    <figure class="slab tilt" style="margin:0">
       <video src="/media/a-agent.mp4" poster="/media/a-agent-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: the agent fixes a refill overflow bug in bucket.rs"></video>
       <figcaption class="meta"><span>26G · Space A · "Cap tokens at capacity."</span><span>real Codex · wait trimmed</span></figcaption>
     </figure>
   </div>
 </section>
 
-<section class="red" id="inline">
-  <div class="wrap split flip">
+<section class="onbone" id="explore">
+  <div class="wrap split">
     <div class="copy">
-      <div class="label"><i></i>V · Space i</div>
-      <h2>Ask about <em>this</em> line. Not the whole repo.</h2>
-      <p>Select the exact text, or let Red pick the enclosing function. The answer lands as one unsaved, undoable edit, so <kbd>u</kbd> takes it back.</p>
-      <div class="keys"><span><kbd>v</kbd> view the change</span><span><kbd>u</kbd> undo it</span><span><kbd>Space H</kbd> history</span></div>
+      <div class="label"><i></i>Space e</div>
+      <h2>Read code <em>without</em> asking a model.</h2>
+      <p>Code explore follows your cursor: the enclosing function, the name under it, its definition, and every match. Dim a function down to the calls that matter, jump to a definition, and walk the trail back. It runs on Red's own index, so it needs no language server and sends nothing anywhere.</p>
+      <div class="keys"><span><kbd>Space e e</kbd> explore</span><span><kbd>Space e f</kbd> follow</span><span><kbd>Space e s</kbd> dim</span><span><kbd>Space e b</kbd> back</span></div>
     </div>
-    <figure class="slab tilt" style="margin:0">
-      <video src="/media/a-inline.mp4" poster="/media/a-inline-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: inline assist rounds a wait time up with div_ceil"></video>
-      <figcaption class="meta"><span>/u64 · V · Space i · v · u</span><span>real Codex · wait trimmed</span></figcaption>
+    <figure class="slab" style="margin:0">
+      <video src="/media/a-explore.mp4" poster="/media/a-explore-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: code explore following a variable, dimming a function to its calls, and jumping to a definition and back"></video>
+      <figcaption class="meta"><span>Space e e · Space e f · Space e s · Space e d · Space e b</span><span>real time</span></figcaption>
     </figure>
   </div>
 </section>
 
-<section class="onbone" id="git">
-  <div class="wrap split">
+<section class="onink" id="git">
+  <div class="wrap split flip">
     <div class="copy">
       <div class="label"><i></i>Space G</div>
       <h2>Stage. Commit. <em>Stay.</em></h2>
       <p>A full Git workspace inside the editor: hunks, staging, branches, remotes, stashes, logs, and rebases. Codex can write the commit message from the staged diff.</p>
       <div class="keys"><span><kbd>s</kbd> stage</span><span><kbd>c</kbd> commit</span><span><kbd>l</kbd> log</span><span><kbd>?</kbd> every action</span></div>
     </div>
-    <figure class="slab" style="margin:0">
+    <figure class="slab tilt" style="margin:0">
       <video src="/media/a-git.mp4" poster="/media/a-git-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: staging a hunk and generating a commit message in the Git workspace"></video>
       <figcaption class="meta"><span>Space G · s · c · Generate message · :wq · l</span><span>real Codex · wait trimmed</span></figcaption>
     </figure>
   </div>
 </section>
 
-<section class="onink" id="sessions">
-  <div class="wrap split flip">
+<section class="red" id="sessions">
+  <div class="wrap split">
     <div class="copy">
       <div class="label"><i></i>Ctrl-\</div>
       <h2>Close the terminal. <em>Keep the work.</em></h2>
       <p>Detached sessions keep buffers, plugins, language servers, and running agents alive across terminal and SSH disconnects on macOS and Linux. Crash recovery covers every platform.</p>
       <div class="keys"><span><code>red --detach=work</code></span><span><code>red --attach work</code></span></div>
     </div>
-    <figure class="slab tilt" style="margin:0">
+    <figure class="slab" style="margin:0">
       <video src="/media/a-detach.mp4" poster="/media/a-detach-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: detaching from a session with unsaved work, then attaching again"></video>
       <figcaption class="meta"><span>--detach=work · O · Ctrl-\ · --attach work</span><span>real time</span></figcaption>
-    </figure>
-  </div>
-</section>
-
-<section class="red" id="themes">
-  <div class="wrap split">
-    <div class="copy">
-      <div class="label"><i></i>Space t</div>
-      <h2>133 themes. <em>One is red.</em></h2>
-      <p>Bundled in the binary and previewed live as you move through the list. VS Code themes work too.</p>
-    </div>
-    <figure class="slab" style="margin:0">
-      <video src="/media/a-themes.mp4" poster="/media/a-themes-poster.jpg" muted loop playsinline preload="metadata" aria-label="Recording: previewing themes live"></video>
-      <figcaption class="meta"><span>Space t · ↑ ×8 · Esc</span><span>real time</span></figcaption>
     </figure>
   </div>
 </section>
@@ -270,7 +273,8 @@ footer a{text-decoration:none}
       <li><b>Every mode</b><span>Normal, Insert, Visual, Visual Line, Visual Block, and Command, with a versioned Vim compatibility matrix.</span><code>ciw · dap · .</code></li>
       <li><b>Multi-cursor</b><span>Select repeated words or stack cursors vertically, then use normal operators.</span><code>Ctrl-n · Ctrl-↓</code></li>
       <li><b>Find anything</b><span>Fuzzy files with live preview, buffers, symbols, references, and project search.</span><code>Ctrl-p · Ctrl-e</code></li>
-      <li><b>Language servers</b><span>Built-in defaults for Rust, TypeScript, Markdown, JSON, TOML, YAML, and Lua. Tree-sitter highlighting.</span><code>gd · K</code></li>
+      <li><b>Language servers</b><span>Built-in defaults for Rust, TypeScript and JavaScript, Markdown, JSON, TOML, YAML, Lua, and Fish. Tree-sitter highlighting.</span><code>gd · K</code></li>
+      <li><b>130+ themes</b><span>Bundled in the binary and previewed live as you move through the list. VS Code themes work too.</span><code>Space t</code></li>
       <li><b>Husk plugins</b><span>An embedded plugin runtime. The file tree, search, Git, and agent are plugins too.</span><code>plugins/*.hk</code></li>
       <li><b>Safe from other tools</b><span>If something else rewrites a file you're editing, both versions are kept until you choose.</span><code>:diffdisk</code></li>
     </ul>
@@ -382,7 +386,7 @@ footer a{text-decoration:none}
 })();
 
 // ticker: duplicate once so the loop is seamless
-const keys=["Ctrl-p bucket ⏎","42G","ciw","Space A <i>make refill saturate</i>","u","V","Space i","Space G","s","c","Ctrl-n ×3","Ctrl-\\","red --attach work","Space t","dap",":wq"];
+const keys=["Ctrl-p bucket ⏎","gx","ciw","Space A <i>make refill saturate</i>","Space e e","u","gT","V","Space i","Space e s","Space G","s","c","Ctrl-n ×3","Ctrl-\\","red --attach work","dap",":wq"];
 const t=document.getElementById("tape");
 const once=keys.map(k=>`<span>${k}</span>`).join("");
 t.innerHTML=once+once;

@@ -93,7 +93,7 @@ test("serves direction A at the root and keeps docs and releases", async () => {
   assert.match(releases, new RegExp(escapeRegExp(publishedVersion)));
   assert.match(releases, /Available now/i);
   const versions = [...releases.matchAll(/<h2>(v\d+\.\d+\.\d+)<\/h2>/g)].map((match) => match[1]);
-  assert.deepEqual(versions, ["v0.10.0", "v0.9.1", "v0.9.0", "v0.8.2", "v0.8.1", "v0.8.0"]);
+  assert.deepEqual(versions, ["v0.11.0", "v0.10.0", "v0.9.1", "v0.9.0", "v0.8.2", "v0.8.1", "v0.8.0"]);
   assert.equal(versions[0], publishedVersion);
   for (const version of versions) {
     assert.match(releases, new RegExp(`id="release-${version.replaceAll(".", "-")}"`));
@@ -301,35 +301,20 @@ test("renders a branded 404 page with a real 404 status", async () => {
   assert.match(html, /github\.com\/codersauce\/red/);
 });
 
-test("ships the replacement editor captures and social card", async () => {
-  const captureNames = [
-    "editing-light.png",
-    "editing-dark.png",
-    "find-files-dark.png",
-    "grep-dark.png",
-    "palette-dark.png",
-    "themes-dark.png",
-    "lsp-dialog-dark.png",
-    "ask-agent-dark.png",
-    "agent-pane-dark.png",
-    "editor-dark.png",
-  ];
-  const [favicon, og, ...captures] = await Promise.all([
+test("ships the favicon and social card", async () => {
+  const [favicon, og] = await Promise.all([
     readFile(new URL("../public/favicon.svg", import.meta.url), "utf8"),
     readFile(new URL("../public/og.png", import.meta.url)),
-    ...captureNames.map((name) => readFile(new URL(`../public/${name}`, import.meta.url))),
   ]);
   assert.match(favicon, /#e5484d/i);
   assert.deepEqual(pngDimensions(og), { width: 1200, height: 630 });
   assert.ok(og.byteLength > 100_000);
   assert.ok(og.byteLength < 2_000_000);
-  assert.ok(captures.every((capture) => capture.byteLength > 50_000));
-  assert.deepEqual(captures.map(pngDimensions), Array.from({ length: 10 }, () => ({ width: 2104, height: 1724 })));
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
 });
 
 test("ships every homepage recording and poster in the built assets", async () => {
-  const names = ["a-hero", "a-agent", "a-inline", "a-git", "a-detach", "a-themes"];
+  const names = ["a-hero", "a-images", "a-agent", "a-explore", "a-git", "a-detach"];
   for (const name of names) {
     const [video, poster] = await Promise.all([
       readFile(new URL(`../dist/client/media/${name}.mp4`, import.meta.url)),

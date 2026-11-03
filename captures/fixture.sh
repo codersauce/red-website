@@ -3,6 +3,7 @@
 # Usage: fixture.sh <workdir>
 set -e
 W="${1:?workdir}"
+HERE_ASSETS="$(cd "$(dirname "$0")" && pwd)/assets"
 rm -rf "$W"
 mkdir -p "$W/throttle/src" "$W/xdg/red"
 cd "$W/throttle"
@@ -139,6 +140,67 @@ Small, allocation-free rate limiters for Rust services.
 
 - `Bucket`: a token bucket with a steady refill rate
 - `SlidingWindow`: at most N events per time span
+T
+
+mkdir -p docs
+cp "$HERE_ASSETS/bucket.png" "$HERE_ASSETS/window.png" docs/
+cat > docs/design.md <<'T'
+# Design notes
+
+Two limiters, one rule: **never allocate on the hot path**.
+The [token bucket](../src/bucket.rs:23) refills lazily from elapsed time, and the [sliding window](../src/window.rs:17) keeps one timestamp per event.
+Both are covered by the [benchmarks](#benchmarks) below.
+Response headers follow the [IETF rate-limit header draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/).
+
+## Choosing a limiter
+
+| Limiter | Bursts | Memory | Precision | Use it for |
+| :--- | :---: | ---: | :---: | :--- |
+| `Bucket` | up to *capacity* | 24 bytes | 1 s | API clients, background jobs |
+| `SlidingWindow` | none | 16 bytes per event | exact | logins, **abuse checks** |
+| *both, stacked* | short | 24 bytes + window | exact | public endpoints |
+
+## Roadmap
+
+- [x] Token bucket with lazy refill
+- [x] Sliding window
+- [ ] Leaky bucket for smoothing output
+- [ ] `async` wrappers that wait instead of rejecting
+
+## Benchmarks
+
+| Operation | Time | Allocations |
+| :--- | ---: | ---: |
+| `Bucket::take` | 9 ns | 0 |
+| `SlidingWindow::hit` | 31 ns | 0 |
+
+## Token bucket
+
+![Token bucket refill over eight seconds](bucket.png)
+
+A request takes tokens; time puts them back at `rate` per second, never past `capacity`. See [`refill`](../src/bucket.rs:23) and [`take`](../src/bucket.rs:31).
+
+## Sliding window
+
+![Events inside and outside a sliding window](window.png)
+
+Each `hit` drops timestamps older than `span`, then admits the event only while fewer than `limit` remain.
+T
+
+cat > docs/overview.md <<'T'
+# throttle
+
+Allocation-free rate limiters. The [token bucket](../src/bucket.rs:23) absorbs **bursts**, the [sliding window](../src/window.rs:17) is *exact*.
+
+![Token bucket refill over eight seconds](bucket.png)
+
+| Limiter | Bursts | Memory | `take` / `hit` |
+| :--- | :---: | ---: | ---: |
+| `Bucket` | up to *capacity* | 24 bytes | 9 ns |
+| `SlidingWindow` | none | 16 bytes per event | 31 ns |
+
+- [x] Lazy refill, no timers
+- [ ] `async` wrappers ([roadmap](design.md#roadmap))
 T
 
 printf '/target\nCargo.lock\n' > .gitignore

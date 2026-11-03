@@ -58,6 +58,8 @@ export default function ReleasesPage() {
         <section id="available-now">
           <h2>Available now</h2>
           <ul>
+            <li><strong>Markdown that reads like the document.</strong> Tables as grids, links without their URLs, and images in the buffer, with every line still editable source.</li>
+            <li><strong>Code explore.</strong> Follow names, dim a function to the calls that matter, and walk a trail back, without sending code to a model.</li>
             <li><strong>A persistent Codex Agent workspace.</strong> Continue a conversation with access to editor context, relevant diagnostics, and unsaved buffers.</li>
             <li><strong>Focused inline assistance.</strong> Review, explain, or refactor source in a bounded editor workflow.</li>
             <li><strong>Vim-style modal editing.</strong> Use familiar motions, operators, text objects, splits, macros, and registers.</li>

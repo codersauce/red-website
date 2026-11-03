@@ -14,8 +14,9 @@ export function SiteNav({ section }: { section?: { label: string; href: string }
     </div>
     <div className="nav-links">
       {/* The homepage's sections, in its order. */}
+      <Link className="nav-section" href="/#markdown">Markdown</Link>
       <Link className="nav-section" href="/#agent">Agent</Link>
-      <Link className="nav-section" href="/#inline">Inline</Link>
+      <Link className="nav-section" href="/#explore">Explore</Link>
       <Link className="nav-section" href="/#git">Git</Link>
       <Link className="nav-section" href="/#sessions">Sessions</Link>
       <Link className="nav-install" href="/#install">Install</Link>

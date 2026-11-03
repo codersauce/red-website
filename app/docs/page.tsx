@@ -21,11 +21,13 @@ export const metadata: Metadata = {
 const topics = [
   {
     title: "Editor",
-    description: "Files, editing, search, windows, language tools, and Git.",
+    description: "Files, editing, search, windows, Markdown, code explore, language tools, and Git.",
     links: [
       ["Navigate and edit", "/docs/editor/navigation"],
       ["Search and replace", "/docs/editor/search"],
       ["Buffers and windows", "/docs/editor/windows"],
+      ["Read and edit Markdown", "/docs/editor/markdown"],
+      ["Explore code", "/docs/editor/explore"],
       ["Language tools", "/docs/languages"],
       ["TypeScript and ESLint", "/docs/languages/typescript-eslint"],
       ["Git", "/docs/git"],

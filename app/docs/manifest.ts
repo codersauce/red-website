@@ -73,6 +73,24 @@ export const docManifest = [
     "description": "Arrange files in splits, move between editor and plugin panes, and resolve files that changed outside Red."
   },
   {
+    "id": "markdown",
+    "slug": "editor/markdown",
+    "href": "/docs/editor/markdown",
+    "section": "Editor",
+    "title": "Read and edit Markdown",
+    "description": "See tables as grids, links without their URLs, and images in the buffer, while every line stays editable source. Follow links and tick tasks.",
+    "minVersion": "v0.11.0"
+  },
+  {
+    "id": "explore",
+    "slug": "editor/explore",
+    "href": "/docs/editor/explore",
+    "section": "Editor",
+    "title": "Explore code",
+    "description": "Read unfamiliar code with a sidebar that follows the cursor, dim a function to the calls that matter, and walk a trail of definitions, without a model or a language server.",
+    "minVersion": "v0.11.0"
+  },
+  {
     "id": "languages",
     "slug": "languages",
     "href": "/docs/languages",

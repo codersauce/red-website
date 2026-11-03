@@ -1,5 +1,48 @@
 export const releases = [
 {
+  "version": "v0.11.0",
+  "id": "release-v0-11-0",
+  "headline": "Markdown that reads like the document, and a new way to explore code",
+  "summary": "Red v0.11.0 shows Markdown the way it reads: tables as grids, links without their URLs, and images right in the buffer, while every line stays editable source. Code explore is a new reading mode that follows names, dims a function to the calls that matter, and keeps a trail of where you have been, without sending your code to a model.",
+  "highlights": [
+    {
+      "id": "markdown-reading",
+      "title": "Markdown that reads like the document",
+      "description": "Pipe tables draw as aligned grids, and link URLs, emphasis markers, and backticks take no space, so paragraphs wrap on the words you see and gj and gk move over them. The file never changes: move onto a line, or enter Insert or Visual mode, and that line shows its raw Markdown. :markdown-tables and :markdown-conceal toggle each split."
+    },
+    {
+      "id": "markdown-images",
+      "title": "Images in your Markdown",
+      "description": "A line that holds only ![alt](path) shows the picture in the buffer, at full resolution in Kitty, Ghostty, WezTerm, iTerm2, and Sixel terminals, including through Herdr, Zellij, and tmux passthrough, and as smoothed block characters elsewhere. Moving onto the line shows its source above the picture without shifting the text below, and scrolling crops the image instead of squashing it. Set markdown_images to choose the protocol or turn it off."
+    },
+    {
+      "id": "markdown-links",
+      "title": "Follow links and tick tasks",
+      "description": "gx follows a link to a web page, a local file, a heading, or a file:line reference, and Ctrl-o comes back. Ctrl-w x opens a link in a split beside the document and reuses that split for the next link. gT toggles a task checkbox as one undoable edit."
+    },
+    {
+      "id": "code-explore",
+      "title": "Explore code without asking a model",
+      "description": "Space e e opens Code explore: a sidebar that follows the cursor with the enclosing function, the name under it, its definition, and its matches. Space e f follows a name, Space e s dims a function to the calls into your project and the system, and Space e d and Space e b jump to a definition and back along a review trail. The error list moved from Space e to Space D."
+    },
+    {
+      "id": "config-overrides",
+      "title": "Change any setting for one launch",
+      "description": "red -c theme=onedark.json -c languages.rust.indent_width=2 sets dotted keys for a single run, and quotes are optional for plain words. Later flags win, a mistyped key suggests the closest setting, and red --print-config shows the merged result."
+    },
+    {
+      "id": "counted-scrolling",
+      "title": "Scrolling that remembers its distance",
+      "description": "A count before Ctrl-d or Ctrl-u sets how far later presses move, as in Vim, until the window is resized. Ctrl-y and Alt-e scroll the view one line and leave the cursor in place."
+    },
+    {
+      "id": "steadier-editing",
+      "title": "Steadier under failure",
+      "description": "A language server that fails or is missing no longer interrupts editing, an update retries when macOS still reports the new binary busy, and a saved Agent conversation is found again on macOS workspaces under /var and /private/var. Intel Mac builds now come from Intel runners."
+    }
+  ]
+},
+{
   "version": "v0.10.0",
   "id": "release-v0-10-0",
   "headline": "Pick up any Codex conversation, and updates that install themselves",

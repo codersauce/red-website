@@ -287,6 +287,70 @@ export const docPages: DocPageDefinition[] = [
     </>,
   },
   {
+    ...docMetadata("markdown"),
+    render: () => <>
+      <section>
+        <h2 id="how-markdown-looks">How Markdown looks</h2>
+        <p>In Normal mode, Red shows a Markdown file the way it reads. Pipe tables draw as aligned grids, link destinations and brackets, emphasis markers, and code-span backticks take no space, and a line that holds only an image shows the picture. Move onto a line, or enter Insert or Visual mode, and that line shows its raw Markdown. None of this changes the file or adds undo entries.</p>
+        <div className="docs-key-grid">
+          <div><kbd>:markdown-tables</kbd><span>Toggle table grids in the current split</span></div>
+          <div><kbd>:markdown-conceal</kbd><span>Toggle hidden markup in the current split</span></div>
+        </div>
+        <p>Set <code>markdown_tables = false</code> or <code>markdown_conceal = false</code> in your configuration to start with source. Hidden markup applies while wrapping is on, and paragraphs wrap on the words you can see, so <kbd>gj</kbd> and <kbd>gk</kbd> move over visible rows. Code fences, escapes, and link reference definitions are never hidden.</p>
+      </section>
+
+      <section>
+        <h2 id="images">Images</h2>
+        <CodeBlock language="text">{`![Token bucket refill over eight seconds](bucket.png)`}</CodeBlock>
+        <p>An image on a line of its own appears in the buffer. Local paths are relative to the Markdown file, and <code>https</code> images are downloaded; either way an image can be up to 8 MB. Height follows the image's proportions, up to <code>markdown_image_max_height</code> rows (16 by default). On the image line, the Markdown appears in the picture's first row and nothing below it moves. Scrolling crops an image instead of squashing it.</p>
+        <p>Kitty, Ghostty, WezTerm, Konsole, iTerm2, and VS Code's terminal show full-resolution images, as do Sixel terminals such as foot, mlterm, and Windows Terminal. Herdr and Zellij 0.45 or later pass them through to a capable terminal; tmux needs <code>set -g allow-passthrough on</code>. Other truecolor terminals get a smoothed picture drawn with block characters. Set <code>markdown_images</code> to <code>"kitty"</code>, <code>"iterm2"</code>, <code>"sixel"</code>, <code>"halfblocks"</code>, or <code>"off"</code> to choose.</p>
+      </section>
+
+      <section>
+        <h2 id="links-and-tasks">Links and tasks</h2>
+        <div className="docs-key-grid">
+          <div><kbd>gx</kbd><span>Follow the link under the cursor</span></div>
+          <div><kbd>Ctrl-o / Ctrl-i</kbd><span>Go back and forward</span></div>
+          <div><kbd>Ctrl-w x</kbd><span>Open a local link in a split beside the document</span></div>
+          <div><kbd>gT</kbd><span>Toggle the task on this line</span></div>
+        </div>
+        <p>Web links open in your browser and email links in your mail app. Local files open relative to the Markdown file, <code>#heading</code> and <code>guide.md#heading</code> jump to headings, and <code>src/main.rs:42:3</code> or <code>src/main.rs#L42</code> jump to a line. <kbd>Ctrl-w x</kbd> reuses the same split for later links from that document, and focus stays in the document unless you set <code>markdown_link_split_focus = "target"</code>.</p>
+        <p>Tables, images, links, and tasks apply to Markdown documents up to 2 MiB.</p>
+      </section>
+    </>,
+  },
+  {
+    ...docMetadata("explore"),
+    render: () => <>
+      <section>
+        <h2 id="turn-it-on">Turn it on</h2>
+        <p>Code explore is a reading mode. Press <kbd>Space e e</kbd>, <kbd>Space E</kbd>, or run <code>:explore</code> to open a sidebar that follows the cursor: the function you are in, the name under the cursor, its definition, and its matches. It never sends your code to a model, and <kbd>gd</kbd> still asks the language server.</p>
+        <Callout title="Moved in v0.11.0">The error list moved from <kbd>Space e</kbd> to <kbd>Space D</kbd>, because <kbd>Space e</kbd> is now the explore group.</Callout>
+      </section>
+
+      <section>
+        <h2 id="keys">Keys</h2>
+        <div className="docs-key-grid">
+          <div><kbd>Space e f</kbd><span>Follow the name under the cursor through this function</span></div>
+          <div><kbd>Space e s</kbd><span>Dim the function except calls into the project and the system</span></div>
+          <div><kbd>Space e d</kbd><span>Jump to the definition in the index</span></div>
+          <div><kbd>Space e t</kbd><span>Jump to the explicit type</span></div>
+          <div><kbd>Space e j / k</kbd><span>Next or previous match</span></div>
+          <div><kbd>Space e b / n</kbd><span>Walk the review trail back or forward</span></div>
+          <div><kbd>Space e R</kbd><span>Index the repository's source files</span></div>
+          <div><kbd>Space e p</kbd><span>Index only this branch's changed files</span></div>
+          <div><kbd>Space e ?</kbd><span>Show every explore key</span></div>
+        </div>
+        <p>While explore is on, double-clicking a name follows it, and clicking a reference or definition jumps there. Jumps are recorded on the trail.</p>
+      </section>
+
+      <section>
+        <h2 id="what-the-index-knows">What the index knows</h2>
+        <p>Explore reads the current buffer when it opens. <kbd>Space e R</kbd> walks the repository, respecting <code>.gitignore</code>, and parses up to 400 source files with Red's Tree-sitter grammars in the background. The index maps names to files and lines: matches are shared spellings, not type-checked references, and types are only the ones written in the source.</p>
+      </section>
+    </>,
+  },
+  {
     ...docMetadata("languages"),
     render: () => <>
       <section>

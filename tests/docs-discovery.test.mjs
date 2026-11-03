@@ -3,7 +3,7 @@ import test from "node:test";
 import { unified } from "unified";
 import rehypeParse from "rehype-parse";
 import remarkParse from "remark-parse";
-import { docManifest } from "../app/docs/manifest.ts";
+import { docManifest, docNavigation } from "../app/docs/manifest.ts";
 import { fetchBuiltWorker } from "./helpers/built-worker.mjs";
 
 function collect(node, predicate, found = []) {
@@ -40,4 +40,10 @@ test("every discovery link resolves and each guide appears exactly once", async 
     const response = await fetchBuiltWorker(url.pathname, { headers: { Accept: "text/html" } });
     assert.equal(response.status, 200, link.url);
   }
+});
+
+test("the docs sidebar lists every docs page", () => {
+  const listed = new Set(docNavigation.flatMap((group) => group.items.map((item) => item.href)));
+  const missing = docManifest.filter((page) => page.slug !== "" && !listed.has(page.href)).map((page) => page.href);
+  assert.deepEqual(missing, []);
 });

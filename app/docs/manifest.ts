@@ -244,6 +244,8 @@ export const docNavigation = [
       { ...docMetadata("navigation"), label: "Navigate and edit" },
       { ...docMetadata("search"), label: "Search and replace" },
       { ...docMetadata("windows"), label: "Buffers and windows" },
+      { ...docMetadata("markdown"), label: "Read and edit Markdown" },
+      { ...docMetadata("explore"), label: "Explore code" },
       { ...docMetadata("languages"), label: "Language tools" },
       { ...docMetadata("typescript-eslint"), label: "TypeScript and ESLint" },
       { ...docMetadata("git"), label: "Git" },

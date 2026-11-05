@@ -1,5 +1,28 @@
 export const releases = [
 {
+  "version": "v0.11.1",
+  "id": "release-v0-11-1",
+  "headline": "Faster cursor movement, and Markdown images that stay put",
+  "summary": "Red v0.11.1 is a performance release. Moving the cursor redraws only the rows that changed, and Markdown images already on screen are reused instead of sent to the terminal again while you type and scroll. It also fixes a Windows startup problem and a scrolling edge case.",
+  "highlights": [
+    {
+      "id": "faster-navigation",
+      "title": "Faster cursor movement",
+      "description": "Indentation guides are reused while the cursor stays in the same scope, and a cursor move redraws only the rows that changed since the last frame. Median latency for moving within the screen fell from 1.76 to 0.98 ms on macOS, and p95 fell from 1.82 to 1.15 ms on Linux. Scrolling p95 on Linux fell from 2.47 to 2.20 ms."
+    },
+    {
+      "id": "markdown-image-reuse",
+      "title": "Markdown images stay on screen while you edit",
+      "description": "An image already drawn is reused while you type, move the cursor, or scroll, instead of being encoded and sent to the terminal again. In Kitty-protocol terminals, an image entering or leaving the view no longer makes Red upload the others again."
+    },
+    {
+      "id": "fixes",
+      "title": "Steadier on Windows and with wrapped lines",
+      "description": "On Windows, the terminal's reply to Red's graphics check no longer arrives as keystrokes at startup. With scrolloff set and long lines wrapping, moving into the top margin scrolls up exactly one row."
+    }
+  ]
+},
+{
   "version": "v0.11.0",
   "id": "release-v0-11-0",
   "headline": "Markdown that reads like the document, and a new way to explore code",
